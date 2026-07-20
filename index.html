@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>자산배분모니터 — 이번달 보유 티커·비중</title>
+<meta name="description" content="주요 정적·동적 자산배분 전략의 전월 말 종가 기준 이번달 보유 티커·비중을 매달 자동 계산해 보여줍니다." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <h1>자산배분모니터</h1>
+    <p class="tagline">주요 정적·동적 자산배분 전략의 <strong>전월 말 종가</strong> 기준 이번달 보유 티커·비중</p>
+    <div id="metaBar" class="meta-bar">불러오는 중…</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section id="customSection" class="panel custom-panel">
+    <h2>커스텀 지표</h2>
+    <div id="customGrid" class="custom-grid">불러오는 중…</div>
+  </section>
+
+  <section id="compareSection" class="panel">
+    <div class="section-head">
+      <h2>전략별 성과 비교</h2>
+      <div class="compare-legend-note">각 전략의 백테스트 시작일이 달라 <b>공통 구간</b>(모든 전략이 동시에 존재하는 가장 긴 기간)으로 맞춰 비교합니다.</div>
+    </div>
+    <div class="compare-chart-wrap">
+      <canvas id="compareChart"></canvas>
+      <div id="compareLegend" class="compare-legend"></div>
+    </div>
+    <div class="compare-table-wrap">
+      <table id="compareTable" class="compare-table">
+        <thead>
+          <tr>
+            <th data-sort="label">전략</th>
+            <th data-sort="cagr">CAGR</th>
+            <th data-sort="mdd">MDD</th>
+            <th data-sort="vol">변동성</th>
+            <th data-sort="sharpe">Sharpe</th>
+            <th data-sort="years">기간</th>
+          </tr>
+        </thead>
+        <tbody id="compareTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-head">
+      <h2>전략별 이번달 배분</h2>
+      <div class="filter-bar">
+        <input id="searchBox" type="search" placeholder="전략명·티커 검색" />
+      </div>
+    </div>
+    <div id="strategyList" class="strategy-grid">불러오는 중…</div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>데이터: Yahoo Finance 공개 차트 API · BLS · FRED · us500.com — 매달 자동 갱신</p>
+    <p class="disclaimer">이 페이지는 정보 제공 목적의 계산 도구이며 투자 자문이 아닙니다. 투자 판단과 책임은 이용자 본인에게 있습니다.</p>
+  </div>
+</footer>
+
+<div id="modalRoot" class="modal-root" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="닫기">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

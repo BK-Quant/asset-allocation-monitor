@@ -1,0 +1,823 @@
+{
+  "meta": {
+    "generatedAt": "2026-07-20 06:48 KST",
+    "basisDate": "2026-06-30",
+    "applicableMonth": "2026년 7월",
+    "latestDataDate": "2026-07-17"
+  },
+  "strategies": {
+    "PERM": {
+      "label": "영구포트폴리오",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "TLT",
+          "displayName": "TLT",
+          "remark": "TLT : iShares 20+ Year Treasury Bond ETF",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 86.102,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "GLD",
+          "displayName": "GLD",
+          "remark": "GLD : SPDR Gold Trust",
+          "sector": "금",
+          "category": "원자재",
+          "price": 368.38,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "BIL",
+          "displayName": "BIL",
+          "remark": "BIL : SPDR Bloomberg 1-3 Month T-Bill ETF",
+          "sector": "초단기채권",
+          "category": "채권",
+          "price": 91.372,
+          "weight": 0.25,
+          "score": null
+        }
+      ]
+    },
+    "KORETF_STABLE": {
+      "label": "한국 ETF 정적배분 - 안정형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "272580.KS",
+          "displayName": "272580.KS",
+          "remark": "TIGER 단기채권액티브",
+          "sector": "단기채권",
+          "category": "채권",
+          "price": 56765.0,
+          "weight": 0.3,
+          "score": null
+        },
+        {
+          "ticker": "363580.KS",
+          "displayName": "363580.KS",
+          "remark": "KIWOOM 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 76620.0,
+          "weight": 0.205,
+          "score": null
+        },
+        {
+          "ticker": "365780.KS",
+          "displayName": "365780.KS",
+          "remark": "ACE 국고채10년",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 83390.0,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "360750.KS",
+          "displayName": "360750.KS",
+          "remark": "TIGER 미국S&P 500",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 28640.0,
+          "weight": 0.125,
+          "score": null
+        },
+        {
+          "ticker": "284430.KS",
+          "displayName": "284430.KS",
+          "remark": "KODEX 200미국채혼합",
+          "sector": "주식/채권 혼합",
+          "category": "혼합",
+          "price": 24881.2148,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.05,
+          "score": null
+        }
+      ]
+    },
+    "KORETF_NEUTRAL": {
+      "label": "한국 ETF 정적배분 - 중립형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "363580.KS",
+          "displayName": "363580.KS",
+          "remark": "KIWOOM 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 76620.0,
+          "weight": 0.245,
+          "score": null
+        },
+        {
+          "ticker": "360750.KS",
+          "displayName": "360750.KS",
+          "remark": "TIGER 미국S&P 500",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 28640.0,
+          "weight": 0.175,
+          "score": null
+        },
+        {
+          "ticker": "365780.KS",
+          "displayName": "365780.KS",
+          "remark": "ACE 국고채10년",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 83390.0,
+          "weight": 0.175,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.15,
+          "score": null
+        },
+        {
+          "ticker": "272580.KS",
+          "displayName": "272580.KS",
+          "remark": "TIGER 단기채권액티브",
+          "sector": "단기채권",
+          "category": "채권",
+          "price": 56765.0,
+          "weight": 0.15,
+          "score": null
+        },
+        {
+          "ticker": "284430.KS",
+          "displayName": "284430.KS",
+          "remark": "KODEX 200미국채혼합",
+          "sector": "주식/채권 혼합",
+          "category": "혼합",
+          "price": 24881.2148,
+          "weight": 0.105,
+          "score": null
+        }
+      ]
+    },
+    "KORETF_GROWTH": {
+      "label": "한국 ETF 정적배분 - 성장형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "363580.KS",
+          "displayName": "363580.KS",
+          "remark": "KIWOOM 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 76620.0,
+          "weight": 0.29,
+          "score": null
+        },
+        {
+          "ticker": "360750.KS",
+          "displayName": "360750.KS",
+          "remark": "TIGER 미국S&P 500",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 28640.0,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "365780.KS",
+          "displayName": "365780.KS",
+          "remark": "ACE 국고채10년",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 83390.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "272580.KS",
+          "displayName": "272580.KS",
+          "remark": "TIGER 단기채권액티브",
+          "sector": "단기채권",
+          "category": "채권",
+          "price": 56765.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "284430.KS",
+          "displayName": "284430.KS",
+          "remark": "KODEX 200미국채혼합",
+          "sector": "주식/채권 혼합",
+          "category": "혼합",
+          "price": 24881.2148,
+          "weight": 0.06,
+          "score": null
+        }
+      ]
+    },
+    "LAA": {
+      "label": "LAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "IWD",
+          "displayName": "IWD",
+          "remark": "IWD : iShares Russell 1000 Value ETF",
+          "sector": "미국 대형가치주",
+          "category": "주식",
+          "price": 242.43,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "IEF",
+          "displayName": "IEF",
+          "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 94.259,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "GLD",
+          "displayName": "GLD",
+          "remark": "GLD : SPDR Gold Trust",
+          "sector": "금",
+          "category": "원자재",
+          "price": 368.38,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "QQQ",
+          "displayName": "QQQ",
+          "remark": "QQQ : Invesco QQQ Trust",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 736.4,
+          "weight": 0.25,
+          "score": null
+        }
+      ]
+    },
+    "RAA": {
+      "label": "RAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "QQQ",
+          "displayName": "QQQ",
+          "remark": "QQQ : Invesco QQQ Trust",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 736.4,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "IWN",
+          "displayName": "IWN",
+          "remark": "IWN : iShares Russell 2000 Value ETF",
+          "sector": "미국 소형가치주",
+          "category": "주식",
+          "price": 221.2,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "IEF",
+          "displayName": "IEF",
+          "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 94.259,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "TLT",
+          "displayName": "TLT",
+          "remark": "TLT : iShares 20+ Year Treasury Bond ETF",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 86.102,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "GLD",
+          "displayName": "GLD",
+          "remark": "GLD : SPDR Gold Trust",
+          "sector": "금",
+          "category": "원자재",
+          "price": 368.38,
+          "weight": 0.2,
+          "score": null
+        }
+      ]
+    },
+    "GTAA": {
+      "label": "GTAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "EFA",
+          "displayName": "EFA",
+          "remark": "EFA : iShares MSCI EAFE ETF",
+          "sector": "선진국 주식",
+          "category": "주식",
+          "price": 103.88,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "IEF",
+          "displayName": "IEF",
+          "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 94.259,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "PDBC",
+          "displayName": "PDBC",
+          "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
+          "sector": "원자재",
+          "category": "원자재",
+          "price": 15.88,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "VNQ",
+          "displayName": "VNQ",
+          "remark": "VNQ : Vanguard Real Estate Index Fund",
+          "sector": "미국 리츠",
+          "category": "리츠",
+          "price": 96.43,
+          "weight": 0.2,
+          "score": null
+        }
+      ]
+    },
+    "PAA": {
+      "label": "PAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "EEM",
+          "displayName": "EEM",
+          "remark": "EEM : iShares MSCI Emerging Markets ETF",
+          "sector": "신흥국 주식",
+          "category": "주식",
+          "price": 68.41,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "IWM",
+          "displayName": "IWM",
+          "remark": "IWM : iShares Russell 2000 ETF",
+          "sector": "미국 소형주",
+          "category": "주식",
+          "price": 300.45,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "QQQ",
+          "displayName": "QQQ",
+          "remark": "QQQ : Invesco QQQ Trust",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 736.4,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "EWJ",
+          "displayName": "EWJ",
+          "remark": "EWJ : iShares MSCI Japan ETF",
+          "sector": "일본 주식",
+          "category": "주식",
+          "price": 93.27,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "IEF",
+          "displayName": "IEF",
+          "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 94.259,
+          "weight": 0.166667,
+          "score": null
+        }
+      ]
+    },
+    "DAA": {
+      "label": "DAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "IWM",
+          "displayName": "IWM",
+          "remark": "IWM : iShares Russell 2000 ETF",
+          "sector": "미국 소형주",
+          "category": "주식",
+          "price": 300.45,
+          "weight": 0.5,
+          "score": null
+        },
+        {
+          "ticker": "EEM",
+          "displayName": "EEM",
+          "remark": "EEM : iShares MSCI Emerging Markets ETF",
+          "sector": "신흥국 주식",
+          "category": "주식",
+          "price": 68.41,
+          "weight": 0.5,
+          "score": null
+        }
+      ]
+    },
+    "VAA": {
+      "label": "VAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "EEM",
+          "displayName": "EEM",
+          "remark": "EEM : iShares MSCI Emerging Markets ETF",
+          "sector": "신흥국 주식",
+          "category": "주식",
+          "price": 68.41,
+          "weight": 1.0,
+          "score": null
+        }
+      ]
+    },
+    "FAA": {
+      "label": "FAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "VTI",
+          "displayName": "VTI",
+          "remark": "VTI : Vanguard Total Stock Market ETF",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 370.04,
+          "weight": 0.333333,
+          "score": null
+        },
+        {
+          "ticker": "PDBC",
+          "displayName": "PDBC",
+          "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
+          "sector": "원자재",
+          "category": "원자재",
+          "price": 15.88,
+          "weight": 0.333333,
+          "score": null
+        },
+        {
+          "ticker": "VNQ",
+          "displayName": "VNQ",
+          "remark": "VNQ : Vanguard Real Estate Index Fund",
+          "sector": "미국 리츠",
+          "category": "리츠",
+          "price": 96.43,
+          "weight": 0.333333,
+          "score": null
+        }
+      ]
+    },
+    "AAA": {
+      "label": "AAA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "TLT",
+          "displayName": "TLT",
+          "remark": "TLT : iShares 20+ Year Treasury Bond ETF",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 86.102,
+          "weight": 0.54166,
+          "score": null
+        },
+        {
+          "ticker": "PDBC",
+          "displayName": "PDBC",
+          "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
+          "sector": "원자재",
+          "category": "원자재",
+          "price": 15.88,
+          "weight": 0.209713,
+          "score": null
+        },
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 0.144226,
+          "score": null
+        },
+        {
+          "ticker": "VNQ",
+          "displayName": "VNQ",
+          "remark": "VNQ : Vanguard Real Estate Index Fund",
+          "sector": "미국 리츠",
+          "category": "리츠",
+          "price": 96.43,
+          "weight": 0.104401,
+          "score": null
+        },
+        {
+          "ticker": "VGK",
+          "displayName": "VGK",
+          "remark": "VGK : Vanguard European Stock Index Fund",
+          "sector": "유럽 주식",
+          "category": "주식",
+          "price": 88.54,
+          "weight": 0.0,
+          "score": null
+        },
+        {
+          "ticker": "EWJ",
+          "displayName": "EWJ",
+          "remark": "EWJ : iShares MSCI Japan ETF",
+          "sector": "일본 주식",
+          "category": "주식",
+          "price": 93.27,
+          "weight": 0.0,
+          "score": null
+        },
+        {
+          "ticker": "EEM",
+          "displayName": "EEM",
+          "remark": "EEM : iShares MSCI Emerging Markets ETF",
+          "sector": "신흥국 주식",
+          "category": "주식",
+          "price": 68.41,
+          "weight": 0.0,
+          "score": null
+        }
+      ]
+    },
+    "DUAL": {
+      "label": "전통듀얼모멘텀",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 1.0,
+          "score": null
+        }
+      ]
+    },
+    "CDM": {
+      "label": "종합듀얼모멘텀",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "HYG",
+          "displayName": "HYG",
+          "remark": "HYG : iShares iBoxx $ High Yield Corporate Bond ETF",
+          "sector": "미국 하이일드 채권",
+          "category": "채권",
+          "price": 79.601,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "REM",
+          "displayName": "REM",
+          "remark": "REM : iShares Mortgage Real Estate Capped ETF",
+          "sector": "모기지 리츠",
+          "category": "리츠",
+          "price": 22.05,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "GLD",
+          "displayName": "GLD",
+          "remark": "GLD : SPDR Gold Trust",
+          "sector": "금",
+          "category": "원자재",
+          "price": 368.38,
+          "weight": 0.25,
+          "score": null
+        }
+      ]
+    },
+    "ADM": {
+      "label": "가속듀얼모멘텀",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 1.0,
+          "score": null
+        }
+      ]
+    },
+    "DGA": {
+      "label": "DGA",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "BIL",
+          "displayName": "BIL",
+          "remark": "BIL : SPDR Bloomberg 1-3 Month T-Bill ETF",
+          "sector": "초단기채권",
+          "category": "채권",
+          "price": 91.372,
+          "weight": 1.0,
+          "score": null
+        }
+      ]
+    },
+    "DYNBOND": {
+      "label": "채권동적배분",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "EMB",
+          "displayName": "EMB",
+          "remark": "EMB : iShares J.P. Morgan USD EM Bond ETF",
+          "sector": "신흥국 채권",
+          "category": "채권",
+          "price": 96.04,
+          "weight": 0.333333,
+          "score": null
+        },
+        {
+          "ticker": "HYG",
+          "displayName": "HYG",
+          "remark": "HYG : iShares iBoxx $ High Yield Corporate Bond ETF",
+          "sector": "미국 하이일드 채권",
+          "category": "채권",
+          "price": 79.601,
+          "weight": 0.333333,
+          "score": null
+        },
+        {
+          "ticker": "TIP",
+          "displayName": "TIP",
+          "remark": "TIP : iShares TIPS Bond ETF",
+          "sector": "미국 물가연동채",
+          "category": "채권",
+          "price": 108.372,
+          "weight": 0.333333,
+          "score": null
+        }
+      ]
+    }
+  },
+  "custom": {
+    "daaCanary": {
+      "label": "DAA 카나리아 지표 (VWO·BND 원시 가중 모멘텀)",
+      "asOfDate": "2026-06-30",
+      "scores": {
+        "VWO": 0.989018,
+        "BND": 0.121612
+      },
+      "riskOn": true,
+      "note": "두 값 모두 0 이상이면 공격형(위험자산 2종), 하나라도 음수면 방어형(안전자산 1종)으로 전환"
+    },
+    "admCurrent": {
+      "label": "가속듀얼모멘텀 당월 확정 티커",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "ticker": "SPY",
+      "remark": "SPY : SPDR S&P 500 ETF Trust"
+    },
+    "admPreview": {
+      "label": "가속듀얼모멘텀 차월 예상 티커 (프리뷰)",
+      "asOfDate": "2026-07-17",
+      "applicableMonth": "2026년 8월 (예상·미확정)",
+      "ticker": "SPY",
+      "remark": "SPY : SPDR S&P 500 ETF Trust",
+      "note": "월말 확정 전 최신 종가 기준 프리뷰 — 월말 재계산 시 바뀔 수 있음"
+    }
+  }
+}
