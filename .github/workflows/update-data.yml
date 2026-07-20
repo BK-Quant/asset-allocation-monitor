@@ -2,9 +2,14 @@ name: 데이터 갱신 (전월 말 종가 → 이번달 신호)
 
 on:
   schedule:
-    # 매달 1일 21:30 UTC = 한국시간 매달 2일 06:30 — 전월 말 거래 데이터가 확실히 반영된 뒤 실행
-    - cron: "30 21 1 * *"
-  workflow_dispatch: {} # 수동 실행 버튼 (Actions 탭에서 즉시 재계산 가능)
+    # 한국장용: 매월 말 영업일(거래일) 19:00 KST = 10:00 UTC.
+    # 매월 마지막 날짜(28~31일)에 매일 걸어두고, 아래 "월말 여부 확인" 스텝에서
+    # 실제로 그달의 마지막 날일 때만 갱신을 진행한다(GitHub Actions cron은 "월말"을
+    # 직접 표현할 수 없어 흔히 쓰는 우회 방식).
+    - cron: "0 10 28-31 * *"
+    # 미국장용: 매월 1일 07:00 KST = 전월 말일 22:00 UTC (시차 때문에 하루 늦게 확정).
+    - cron: "0 22 28-31 * *"
+  workflow_dispatch: {} # 수동 실행 버튼 (Actions 탭에서 즉시 재계산 가능, 월말 여부와 무관하게 항상 실행)
 
 permissions:
   contents: write
@@ -15,20 +20,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: 월말 여부 확인 (scheduled 실행에만 적용)
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            tomorrow=$(date -u -d tomorrow +%d)
+            if [ "$tomorrow" != "01" ]; then
+              echo "오늘은 이 달의 마지막 날이 아님(내일=${tomorrow}일) — 갱신 생략"
+              echo "run=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
         with:
           python-version: "3.12"
 
       - name: 가격·매크로 데이터 수집
+        if: steps.gate.outputs.run == 'true'
         run: python scripts/update_data.py
 
       - name: 전략 신호·백테스트 계산
+        if: steps.gate.outputs.run == 'true'
         run: python scripts/build_output.py
 
       - name: 변경사항 커밋
+        if: steps.gate.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/
-          git diff --cached --quiet && echo "변경 없음, 커밋 생략" || git commit -m "chore: 데이터 자동 갱신 $(date -u +%Y-%m-%d)"
+          git diff --cached --quiet && echo "변경 없음, 커밋 생략" || git commit -m "chore: 데이터 자동 갱신 $(date -u +%Y-%m-%d) ${{ github.event.schedule }}"
           git push
