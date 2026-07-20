@@ -235,6 +235,14 @@ function renderComparison(current, backtests) {
   }
 
   picker.addEventListener("change", redrawChart);
+  document.getElementById("comparePickAll").addEventListener("click", () => {
+    picker.querySelectorAll("input[type=checkbox]").forEach((el) => (el.checked = true));
+    redrawChart();
+  });
+  document.getElementById("comparePickNone").addEventListener("click", () => {
+    picker.querySelectorAll("input[type=checkbox]").forEach((el) => (el.checked = false));
+    redrawChart();
+  });
   redrawChart();
 
   // ── 비교 테이블 ──

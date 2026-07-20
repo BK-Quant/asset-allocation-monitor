@@ -156,6 +156,7 @@ main { padding: 32px 0 60px; }
   max-width: 420px;
 }
 .compare-legend-note b { color: var(--text); }
+.compare-picker-actions { display: flex; gap: 8px; }
 
 .compare-picker {
   display: flex;
