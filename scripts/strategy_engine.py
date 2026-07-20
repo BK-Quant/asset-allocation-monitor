@@ -246,22 +246,34 @@ def calc_PAA(ps, idx):
 
 
 def calc_DAA(ps, idx):
+    """DAA-G12 (Keller & Keuning, 2018). 카나리아(VWO·BND) 중 음수 모멘텀 개수(n)에 따라
+    공격자산군 비중을 3단계(breadth)로 나눈다: n=0 → 100% 공격, n=1 → 50%/50%, n=2 → 100% 방어.
+    공격자산군은 상위 T=6개를 균등가중, 방어자산군은 상위 1개(N=1)에 전액 배분한다."""
     offensive = ["SPY", "IWM", "QQQ", "VGK", "EWJ", "EEM", "VNQ", "PDBC", "GLD", "TLT", "HYG", "LQD"]
     defensive = ["SHY", "IEF", "LQD"]
     canary = ["VWO", "BND"]
+    T_OFFENSIVE = 6
+
     canary_scored = score_tickers(ps, canary, idx, ps.get_weighted_momentum_score)
-    canary_positive = len(canary_scored) == len(canary) and all(x["score"] >= 0 for x in canary_scored)
+    n_neg = sum(1 for x in canary_scored if x["score"] < 0) if len(canary_scored) == len(canary) else len(canary)
+    breadth = (len(canary) - n_neg) / len(canary)  # 1.0 / 0.5 / 0.0
+
     allocations = {}
-    if canary_positive:
-        top2 = sort_by_score_desc(score_tickers(ps, offensive, idx, ps.get_weighted_momentum_score))[:2]
-        for x in top2:
-            allocations[x["ticker"]] = 0.50
-    else:
-        top1 = sort_by_score_desc(score_tickers(ps, defensive, idx, ps.get_weighted_momentum_score))
-        if top1:
-            allocations[top1[0]["ticker"]] = 1.0
+    if breadth > 0:
+        top_off = sort_by_score_desc(score_tickers(ps, offensive, idx, ps.get_weighted_momentum_score))[:T_OFFENSIVE]
+        if top_off:
+            w = breadth / len(top_off)
+            for x in top_off:
+                allocations[x["ticker"]] = allocations.get(x["ticker"], 0) + w
         else:
-            allocations["USD"] = 1.0
+            allocations["USD"] = allocations.get("USD", 0) + breadth
+    if breadth < 1:
+        top_def = sort_by_score_desc(score_tickers(ps, defensive, idx, ps.get_weighted_momentum_score))
+        defensive_weight = 1 - breadth
+        if top_def:
+            allocations[top_def[0]["ticker"]] = allocations.get(top_def[0]["ticker"], 0) + defensive_weight
+        else:
+            allocations["USD"] = allocations.get("USD", 0) + defensive_weight
     return allocations
 
 
@@ -423,12 +435,14 @@ def calc_CDM(ps, idx):
 
 
 def calc_ADM(ps, idx):
-    stocks, bonds = ["SPY", "SCZ"], ["TLT", "TIP"]
+    """Accelerating Dual Momentum (Dushanov). SPY(미국대형)와 VSS(전세계ex-US 소형주) 중
+    1/3/6개월 모멘텀 합산 스코어가 더 높은 쪽에 투자하되, 둘 다 음수면 TLT(장기국채) 단일
+    안전자산으로 전환한다."""
+    stocks = ["SPY", "VSS"]
     best_stock = sort_by_score_desc(score_tickers(ps, stocks, idx, lambda t, i: ps.get_momentum_score(t, i, (21, 63, 126))))
     if best_stock and best_stock[0]["score"] > 0:
         return {best_stock[0]["ticker"]: 1.0}
-    best_bond = sort_by_score_desc(score_tickers(ps, bonds, idx, lambda t, i: ps.get_momentum_score(t, i, (21, 63, 126))))
-    return {best_bond[0]["ticker"]: 1.0} if best_bond else {"USD": 1.0}
+    return {"TLT": 1.0} if ps.get_price("TLT", idx) is not None else {"USD": 1.0}
 
 
 def calc_DGA(ps, idx, use_live_macro=False):
@@ -492,13 +506,13 @@ STRATEGY_LABELS = {
     "RAA": "RAA",
     "GTAA": "GTAA",
     "PAA": "PAA",
-    "DAA": "DAA",
+    "DAA": "방어적자산배분(DAA-G12)",
     "VAA": "VAA",
     "FAA": "FAA",
     "AAA": "AAA",
     "DUAL": "전통듀얼모멘텀",
     "CDM": "종합듀얼모멘텀",
-    "ADM": "가속듀얼모멘텀",
+    "ADM": "가속듀얼모멘텀(ADM)",
     "DGA": "DGA",
     "DYNBOND": "채권동적배분",
 }

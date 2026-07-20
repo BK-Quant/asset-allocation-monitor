@@ -35,16 +35,19 @@ function renderCustomSection(current) {
   const grid = document.getElementById("customGrid");
   grid.innerHTML = "";
 
-  // DAA 카나리아
+  // DAA 카나리아 (breadth 3단계: 100% 공격 / 50-50 / 100% 방어)
   const daaCard = document.createElement("div");
   daaCard.className = "custom-card";
   const daaScores = c.daaCanary.scores;
+  const breadth = c.daaCanary.breadth ?? (c.daaCanary.riskOn ? 1 : 0);
+  const breadthBadgeClass = breadth >= 1 ? "on" : breadth <= 0 ? "off" : "preview";
+  const breadthLabel = breadth >= 1 ? "공격형 100% (Risk-ON)" : breadth <= 0 ? "방어형 100% (Risk-OFF)" : "혼합 50/50 (완충)";
   daaCard.innerHTML = `
     <h3>${c.daaCanary.label}</h3>
     <div class="canary-row"><span>VWO (신흥국)</span><span class="${scoreClass(daaScores.VWO)}">${daaScores.VWO != null ? fmtPct(daaScores.VWO) : "—"}</span></div>
     <div class="canary-row"><span>BND (미국종합채권)</span><span class="${scoreClass(daaScores.BND)}">${daaScores.BND != null ? fmtPct(daaScores.BND) : "—"}</span></div>
     <div class="sub">
-      <span class="badge ${c.daaCanary.riskOn ? "on" : "off"}">${c.daaCanary.riskOn ? "공격형 (Risk-ON)" : "방어형 (Risk-OFF)"}</span>
+      <span class="badge ${breadthBadgeClass}">${breadthLabel}</span>
       기준일 ${c.daaCanary.asOfDate}
     </div>
     <div class="sub">${c.daaCanary.note}</div>

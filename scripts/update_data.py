@@ -36,7 +36,7 @@ from pathlib import Path
 TICKERS = [
     "SPY", "TLT", "GLD", "BIL", "IWD", "QQQ", "IEF", "SHY",
     "IWM", "VWO", "BND", "EFA", "PDBC", "VNQ", "VGK", "EWJ",
-    "EEM", "HYG", "LQD", "REM", "TIP", "AGG", "SCZ",
+    "EEM", "HYG", "LQD", "REM", "TIP", "AGG", "SCZ", "VSS",
     "BWX", "EMB", "RWX", "VTI", "VEA", "IWN", "SCHD",
     "363580.KS", "360750.KS", "411060.KS", "365780.KS", "284430.KS", "272580.KS",
 ]

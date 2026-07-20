@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-20 06:48 KST",
+    "generatedAt": "2026-07-20 19:45 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
     "latestDataDate": "2026-07-17"
@@ -491,7 +491,7 @@
       ]
     },
     "DAA": {
-      "label": "DAA",
+      "label": "방어적자산배분(DAA-G12)",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
@@ -503,7 +503,7 @@
           "sector": "미국 소형주",
           "category": "주식",
           "price": 300.45,
-          "weight": 0.5,
+          "weight": 0.166667,
           "score": null
         },
         {
@@ -513,7 +513,47 @@
           "sector": "신흥국 주식",
           "category": "주식",
           "price": 68.41,
-          "weight": 0.5,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "QQQ",
+          "displayName": "QQQ",
+          "remark": "QQQ : Invesco QQQ Trust",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 736.4,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "EWJ",
+          "displayName": "EWJ",
+          "remark": "EWJ : iShares MSCI Japan ETF",
+          "sector": "일본 주식",
+          "category": "주식",
+          "price": 93.27,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "SPY",
+          "displayName": "SPY",
+          "remark": "SPY : SPDR S&P 500 ETF Trust",
+          "sector": "미국 대형주",
+          "category": "주식",
+          "price": 746.77,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "VNQ",
+          "displayName": "VNQ",
+          "remark": "VNQ : Vanguard Real Estate Index Fund",
+          "sector": "미국 리츠",
+          "category": "리츠",
+          "price": 96.43,
+          "weight": 0.166667,
           "score": null
         }
       ]
@@ -587,7 +627,7 @@
           "sector": "미국 장기채",
           "category": "채권",
           "price": 86.102,
-          "weight": 0.54166,
+          "weight": 0.541665,
           "score": null
         },
         {
@@ -607,7 +647,7 @@
           "sector": "미국 대형주",
           "category": "주식",
           "price": 746.77,
-          "weight": 0.144226,
+          "weight": 0.144223,
           "score": null
         },
         {
@@ -617,7 +657,7 @@
           "sector": "미국 리츠",
           "category": "리츠",
           "price": 96.43,
-          "weight": 0.104401,
+          "weight": 0.104399,
           "score": null
         },
         {
@@ -719,7 +759,7 @@
       ]
     },
     "ADM": {
-      "label": "가속듀얼모멘텀",
+      "label": "가속듀얼모멘텀(ADM)",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
@@ -795,14 +835,15 @@
   },
   "custom": {
     "daaCanary": {
-      "label": "DAA 카나리아 지표 (VWO·BND 원시 가중 모멘텀)",
+      "label": "DAA 카나리아 지표 (VWO·BND 원시 가중 모멘텀, 13612W)",
       "asOfDate": "2026-06-30",
       "scores": {
         "VWO": 0.989018,
         "BND": 0.121612
       },
       "riskOn": true,
-      "note": "두 값 모두 0 이상이면 공격형(위험자산 2종), 하나라도 음수면 방어형(안전자산 1종)으로 전환"
+      "breadth": 1.0,
+      "note": "음수 카나리아 0개 → 공격자산군(상위 6개 균등가중) 비중 100% / 방어자산군(상위 1개) 비중 0% (breadth 방식: 0개 음수=100%공격, 1개=50/50, 2개=100%방어)"
     },
     "admCurrent": {
       "label": "가속듀얼모멘텀 당월 확정 티커",

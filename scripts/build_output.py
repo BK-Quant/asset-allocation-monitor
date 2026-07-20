@@ -34,6 +34,7 @@ TICKER_REMARK = {
     "IEF": "IEF : iShares 7-10 Year Treasury Bond ETF", "SHY": "SHY : iShares 1-3 Year Treasury Bond ETF",
     "IWM": "IWM : iShares Russell 2000 ETF", "IWN": "IWN : iShares Russell 2000 Value ETF",
     "VWO": "VWO : Vanguard Emerging Markets Stock Index Fund", "BND": "BND : Vanguard Total Bond Market ETF",
+    "VSS": "VSS : Vanguard FTSE All-World ex-US Small-Cap ETF",
     "EFA": "EFA : iShares MSCI EAFE ETF", "PDBC": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
     "VNQ": "VNQ : Vanguard Real Estate Index Fund", "VGK": "VGK : Vanguard European Stock Index Fund",
     "EWJ": "EWJ : iShares MSCI Japan ETF", "EEM": "EEM : iShares MSCI Emerging Markets ETF",
@@ -50,7 +51,7 @@ TICKER_REMARK = {
 
 TICKER_SECTOR = {
     "SPY": "미국 대형주", "IWD": "미국 대형가치주", "QQQ": "나스닥", "IWM": "미국 소형주",
-    "IWN": "미국 소형가치주", "SCZ": "전세계 소형주", "VTI": "미국 주식", "SCHD": "미국 고배당주",
+    "IWN": "미국 소형가치주", "SCZ": "전세계 소형주", "VSS": "전세계(ex-US) 소형주", "VTI": "미국 주식", "SCHD": "미국 고배당주",
     "VGK": "유럽 주식", "EWJ": "일본 주식", "EEM": "신흥국 주식", "VWO": "신흥국 주식",
     "EFA": "선진국 주식", "VEA": "선진국 주식", "VNQ": "미국 리츠", "REM": "모기지 리츠",
     "RWX": "국제 리츠", "IEF": "미국 중기채", "TLT": "미국 장기채", "SHY": "미국 단기국채",
@@ -61,7 +62,7 @@ TICKER_SECTOR = {
 }
 
 CATEGORY_GROUPS = {
-    "주식": ["SPY", "IWD", "QQQ", "IWM", "IWN", "SCZ", "VTI", "VGK", "EWJ", "EEM", "VWO", "EFA", "VEA", "SCHD", "363580.KS", "360750.KS"],
+    "주식": ["SPY", "IWD", "QQQ", "IWM", "IWN", "SCZ", "VSS", "VTI", "VGK", "EWJ", "EEM", "VWO", "EFA", "VEA", "SCHD", "363580.KS", "360750.KS"],
     "리츠": ["VNQ", "REM", "RWX"],
     "채권": ["IEF", "TLT", "SHY", "BND", "AGG", "HYG", "LQD", "TIP", "BWX", "EMB", "BIL", "365780.KS", "272580.KS"],
     "원자재": ["GLD", "PDBC", "411060.KS"],
@@ -123,7 +124,9 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
 
     # ── 커스텀 지표 섹션 ──
     daa_scores = daa_canary_raw_scores(ps, idx_current)
-    daa_risk_on = all((v is not None and v >= 0) for v in daa_scores.values())
+    daa_n_neg = sum(1 for v in daa_scores.values() if v is not None and v < 0)
+    daa_breadth = (len(daa_scores) - daa_n_neg) / len(daa_scores) if daa_scores else 0
+    daa_risk_on = daa_breadth >= 1.0  # 하위호환: 두 카나리아 모두 양수인 완전 공격 국면 여부
 
     adm_current = compute_allocation(ps, "ADM", idx_current)
     adm_current_ticker = next(iter(adm_current.keys()), None)
@@ -136,11 +139,12 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
 
     custom = {
         "daaCanary": {
-            "label": "DAA 카나리아 지표 (VWO·BND 원시 가중 모멘텀)",
+            "label": "DAA 카나리아 지표 (VWO·BND 원시 가중 모멘텀, 13612W)",
             "asOfDate": basis_date,
             "scores": {t: (round(v, 6) if v is not None else None) for t, v in daa_scores.items()},
             "riskOn": daa_risk_on,
-            "note": "두 값 모두 0 이상이면 공격형(위험자산 2종), 하나라도 음수면 방어형(안전자산 1종)으로 전환",
+            "breadth": round(daa_breadth, 4),
+            "note": f"음수 카나리아 {daa_n_neg}개 → 공격자산군(상위 6개 균등가중) 비중 {daa_breadth*100:.0f}% / 방어자산군(상위 1개) 비중 {(1-daa_breadth)*100:.0f}% (breadth 방식: 0개 음수=100%공격, 1개=50/50, 2개=100%방어)",
         },
         "admCurrent": {
             "label": "가속듀얼모멘텀 당월 확정 티커",
