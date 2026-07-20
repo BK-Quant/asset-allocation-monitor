@@ -61,6 +61,27 @@ function renderCustomSection(current) {
   `;
   grid.appendChild(daaCard);
 
+  // DAA 카나리아 프리뷰 (최신 종가 기준, 월말 미확정)
+  if (c.daaCanaryPreview) {
+    const daaPrevCard = document.createElement("div");
+    daaPrevCard.className = "custom-card";
+    const pScores = c.daaCanaryPreview.scores;
+    const pBreadth = c.daaCanaryPreview.breadth ?? 0;
+    const pBadgeClass = pBreadth >= 1 ? "on" : pBreadth <= 0 ? "off" : "preview";
+    const pLabel = pBreadth >= 1 ? "공격형 100% (Risk-ON)" : pBreadth <= 0 ? "방어형 100% (Risk-OFF)" : "혼합 50/50 (완충)";
+    daaPrevCard.innerHTML = `
+      <h3>${c.daaCanaryPreview.label} <span class="badge preview">미확정</span></h3>
+      <div class="canary-row"><span>VWO (신흥국)</span><span class="${scoreClass(pScores.VWO)}">${fmtScore(pScores.VWO)}</span></div>
+      <div class="canary-row"><span>BND (미국종합채권)</span><span class="${scoreClass(pScores.BND)}">${fmtScore(pScores.BND)}</span></div>
+      <div class="sub">
+        <span class="badge ${pBadgeClass}">${pLabel}</span>
+        기준일 ${c.daaCanaryPreview.asOfDate}
+      </div>
+      <div class="sub">${c.daaCanaryPreview.note}</div>
+    `;
+    grid.appendChild(daaPrevCard);
+  }
+
   // ADM 당월 확정
   const admCurCard = document.createElement("div");
   admCurCard.className = "custom-card";
@@ -100,7 +121,7 @@ function holdingsTableHTML(holdings) {
     .map(
       (h) => `
       <tr class="ticker-row" data-ticker="${h.ticker}" data-name="${h.displayName}">
-        <td>${h.ticker}<br><span style="color:var(--text-dim);font-size:11px">${h.sector}</span></td>
+        <td>${h.displayName}<br><span style="color:var(--text-dim);font-size:11px">${h.ticker} · ${h.sector}</span></td>
         <td class="price">${fmtPrice(h.price)}</td>
         <td class="weight">${fmtPct(h.weight)}</td>
       </tr>`
@@ -163,31 +184,58 @@ function renderComparison(current, backtests) {
     return;
   }
 
-  // 공통 구간(모든 전략이 겹치는 가장 긴 구간) = 가장 늦게 시작한 전략의 시작일
-  const commonStart = codes.map((c) => backtests[c].dates[0]).sort().pop();
-
   const rows = codes.map((code) => {
     const bt = backtests[code];
     const stats = annualizedStats(bt);
     return { code, label: current.strategies[code]?.label || code, bt, stats };
   }).filter((r) => r.stats);
 
-  // ── 비교 차트: 공통 구간부터 100으로 리베이스 ──
-  const series = rows.map((r) => {
-    const startIdx = r.bt.dates.findIndex((d) => d >= commonStart);
-    if (startIdx < 0) return null;
-    const baseNav = r.bt.nav[startIdx];
-    const dates = r.bt.dates.slice(startIdx);
-    const nav = r.bt.nav.slice(startIdx).map((v) => (v / baseNav) * 100);
-    return { code: r.code, label: r.label, dates, nav };
-  }).filter(Boolean);
+  // 색상은 전체 목록 기준 고정 인덱스라 선택을 바꿔도 각 전략 색이 유지된다.
+  const colorOf = (code) => COMPARE_COLORS[rows.findIndex((r) => r.code === code) % COMPARE_COLORS.length];
 
-  drawMultiLineChart(document.getElementById("compareChart"), series);
-
-  const legend = document.getElementById("compareLegend");
-  legend.innerHTML = series
-    .map((s, i) => `<span class="legend-item"><i style="background:${COMPARE_COLORS[i % COMPARE_COLORS.length]}"></i>${s.label}</span>`)
+  // ── 전략 선택 체크박스 ──
+  const picker = document.getElementById("comparePicker");
+  const sortedForPicker = [...rows].sort((a, b) => a.label.localeCompare(b.label));
+  picker.innerHTML = sortedForPicker
+    .map(
+      (r) => `
+      <label class="picker-item">
+        <input type="checkbox" value="${r.code}" />
+        <i style="background:${colorOf(r.code)}"></i>
+        <span>${r.label}</span>
+      </label>`
+    )
     .join("");
+
+  const chartCanvas = document.getElementById("compareChart");
+  const emptyHint = document.getElementById("compareEmptyHint");
+
+  function redrawChart() {
+    const selected = [...picker.querySelectorAll("input:checked")].map((el) => el.value);
+    if (!selected.length) {
+      chartCanvas.style.display = "none";
+      emptyHint.style.display = "";
+      return;
+    }
+    chartCanvas.style.display = "";
+    emptyHint.style.display = "none";
+
+    const selectedRows = rows.filter((r) => selected.includes(r.code));
+    // 선택된 전략들끼리 공통으로 겹치는 구간(가장 늦게 시작한 전략의 시작일)부터 100으로 리베이스
+    const commonStart = selectedRows.map((r) => r.bt.dates[0]).sort().pop();
+    const series = selectedRows.map((r) => {
+      const startIdx = r.bt.dates.findIndex((d) => d >= commonStart);
+      if (startIdx < 0) return null;
+      const baseNav = r.bt.nav[startIdx];
+      const dates = r.bt.dates.slice(startIdx);
+      const nav = r.bt.nav.slice(startIdx).map((v) => (v / baseNav) * 100);
+      return { code: r.code, label: r.label, dates, nav, color: colorOf(r.code) };
+    }).filter(Boolean);
+    drawMultiLineChart(chartCanvas, series);
+  }
+
+  picker.addEventListener("change", redrawChart);
+  redrawChart();
 
   // ── 비교 테이블 ──
   let sortKey = "cagr", sortDir = -1;
@@ -231,7 +279,10 @@ function renderComparison(current, backtests) {
 function drawMultiLineChart(canvas, series) {
   const height = 280;
   const dpr = window.devicePixelRatio || 1;
-  const cssWidth = canvas.parentElement.clientWidth || 640;
+  const parent = canvas.parentElement;
+  const parentStyle = getComputedStyle(parent);
+  const horizontalPadding = parseFloat(parentStyle.paddingLeft || "0") + parseFloat(parentStyle.paddingRight || "0");
+  const cssWidth = Math.max(100, (parent.clientWidth || 640) - horizontalPadding);
   canvas.style.width = cssWidth + "px";
   canvas.style.height = height + "px";
   canvas.width = cssWidth * dpr;
@@ -275,17 +326,17 @@ function drawMultiLineChart(canvas, series) {
       if (idx === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     });
-    ctx.strokeStyle = COMPARE_COLORS[i % COMPARE_COLORS.length];
+    ctx.strokeStyle = s.color || COMPARE_COLORS[i % COMPARE_COLORS.length];
     ctx.lineWidth = 1.5;
     ctx.stroke();
   });
 
-  const firstSeries = series[0];
+  const longestSeries = series.reduce((a, b) => (b.nav.length > a.nav.length ? b : a));
   ctx.fillStyle = "#9aa8c2";
   ctx.textAlign = "left";
-  ctx.fillText(firstSeries.dates[0] || "", padding.left, height - 6);
+  ctx.fillText(longestSeries.dates[0] || "", padding.left, height - 6);
   ctx.textAlign = "right";
-  ctx.fillText(firstSeries.dates[firstSeries.dates.length - 1] || "", padding.left + w, height - 6);
+  ctx.fillText(longestSeries.dates[longestSeries.dates.length - 1] || "", padding.left + w, height - 6);
 }
 
 function renderStrategies(current, backtests, prices) {

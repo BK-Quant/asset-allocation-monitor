@@ -26,11 +26,12 @@
   <section id="compareSection" class="panel">
     <div class="section-head">
       <h2>전략별 성과 비교</h2>
-      <div class="compare-legend-note">각 전략의 백테스트 시작일이 달라 <b>공통 구간</b>(모든 전략이 동시에 존재하는 가장 긴 기간)으로 맞춰 비교합니다.</div>
+      <div class="compare-legend-note">전략을 선택하면 그래프에 표시됩니다. 선택한 전략들이 <b>공통으로 겹치는 구간</b>부터 100으로 맞춰 비교합니다.</div>
     </div>
+    <div id="comparePicker" class="compare-picker">불러오는 중…</div>
     <div class="compare-chart-wrap">
       <canvas id="compareChart"></canvas>
-      <div id="compareLegend" class="compare-legend"></div>
+      <div id="compareEmptyHint" class="compare-empty-hint">전략을 선택하면 여기에 그래프가 표시됩니다.</div>
     </div>
     <div class="compare-table-wrap">
       <table id="compareTable" class="compare-table">
@@ -76,6 +77,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=20260721"></script>
+<script src="js/app.js?v=20260721b"></script>
 </body>
 </html>

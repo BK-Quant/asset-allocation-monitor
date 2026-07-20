@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from strategy_engine import (
-    PriceSeries, STRATEGIES, STRATEGY_LABELS, KOREA_ETF_PROFILES,
+    PriceSeries, STRATEGIES, STRATEGY_LABELS,
     KOALLWEATHER1_WEIGHTS, KOALLWEATHER2_PROFILES, HANMI_STATIC_WEIGHTS,
     compute_allocation, daa_canary_raw_scores,
 )
@@ -117,10 +117,13 @@ def previous_complete_month_index(ps: PriceSeries, today):
 
 
 def build_holding_row(ps, ticker, weight, idx, score=None):
+    remark = TICKER_REMARK.get(ticker, ticker)
     return {
         "ticker": ticker,
-        "displayName": TICKER_REMARK.get(ticker, ticker).split(" : ")[0] if " : " in TICKER_REMARK.get(ticker, "") else ticker,
-        "remark": TICKER_REMARK.get(ticker, ticker),
+        # 미국 티커는 remark가 "SPY : SPDR S&P 500 ETF Trust" 형태라 콜론 앞(티커 심볼) 사용,
+        # 한국 ETF는 remark 자체가 이미 상품명("KODEX 200" 등)이라 그대로 사용.
+        "displayName": remark.split(" : ")[0] if " : " in remark else remark,
+        "remark": remark,
         "sector": TICKER_SECTOR.get(ticker, "기타"),
         "category": TICKER_CATEGORY.get(ticker, "기타"),
         "price": ps.get_price(ticker, idx),
@@ -150,10 +153,15 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
         }
 
     # ── 커스텀 지표 섹션 ──
-    daa_scores = daa_canary_raw_scores(ps, idx_current)
-    daa_n_neg = sum(1 for v in daa_scores.values() if v is not None and v < 0)
-    daa_breadth = (len(daa_scores) - daa_n_neg) / len(daa_scores) if daa_scores else 0
+    def daa_breadth_info(idx):
+        scores = daa_canary_raw_scores(ps, idx)
+        n_neg = sum(1 for v in scores.values() if v is not None and v < 0)
+        breadth = (len(scores) - n_neg) / len(scores) if scores else 0
+        return scores, n_neg, breadth
+
+    daa_scores, daa_n_neg, daa_breadth = daa_breadth_info(idx_current)
     daa_risk_on = daa_breadth >= 1.0  # 하위호환: 두 카나리아 모두 양수인 완전 공격 국면 여부
+    daa_scores_preview, daa_n_neg_preview, daa_breadth_preview = daa_breadth_info(idx_latest)
 
     adm_current = compute_allocation(ps, "ADM", idx_current)
     adm_current_ticker = next(iter(adm_current.keys()), None)
@@ -172,6 +180,13 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
             "riskOn": daa_risk_on,
             "breadth": round(daa_breadth, 4),
             "note": f"음수 카나리아 {daa_n_neg}개 → 공격자산군(상위 6개 균등가중) 비중 {daa_breadth*100:.0f}% / 방어자산군(상위 1개) 비중 {(1-daa_breadth)*100:.0f}% (breadth 방식: 0개 음수=100%공격, 1개=50/50, 2개=100%방어)",
+        },
+        "daaCanaryPreview": {
+            "label": "DAA 카나리아 지표 (최신 종가 기준 프리뷰)",
+            "asOfDate": latest_date,
+            "scores": {t: (round(v, 6) if v is not None else None) for t, v in daa_scores_preview.items()},
+            "breadth": round(daa_breadth_preview, 4),
+            "note": f"음수 카나리아 {daa_n_neg_preview}개 → 공격 {daa_breadth_preview*100:.0f}% / 방어 {(1-daa_breadth_preview)*100:.0f}% — 월말 확정 전 최신 종가 기준, 월말 재계산 시 바뀔 수 있음",
         },
         "admCurrent": {
             "label": "가속듀얼모멘텀 당월 확정 티커",
@@ -207,14 +222,8 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
 # 조용히 0수익으로 빠져서 실제보다 성과가 왜곡된다.
 REQUIRED_TICKERS = {
     "PERM": ["SPY", "TLT", "GLD", "BIL"],
-    "KORETF_STABLE": list(KOREA_ETF_PROFILES["STABLE"].keys()),
-    "KORETF_NEUTRAL": list(KOREA_ETF_PROFILES["NEUTRAL"].keys()),
-    "KORETF_GROWTH": list(KOREA_ETF_PROFILES["GROWTH"].keys()),
     "KOALLWEATHER1": list(KOALLWEATHER1_WEIGHTS.keys()),
-    "KOALLWEATHER2_MP": [t for t, w in KOALLWEATHER2_PROFILES["MP"].items() if w > 0],
     "KOALLWEATHER2_GROWTH": [t for t, w in KOALLWEATHER2_PROFILES["GROWTH"].items() if w > 0],
-    "KOALLWEATHER2_NEUTRAL": [t for t, w in KOALLWEATHER2_PROFILES["NEUTRAL"].items() if w > 0],
-    "KOALLWEATHER2_STABLE": [t for t, w in KOALLWEATHER2_PROFILES["STABLE"].items() if w > 0],
     "HANMI_STATIC": list(HANMI_STATIC_WEIGHTS.keys()),
 }
 

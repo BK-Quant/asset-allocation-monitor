@@ -185,19 +185,6 @@ def calc_PERM(ps, idx):
     return {"SPY": 0.25, "TLT": 0.25, "GLD": 0.25, "BIL": 0.25}
 
 
-KOREA_ETF_PROFILES = {
-    "STABLE": {"363580.KS": 0.205, "360750.KS": 0.125, "411060.KS": 0.05, "365780.KS": 0.20, "284430.KS": 0.12, "272580.KS": 0.30},
-    "NEUTRAL": {"363580.KS": 0.245, "360750.KS": 0.175, "411060.KS": 0.15, "365780.KS": 0.175, "284430.KS": 0.105, "272580.KS": 0.15},
-    "GROWTH": {"363580.KS": 0.29, "360750.KS": 0.25, "411060.KS": 0.20, "365780.KS": 0.10, "284430.KS": 0.06, "272580.KS": 0.10},
-}
-
-
-def calc_KORETF(profile="NEUTRAL"):
-    def _inner(ps, idx):
-        return dict(KOREA_ETF_PROFILES[profile])
-    return _inner
-
-
 KOALLWEATHER1_WEIGHTS = {
     # 주식 50%
     "251350.KS": 0.15,  # KODEX 선진국MSCI World
@@ -223,22 +210,10 @@ def calc_KOALLWEATHER1(ps, idx):
 
 
 KOALLWEATHER2_PROFILES = {
-    # 출처: 표39 위험감내도별 K-올웨더 포트폴리오 예시
-    "MP": {
-        "379800.KS": 0.25, "294400.KS": 0.08, "283580.KS": 0.085, "453810.KS": 0.085,
-        "411060.KS": 0.20, "308620.KS": 0.075, "453850.KS": 0.075, "385560.KS": 0.15, "449170.KS": 0.0,
-    },
+    # 출처: 표39 위험감내도별 K-올웨더 포트폴리오 예시 (성장형만 사용)
     "GROWTH": {
         "379800.KS": 0.24, "294400.KS": 0.08, "283580.KS": 0.08, "453810.KS": 0.08,
         "411060.KS": 0.19, "308620.KS": 0.07, "453850.KS": 0.07, "385560.KS": 0.14, "449170.KS": 0.05,
-    },
-    "NEUTRAL": {
-        "379800.KS": 0.20, "294400.KS": 0.06, "283580.KS": 0.07, "453810.KS": 0.07,
-        "411060.KS": 0.16, "308620.KS": 0.06, "453850.KS": 0.06, "385560.KS": 0.12, "449170.KS": 0.20,
-    },
-    "STABLE": {
-        "379800.KS": 0.15, "294400.KS": 0.05, "283580.KS": 0.05, "453810.KS": 0.05,
-        "411060.KS": 0.12, "308620.KS": 0.045, "453850.KS": 0.045, "385560.KS": 0.09, "449170.KS": 0.40,
     },
 }
 
@@ -573,9 +548,6 @@ def calc_DYNBOND(ps, idx):
 
 STRATEGIES = {
     "PERM": calc_PERM,
-    "KORETF_STABLE": calc_KORETF("STABLE"),
-    "KORETF_NEUTRAL": calc_KORETF("NEUTRAL"),
-    "KORETF_GROWTH": calc_KORETF("GROWTH"),
     "LAA": calc_LAA,
     "RAA": calc_RAA,
     "GTAA": calc_GTAA,
@@ -590,19 +562,13 @@ STRATEGIES = {
     "DGA": calc_DGA,
     "DYNBOND": calc_DYNBOND,
     "KOALLWEATHER1": calc_KOALLWEATHER1,
-    "KOALLWEATHER2_MP": calc_KOALLWEATHER2("MP"),
     "KOALLWEATHER2_GROWTH": calc_KOALLWEATHER2("GROWTH"),
-    "KOALLWEATHER2_NEUTRAL": calc_KOALLWEATHER2("NEUTRAL"),
-    "KOALLWEATHER2_STABLE": calc_KOALLWEATHER2("STABLE"),
     "HANMI_STATIC": calc_HANMI_STATIC,
     "HANMI_DYNAMIC_STABLE": calc_HANMI_DYNAMIC_STABLE,
 }
 
 STRATEGY_LABELS = {
     "PERM": "영구포트폴리오",
-    "KORETF_STABLE": "한국 ETF 정적배분 - 안정형",
-    "KORETF_NEUTRAL": "한국 ETF 정적배분 - 중립형",
-    "KORETF_GROWTH": "한국 ETF 정적배분 - 성장형",
     "LAA": "LAA",
     "RAA": "RAA",
     "GTAA": "GTAA",
@@ -616,11 +582,8 @@ STRATEGY_LABELS = {
     "ADM": "가속듀얼모멘텀(ADM)",
     "DGA": "DGA",
     "DYNBOND": "채권동적배분",
-    "KOALLWEATHER1": "K-올웨더 v1 (김성일 이전버전)",
-    "KOALLWEATHER2_MP": "K-올웨더 v2 - MP(기준)",
+    "KOALLWEATHER1": "K-올웨더 v1",
     "KOALLWEATHER2_GROWTH": "K-올웨더 v2 - 성장형",
-    "KOALLWEATHER2_NEUTRAL": "K-올웨더 v2 - 중립형",
-    "KOALLWEATHER2_STABLE": "K-올웨더 v2 - 안정형",
     "HANMI_STATIC": "한미정적자산배분",
     "HANMI_DYNAMIC_STABLE": "한미동적 - 안정형",
 }
