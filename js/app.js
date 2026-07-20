@@ -365,8 +365,10 @@ function renderStrategies(current, backtests, prices) {
       <div class="timing-note">${s.timingNote}</div>
       ${holdingsTableHTML(s.holdings)}
       <div class="card-actions">
+        <button class="btn btn-logic" type="button">로직 설명</button>
         <button class="btn btn-backtest" type="button">백테스트 보기</button>
       </div>
+      <div class="logic-wrap">${s.description || "설명이 아직 없습니다."}</div>
       <div class="backtest-wrap">
         <canvas></canvas>
         ${statsHTML}
@@ -377,6 +379,14 @@ function renderStrategies(current, backtests, prices) {
     // 티커 클릭 → 가격 차트 모달
     card.querySelectorAll(".ticker-row").forEach((row) => {
       row.addEventListener("click", () => openTickerModal(row.dataset.ticker, row.dataset.name, prices));
+    });
+
+    // 로직 설명 토글
+    const btnLogic = card.querySelector(".btn-logic");
+    const logicWrap = card.querySelector(".logic-wrap");
+    btnLogic.addEventListener("click", () => {
+      logicWrap.classList.toggle("open");
+      btnLogic.textContent = logicWrap.classList.contains("open") ? "로직 설명 접기" : "로직 설명";
     });
 
     // 백테스트 토글

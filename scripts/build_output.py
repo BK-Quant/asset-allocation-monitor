@@ -18,7 +18,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from strategy_engine import (
-    PriceSeries, STRATEGIES, STRATEGY_LABELS,
+    PriceSeries, STRATEGIES, STRATEGY_LABELS, STRATEGY_DESCRIPTIONS,
     KOALLWEATHER1_WEIGHTS, KOALLWEATHER2_PROFILES, HANMI_STATIC_WEIGHTS,
     compute_allocation, daa_canary_raw_scores,
 )
@@ -146,6 +146,7 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
         holdings = [build_holding_row(ps, t, w, idx_current) for t, w in sorted(allocation.items(), key=lambda x: -x[1])]
         strategies_out[code] = {
             "label": STRATEGY_LABELS[code],
+            "description": STRATEGY_DESCRIPTIONS.get(code, ""),
             "asOfDate": basis_date,
             "applicableMonth": applicable_month_label,
             "timingNote": f"기준: {basis_date} 종가(전월 말) → 적용: {applicable_month_label} 보유",

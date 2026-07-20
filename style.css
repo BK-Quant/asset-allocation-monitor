@@ -311,6 +311,19 @@ main { padding: 32px 0 60px; }
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
 
+.logic-wrap {
+  display: none;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.logic-wrap.open { display: block; }
+
 .backtest-wrap { margin-top: 12px; display: none; }
 .backtest-wrap.open { display: block; }
 .backtest-wrap canvas { max-height: 160px; }
