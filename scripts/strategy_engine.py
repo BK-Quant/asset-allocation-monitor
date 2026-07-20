@@ -292,36 +292,6 @@ def calc_HANMI_DYNAMIC_STABLE(ps, idx):
     return allocations
 
 
-HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE = [
-    "133690.KS", "360750.KS", "229200.KS", "069500.KS", "411060.KS",
-    "148070.KS", "305080.KS", "138230.KS", "0043B0.KS",
-]
-
-
-def calc_HANMI_DYNAMIC_AGGRESSIVE(ps, idx):
-    """한미동적-공격형. ⚠️ 근사치: 원 로직은 매수(200일 SMA 상향돌파)와 매도(150일 SMA
-    하향돌파) 임계값이 달라 이력(hysteresis)이 있는 상태기반 전략이지만, 이 모니터의 계산
-    엔진은 매월 시점마다 무상태(stateless)로 배분을 재계산하는 구조라 이전 달 보유 여부를
-    알 수 없다. 따라서 매수 조건(200일 SMA 상향)만으로 매달 재평가하며, 실제 매도가 150일
-    SMA 기준이라 이 근사치보다 회전율이 낮고 보유가 더 오래 유지될 수 있다.
-    상위 종목 선정: (1개월+3개월 수익률) 내림차순, 최대 10종목, 균등가중."""
-    universe = HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE
-    scored = []
-    for t in universe:
-        above_sma200 = ps.get_sma_momentum(t, idx, 200)
-        if above_sma200 is None or above_sma200 <= 0:
-            continue
-        r1m, r3m = ps.get_return(t, idx, 21), ps.get_return(t, idx, 63)
-        if r1m is None or r3m is None:
-            continue
-        scored.append({"ticker": t, "score": r1m + r3m})
-    top = sort_by_score_desc(scored)[:10]
-    if not top:
-        return {"USD": 1.0}
-    w = 1 / len(top)
-    return {x["ticker"]: w for x in top}
-
-
 def calc_LAA(ps, idx):
     uptrend = (ps.get_sma_momentum("SPY", idx, 200) or 0) > 0
     above_avg = ps.is_unemployment_above_average(ps.dates[idx])
@@ -626,7 +596,6 @@ STRATEGIES = {
     "KOALLWEATHER2_STABLE": calc_KOALLWEATHER2("STABLE"),
     "HANMI_STATIC": calc_HANMI_STATIC,
     "HANMI_DYNAMIC_STABLE": calc_HANMI_DYNAMIC_STABLE,
-    "HANMI_DYNAMIC_AGGRESSIVE": calc_HANMI_DYNAMIC_AGGRESSIVE,
 }
 
 STRATEGY_LABELS = {
@@ -654,7 +623,6 @@ STRATEGY_LABELS = {
     "KOALLWEATHER2_STABLE": "K-올웨더 v2 - 안정형",
     "HANMI_STATIC": "한미정적자산배분",
     "HANMI_DYNAMIC_STABLE": "한미동적 - 안정형",
-    "HANMI_DYNAMIC_AGGRESSIVE": "한미동적 - 공격형",
 }
 
 

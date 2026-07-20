@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-20 22:37 KST",
+    "generatedAt": "2026-07-21 00:01 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
     "latestDataDate": "2026-07-20"
@@ -1504,74 +1504,6 @@
           "category": "주식",
           "price": 138580.0,
           "weight": 0.12,
-          "score": null
-        }
-      ]
-    },
-    "HANMI_DYNAMIC_AGGRESSIVE": {
-      "label": "한미동적 - 공격형",
-      "asOfDate": "2026-06-30",
-      "applicableMonth": "2026년 7월",
-      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
-      "holdings": [
-        {
-          "ticker": "069500.KS",
-          "displayName": "069500.KS",
-          "remark": "KODEX 200",
-          "sector": "국내 주식",
-          "category": "주식",
-          "price": 138580.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "133690.KS",
-          "displayName": "133690.KS",
-          "remark": "TIGER 미국나스닥100",
-          "sector": "나스닥",
-          "category": "주식",
-          "price": 205050.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "360750.KS",
-          "displayName": "360750.KS",
-          "remark": "TIGER 미국S&P 500",
-          "sector": "미국 주식",
-          "category": "주식",
-          "price": 28640.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "138230.KS",
-          "displayName": "138230.KS",
-          "remark": "TIGER 미국달러선물",
-          "sector": "미국달러선물",
-          "category": "외환",
-          "price": 18055.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "305080.KS",
-          "displayName": "305080.KS",
-          "remark": "TIGER 미국채10년선물",
-          "sector": "미국 중기채",
-          "category": "채권",
-          "price": 14005.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "0043B0.KS",
-          "displayName": "0043B0.KS",
-          "remark": "TIGER 머니마켓액티브",
-          "sector": "초단기채권",
-          "category": "채권",
-          "price": 102840.0,
-          "weight": 0.166667,
           "score": null
         }
       ]
