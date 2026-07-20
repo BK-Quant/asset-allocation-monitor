@@ -311,16 +311,16 @@
       "value": 4.2
     }
   ],
-  "sp500_ma200": 693.44,
-  "sp500_last": 743.29,
+  "sp500_ma200": 693.8759,
+  "sp500_last": 747.89,
   "sp500_dividend_yield": {
     "date": "July 17, 2026",
     "value": 1.05,
     "threshold": 1.6
   },
   "t10y3m_spread": {
-    "date": "2026-07-17",
-    "value": 0.834,
+    "date": "2026-07-20",
+    "value": 0.859,
     "source": "Yahoo ^TNX-^IRX proxy"
   }
 }

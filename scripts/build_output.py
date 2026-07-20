@@ -19,6 +19,7 @@ from pathlib import Path
 
 from strategy_engine import (
     PriceSeries, STRATEGIES, STRATEGY_LABELS, KOREA_ETF_PROFILES,
+    KOALLWEATHER1_WEIGHTS, KOALLWEATHER2_PROFILES, HANMI_STATIC_WEIGHTS,
     compute_allocation, daa_canary_raw_scores,
 )
 
@@ -46,6 +47,16 @@ TICKER_REMARK = {
     "VTI": "VTI : Vanguard Total Stock Market ETF", "VEA": "VEA : Vanguard FTSE Developed Markets ETF",
     "363580.KS": "KIWOOM 200TR", "360750.KS": "TIGER 미국S&P 500", "411060.KS": "ACE KRX금현물",
     "365780.KS": "ACE 국고채10년", "284430.KS": "KODEX 200미국채혼합", "272580.KS": "TIGER 단기채권액티브",
+    "251350.KS": "KODEX 선진국MSCI World", "379810.KS": "KODEX 미국나스닥100TR", "379800.KS": "KODEX 미국S&P500TR",
+    "195980.KS": "PLUS 신흥국MSCI(합성H)", "487240.KS": "KODEX AI전력핵심설비", "117460.KS": "KODEX 에너지화학",
+    "381180.KS": "TIGER 미국필라델피아반도체나스닥", "385560.KS": "RISE/KBSTAR KIS국고채30년Enhanced",
+    "464470.KS": "PLUS 미국채30년액티브",
+    "294400.KS": "KOSEF 200TR", "283580.KS": "KODEX 차이나CSI300", "453810.KS": "KODEX 인도Nifty50",
+    "308620.KS": "KODEX 미국채10년선물", "453850.KS": "ACE 미국30년국채액티브(H)", "449170.KS": "TIGER KOFR금리액티브(합성)",
+    "102110.KS": "TIGER 200", "451600.KS": "PLUS 국고채30년액티브", "488770.KS": "KODEX 머니마켓액티브",
+    "148070.KS": "KOSEF 국고채10년", "133690.KS": "TIGER 미국나스닥100", "069500.KS": "KODEX 200",
+    "229200.KS": "KODEX 코스닥150", "138230.KS": "TIGER 미국달러선물", "0043B0.KS": "TIGER 머니마켓액티브",
+    "305080.KS": "TIGER 미국채10년선물", "329750.KS": "TIGER 미국달러단기채권액티브",
     "USD": "USD : 현금(무이자 가정)",
 }
 
@@ -59,14 +70,30 @@ TICKER_SECTOR = {
     "TIP": "미국 물가연동채", "BWX": "국제 채권", "EMB": "신흥국 채권", "GLD": "금", "PDBC": "원자재",
     "BIL": "초단기채권", "363580.KS": "국내 주식", "360750.KS": "미국 주식", "411060.KS": "금",
     "365780.KS": "국고채", "284430.KS": "주식/채권 혼합", "272580.KS": "단기채권", "USD": "현금",
+    "251350.KS": "선진국 주식", "379810.KS": "미국 주식", "379800.KS": "미국 주식", "195980.KS": "신흥국 주식",
+    "487240.KS": "국내 테마주(AI전력)", "117460.KS": "국내 테마주(에너지화학)", "381180.KS": "미국 반도체",
+    "385560.KS": "국고채", "464470.KS": "미국 장기채", "294400.KS": "국내 주식", "283580.KS": "중국 주식",
+    "453810.KS": "인도 주식", "308620.KS": "미국 중기채", "453850.KS": "미국 장기채", "449170.KS": "초단기채권(KOFR)",
+    "102110.KS": "국내 주식", "451600.KS": "국고채", "488770.KS": "초단기채권", "148070.KS": "국고채",
+    "133690.KS": "나스닥", "069500.KS": "국내 주식", "229200.KS": "국내 주식(코스닥)", "138230.KS": "미국달러선물",
+    "0043B0.KS": "초단기채권", "305080.KS": "미국 중기채", "329750.KS": "미국달러단기채권",
 }
 
 CATEGORY_GROUPS = {
-    "주식": ["SPY", "IWD", "QQQ", "IWM", "IWN", "SCZ", "VSS", "VTI", "VGK", "EWJ", "EEM", "VWO", "EFA", "VEA", "SCHD", "363580.KS", "360750.KS"],
+    "주식": [
+        "SPY", "IWD", "QQQ", "IWM", "IWN", "SCZ", "VSS", "VTI", "VGK", "EWJ", "EEM", "VWO", "EFA", "VEA", "SCHD",
+        "363580.KS", "360750.KS", "251350.KS", "379810.KS", "379800.KS", "195980.KS", "487240.KS", "117460.KS",
+        "381180.KS", "294400.KS", "283580.KS", "453810.KS", "102110.KS", "133690.KS", "069500.KS", "229200.KS",
+    ],
     "리츠": ["VNQ", "REM", "RWX"],
-    "채권": ["IEF", "TLT", "SHY", "BND", "AGG", "HYG", "LQD", "TIP", "BWX", "EMB", "BIL", "365780.KS", "272580.KS"],
+    "채권": [
+        "IEF", "TLT", "SHY", "BND", "AGG", "HYG", "LQD", "TIP", "BWX", "EMB", "BIL", "365780.KS", "272580.KS",
+        "385560.KS", "464470.KS", "308620.KS", "453850.KS", "449170.KS", "451600.KS", "488770.KS", "148070.KS",
+        "0043B0.KS", "305080.KS", "329750.KS",
+    ],
     "원자재": ["GLD", "PDBC", "411060.KS"],
     "혼합": ["284430.KS"],
+    "외환": ["138230.KS"],
     "현금": ["USD"],
 }
 TICKER_CATEGORY = {t: cat for cat, tickers in CATEGORY_GROUPS.items() for t in tickers}
@@ -183,6 +210,12 @@ REQUIRED_TICKERS = {
     "KORETF_STABLE": list(KOREA_ETF_PROFILES["STABLE"].keys()),
     "KORETF_NEUTRAL": list(KOREA_ETF_PROFILES["NEUTRAL"].keys()),
     "KORETF_GROWTH": list(KOREA_ETF_PROFILES["GROWTH"].keys()),
+    "KOALLWEATHER1": list(KOALLWEATHER1_WEIGHTS.keys()),
+    "KOALLWEATHER2_MP": [t for t, w in KOALLWEATHER2_PROFILES["MP"].items() if w > 0],
+    "KOALLWEATHER2_GROWTH": [t for t, w in KOALLWEATHER2_PROFILES["GROWTH"].items() if w > 0],
+    "KOALLWEATHER2_NEUTRAL": [t for t, w in KOALLWEATHER2_PROFILES["NEUTRAL"].items() if w > 0],
+    "KOALLWEATHER2_STABLE": [t for t, w in KOALLWEATHER2_PROFILES["STABLE"].items() if w > 0],
+    "HANMI_STATIC": list(HANMI_STATIC_WEIGHTS.keys()),
 }
 
 

@@ -198,6 +198,130 @@ def calc_KORETF(profile="NEUTRAL"):
     return _inner
 
 
+KOALLWEATHER1_WEIGHTS = {
+    # 주식 50%
+    "251350.KS": 0.15,  # KODEX 선진국MSCI World
+    "379810.KS": 0.10,  # KODEX 미국나스닥100TR
+    "379800.KS": 0.10,  # KODEX 미국S&P500TR
+    "195980.KS": 0.15,  # PLUS 신흥국MSCI(합성H)
+    # 대체투자 15%
+    "411060.KS": 0.10,  # ACE KRX 금 현물
+    "487240.KS": 0.015,  # KODEX AI전력핵심설비
+    "117460.KS": 0.015,  # KODEX 에너지화학
+    "381180.KS": 0.02,  # TIGER 미국필라델피아반도체나스닥
+    # 채권+외화 35%
+    "365780.KS": 0.075,  # ACE 국고채10년
+    "385560.KS": 0.075,  # RISE KIS국고채30년Enhanced
+    "305080.KS": 0.10,  # TIGER 미국채10년선물
+    "464470.KS": 0.10,  # PLUS 미국채30년액티브
+}
+
+
+def calc_KOALLWEATHER1(ps, idx):
+    """김성일(이전 버전) K-올웨더 (브라이언 제공 스프레드시트, 2026-07-20 기준)."""
+    return dict(KOALLWEATHER1_WEIGHTS)
+
+
+KOALLWEATHER2_PROFILES = {
+    # 출처: 표39 위험감내도별 K-올웨더 포트폴리오 예시
+    "MP": {
+        "379800.KS": 0.25, "294400.KS": 0.08, "283580.KS": 0.085, "453810.KS": 0.085,
+        "411060.KS": 0.20, "308620.KS": 0.075, "453850.KS": 0.075, "385560.KS": 0.15, "449170.KS": 0.0,
+    },
+    "GROWTH": {
+        "379800.KS": 0.24, "294400.KS": 0.08, "283580.KS": 0.08, "453810.KS": 0.08,
+        "411060.KS": 0.19, "308620.KS": 0.07, "453850.KS": 0.07, "385560.KS": 0.14, "449170.KS": 0.05,
+    },
+    "NEUTRAL": {
+        "379800.KS": 0.20, "294400.KS": 0.06, "283580.KS": 0.07, "453810.KS": 0.07,
+        "411060.KS": 0.16, "308620.KS": 0.06, "453850.KS": 0.06, "385560.KS": 0.12, "449170.KS": 0.20,
+    },
+    "STABLE": {
+        "379800.KS": 0.15, "294400.KS": 0.05, "283580.KS": 0.05, "453810.KS": 0.05,
+        "411060.KS": 0.12, "308620.KS": 0.045, "453850.KS": 0.045, "385560.KS": 0.09, "449170.KS": 0.40,
+    },
+}
+
+
+def calc_KOALLWEATHER2(profile="NEUTRAL"):
+    def _inner(ps, idx):
+        weights = {t: w for t, w in KOALLWEATHER2_PROFILES[profile].items() if w > 0}
+        return weights
+    return _inner
+
+
+HANMI_STATIC_WEIGHTS = {
+    "102110.KS": 0.25,  # TIGER 200
+    "360750.KS": 0.25,  # TIGER 미국S&P500
+    "305080.KS": 0.0625,  # TIGER 미국채10년선물
+    "365780.KS": 0.0625,  # ACE 국고채10년
+    "451600.KS": 0.0625,  # PLUS 국고채30년액티브
+    "464470.KS": 0.0625,  # PLUS 미국채30년액티브
+    "329750.KS": 0.025,  # TIGER 미국달러단기채권액티브
+    "488770.KS": 0.025,  # KODEX 머니마켓액티브
+    "411060.KS": 0.20,  # ACE KRX금현물
+}
+
+
+def calc_HANMI_STATIC(ps, idx):
+    """한미정적자산배분 (브라이언 제공, 2026-07-20 기준)."""
+    return dict(HANMI_STATIC_WEIGHTS)
+
+
+HANMI_DYNAMIC_STABLE_UNIVERSE = [
+    "148070.KS", "305080.KS", "329750.KS", "360750.KS",
+    "133690.KS", "411060.KS", "069500.KS", "229200.KS",
+]
+
+
+def calc_HANMI_DYNAMIC_STABLE(ps, idx):
+    """한미동적-안정형. 8종목 유니버스 중 120일 이격도(가격/SMA120) > 100%인 종목을
+    종목당 고정 12%씩 매수(최대 96%, 나머지는 현금). 매도 조건(이격도<100)과 매수 조건이
+    동일 지표의 같은 임계값이라 이력(hysteresis) 없이 매달 그대로 재평가 가능."""
+    scored = []
+    for t in HANMI_DYNAMIC_STABLE_UNIVERSE:
+        disparity120 = ps.get_sma_momentum(t, idx, 120)
+        disparity5 = ps.get_sma_momentum(t, idx, 5)
+        if disparity120 is not None and disparity120 > 0:
+            scored.append({"ticker": t, "score": disparity5 if disparity5 is not None else 0.0})
+    scored = sort_by_score_desc(scored)
+    allocations = {x["ticker"]: 0.12 for x in scored}
+    cash = 1 - sum(allocations.values())
+    if cash > 1e-9:
+        allocations["USD"] = cash
+    return allocations
+
+
+HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE = [
+    "133690.KS", "360750.KS", "229200.KS", "069500.KS", "411060.KS",
+    "148070.KS", "305080.KS", "138230.KS", "0043B0.KS",
+]
+
+
+def calc_HANMI_DYNAMIC_AGGRESSIVE(ps, idx):
+    """한미동적-공격형. ⚠️ 근사치: 원 로직은 매수(200일 SMA 상향돌파)와 매도(150일 SMA
+    하향돌파) 임계값이 달라 이력(hysteresis)이 있는 상태기반 전략이지만, 이 모니터의 계산
+    엔진은 매월 시점마다 무상태(stateless)로 배분을 재계산하는 구조라 이전 달 보유 여부를
+    알 수 없다. 따라서 매수 조건(200일 SMA 상향)만으로 매달 재평가하며, 실제 매도가 150일
+    SMA 기준이라 이 근사치보다 회전율이 낮고 보유가 더 오래 유지될 수 있다.
+    상위 종목 선정: (1개월+3개월 수익률) 내림차순, 최대 10종목, 균등가중."""
+    universe = HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE
+    scored = []
+    for t in universe:
+        above_sma200 = ps.get_sma_momentum(t, idx, 200)
+        if above_sma200 is None or above_sma200 <= 0:
+            continue
+        r1m, r3m = ps.get_return(t, idx, 21), ps.get_return(t, idx, 63)
+        if r1m is None or r3m is None:
+            continue
+        scored.append({"ticker": t, "score": r1m + r3m})
+    top = sort_by_score_desc(scored)[:10]
+    if not top:
+        return {"USD": 1.0}
+    w = 1 / len(top)
+    return {x["ticker"]: w for x in top}
+
+
 def calc_LAA(ps, idx):
     uptrend = (ps.get_sma_momentum("SPY", idx, 200) or 0) > 0
     above_avg = ps.is_unemployment_above_average(ps.dates[idx])
@@ -495,6 +619,14 @@ STRATEGIES = {
     "ADM": calc_ADM,
     "DGA": calc_DGA,
     "DYNBOND": calc_DYNBOND,
+    "KOALLWEATHER1": calc_KOALLWEATHER1,
+    "KOALLWEATHER2_MP": calc_KOALLWEATHER2("MP"),
+    "KOALLWEATHER2_GROWTH": calc_KOALLWEATHER2("GROWTH"),
+    "KOALLWEATHER2_NEUTRAL": calc_KOALLWEATHER2("NEUTRAL"),
+    "KOALLWEATHER2_STABLE": calc_KOALLWEATHER2("STABLE"),
+    "HANMI_STATIC": calc_HANMI_STATIC,
+    "HANMI_DYNAMIC_STABLE": calc_HANMI_DYNAMIC_STABLE,
+    "HANMI_DYNAMIC_AGGRESSIVE": calc_HANMI_DYNAMIC_AGGRESSIVE,
 }
 
 STRATEGY_LABELS = {
@@ -515,6 +647,14 @@ STRATEGY_LABELS = {
     "ADM": "가속듀얼모멘텀(ADM)",
     "DGA": "DGA",
     "DYNBOND": "채권동적배분",
+    "KOALLWEATHER1": "K-올웨더 v1 (김성일 이전버전)",
+    "KOALLWEATHER2_MP": "K-올웨더 v2 - MP(기준)",
+    "KOALLWEATHER2_GROWTH": "K-올웨더 v2 - 성장형",
+    "KOALLWEATHER2_NEUTRAL": "K-올웨더 v2 - 중립형",
+    "KOALLWEATHER2_STABLE": "K-올웨더 v2 - 안정형",
+    "HANMI_STATIC": "한미정적자산배분",
+    "HANMI_DYNAMIC_STABLE": "한미동적 - 안정형",
+    "HANMI_DYNAMIC_AGGRESSIVE": "한미동적 - 공격형",
 }
 
 

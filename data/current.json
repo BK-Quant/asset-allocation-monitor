@@ -1,9 +1,9 @@
 {
   "meta": {
-    "generatedAt": "2026-07-20 19:45 KST",
+    "generatedAt": "2026-07-20 22:37 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
-    "latestDataDate": "2026-07-17"
+    "latestDataDate": "2026-07-20"
   },
   "strategies": {
     "PERM": {
@@ -627,7 +627,7 @@
           "sector": "미국 장기채",
           "category": "채권",
           "price": 86.102,
-          "weight": 0.541665,
+          "weight": 0.541663,
           "score": null
         },
         {
@@ -637,7 +637,7 @@
           "sector": "원자재",
           "category": "원자재",
           "price": 15.88,
-          "weight": 0.209713,
+          "weight": 0.209712,
           "score": null
         },
         {
@@ -647,7 +647,7 @@
           "sector": "미국 대형주",
           "category": "주식",
           "price": 746.77,
-          "weight": 0.144223,
+          "weight": 0.144225,
           "score": null
         },
         {
@@ -657,7 +657,7 @@
           "sector": "미국 리츠",
           "category": "리츠",
           "price": 96.43,
-          "weight": 0.104399,
+          "weight": 0.1044,
           "score": null
         },
         {
@@ -831,6 +831,750 @@
           "score": null
         }
       ]
+    },
+    "KOALLWEATHER1": {
+      "label": "K-올웨더 v1 (김성일 이전버전)",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "251350.KS",
+          "displayName": "251350.KS",
+          "remark": "KODEX 선진국MSCI World",
+          "sector": "선진국 주식",
+          "category": "주식",
+          "price": 42605.0,
+          "weight": 0.15,
+          "score": null
+        },
+        {
+          "ticker": "195980.KS",
+          "displayName": "195980.KS",
+          "remark": "PLUS 신흥국MSCI(합성H)",
+          "sector": "신흥국 주식",
+          "category": "주식",
+          "price": 15480.0,
+          "weight": 0.15,
+          "score": null
+        },
+        {
+          "ticker": "379810.KS",
+          "displayName": "379810.KS",
+          "remark": "KODEX 미국나스닥100TR",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 30690.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "379800.KS",
+          "displayName": "379800.KS",
+          "remark": "KODEX 미국S&P500TR",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 26115.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "305080.KS",
+          "displayName": "305080.KS",
+          "remark": "TIGER 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 14005.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "464470.KS",
+          "displayName": "464470.KS",
+          "remark": "PLUS 미국채30년액티브",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 56810.0,
+          "weight": 0.1,
+          "score": null
+        },
+        {
+          "ticker": "365780.KS",
+          "displayName": "365780.KS",
+          "remark": "ACE 국고채10년",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 83390.0,
+          "weight": 0.075,
+          "score": null
+        },
+        {
+          "ticker": "385560.KS",
+          "displayName": "385560.KS",
+          "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 53990.0,
+          "weight": 0.075,
+          "score": null
+        },
+        {
+          "ticker": "381180.KS",
+          "displayName": "381180.KS",
+          "remark": "TIGER 미국필라델피아반도체나스닥",
+          "sector": "미국 반도체",
+          "category": "주식",
+          "price": 55910.0,
+          "weight": 0.02,
+          "score": null
+        },
+        {
+          "ticker": "487240.KS",
+          "displayName": "487240.KS",
+          "remark": "KODEX AI전력핵심설비",
+          "sector": "국내 테마주(AI전력)",
+          "category": "주식",
+          "price": 42650.0,
+          "weight": 0.015,
+          "score": null
+        },
+        {
+          "ticker": "117460.KS",
+          "displayName": "117460.KS",
+          "remark": "KODEX 에너지화학",
+          "sector": "국내 테마주(에너지화학)",
+          "category": "주식",
+          "price": 13245.0,
+          "weight": 0.015,
+          "score": null
+        }
+      ]
+    },
+    "KOALLWEATHER2_MP": {
+      "label": "K-올웨더 v2 - MP(기준)",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "379800.KS",
+          "displayName": "379800.KS",
+          "remark": "KODEX 미국S&P500TR",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 26115.0,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "385560.KS",
+          "displayName": "385560.KS",
+          "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 53990.0,
+          "weight": 0.15,
+          "score": null
+        },
+        {
+          "ticker": "283580.KS",
+          "displayName": "283580.KS",
+          "remark": "KODEX 차이나CSI300",
+          "sector": "중국 주식",
+          "category": "주식",
+          "price": 18325.0,
+          "weight": 0.085,
+          "score": null
+        },
+        {
+          "ticker": "453810.KS",
+          "displayName": "453810.KS",
+          "remark": "KODEX 인도Nifty50",
+          "sector": "인도 주식",
+          "category": "주식",
+          "price": 13280.0,
+          "weight": 0.085,
+          "score": null
+        },
+        {
+          "ticker": "294400.KS",
+          "displayName": "294400.KS",
+          "remark": "KOSEF 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 181425.0,
+          "weight": 0.08,
+          "score": null
+        },
+        {
+          "ticker": "308620.KS",
+          "displayName": "308620.KS",
+          "remark": "KODEX 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 13130.0,
+          "weight": 0.075,
+          "score": null
+        },
+        {
+          "ticker": "453850.KS",
+          "displayName": "453850.KS",
+          "remark": "ACE 미국30년국채액티브(H)",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 7600.0,
+          "weight": 0.075,
+          "score": null
+        }
+      ]
+    },
+    "KOALLWEATHER2_GROWTH": {
+      "label": "K-올웨더 v2 - 성장형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "379800.KS",
+          "displayName": "379800.KS",
+          "remark": "KODEX 미국S&P500TR",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 26115.0,
+          "weight": 0.24,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.19,
+          "score": null
+        },
+        {
+          "ticker": "385560.KS",
+          "displayName": "385560.KS",
+          "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 53990.0,
+          "weight": 0.14,
+          "score": null
+        },
+        {
+          "ticker": "294400.KS",
+          "displayName": "294400.KS",
+          "remark": "KOSEF 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 181425.0,
+          "weight": 0.08,
+          "score": null
+        },
+        {
+          "ticker": "283580.KS",
+          "displayName": "283580.KS",
+          "remark": "KODEX 차이나CSI300",
+          "sector": "중국 주식",
+          "category": "주식",
+          "price": 18325.0,
+          "weight": 0.08,
+          "score": null
+        },
+        {
+          "ticker": "453810.KS",
+          "displayName": "453810.KS",
+          "remark": "KODEX 인도Nifty50",
+          "sector": "인도 주식",
+          "category": "주식",
+          "price": 13280.0,
+          "weight": 0.08,
+          "score": null
+        },
+        {
+          "ticker": "308620.KS",
+          "displayName": "308620.KS",
+          "remark": "KODEX 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 13130.0,
+          "weight": 0.07,
+          "score": null
+        },
+        {
+          "ticker": "453850.KS",
+          "displayName": "453850.KS",
+          "remark": "ACE 미국30년국채액티브(H)",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 7600.0,
+          "weight": 0.07,
+          "score": null
+        },
+        {
+          "ticker": "449170.KS",
+          "displayName": "449170.KS",
+          "remark": "TIGER KOFR금리액티브(합성)",
+          "sector": "초단기채권(KOFR)",
+          "category": "채권",
+          "price": 111225.0,
+          "weight": 0.05,
+          "score": null
+        }
+      ]
+    },
+    "KOALLWEATHER2_NEUTRAL": {
+      "label": "K-올웨더 v2 - 중립형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "379800.KS",
+          "displayName": "379800.KS",
+          "remark": "KODEX 미국S&P500TR",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 26115.0,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "449170.KS",
+          "displayName": "449170.KS",
+          "remark": "TIGER KOFR금리액티브(합성)",
+          "sector": "초단기채권(KOFR)",
+          "category": "채권",
+          "price": 111225.0,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.16,
+          "score": null
+        },
+        {
+          "ticker": "385560.KS",
+          "displayName": "385560.KS",
+          "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 53990.0,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "283580.KS",
+          "displayName": "283580.KS",
+          "remark": "KODEX 차이나CSI300",
+          "sector": "중국 주식",
+          "category": "주식",
+          "price": 18325.0,
+          "weight": 0.07,
+          "score": null
+        },
+        {
+          "ticker": "453810.KS",
+          "displayName": "453810.KS",
+          "remark": "KODEX 인도Nifty50",
+          "sector": "인도 주식",
+          "category": "주식",
+          "price": 13280.0,
+          "weight": 0.07,
+          "score": null
+        },
+        {
+          "ticker": "294400.KS",
+          "displayName": "294400.KS",
+          "remark": "KOSEF 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 181425.0,
+          "weight": 0.06,
+          "score": null
+        },
+        {
+          "ticker": "308620.KS",
+          "displayName": "308620.KS",
+          "remark": "KODEX 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 13130.0,
+          "weight": 0.06,
+          "score": null
+        },
+        {
+          "ticker": "453850.KS",
+          "displayName": "453850.KS",
+          "remark": "ACE 미국30년국채액티브(H)",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 7600.0,
+          "weight": 0.06,
+          "score": null
+        }
+      ]
+    },
+    "KOALLWEATHER2_STABLE": {
+      "label": "K-올웨더 v2 - 안정형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "449170.KS",
+          "displayName": "449170.KS",
+          "remark": "TIGER KOFR금리액티브(합성)",
+          "sector": "초단기채권(KOFR)",
+          "category": "채권",
+          "price": 111225.0,
+          "weight": 0.4,
+          "score": null
+        },
+        {
+          "ticker": "379800.KS",
+          "displayName": "379800.KS",
+          "remark": "KODEX 미국S&P500TR",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 26115.0,
+          "weight": 0.15,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "385560.KS",
+          "displayName": "385560.KS",
+          "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 53990.0,
+          "weight": 0.09,
+          "score": null
+        },
+        {
+          "ticker": "294400.KS",
+          "displayName": "294400.KS",
+          "remark": "KOSEF 200TR",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 181425.0,
+          "weight": 0.05,
+          "score": null
+        },
+        {
+          "ticker": "283580.KS",
+          "displayName": "283580.KS",
+          "remark": "KODEX 차이나CSI300",
+          "sector": "중국 주식",
+          "category": "주식",
+          "price": 18325.0,
+          "weight": 0.05,
+          "score": null
+        },
+        {
+          "ticker": "453810.KS",
+          "displayName": "453810.KS",
+          "remark": "KODEX 인도Nifty50",
+          "sector": "인도 주식",
+          "category": "주식",
+          "price": 13280.0,
+          "weight": 0.05,
+          "score": null
+        },
+        {
+          "ticker": "308620.KS",
+          "displayName": "308620.KS",
+          "remark": "KODEX 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 13130.0,
+          "weight": 0.045,
+          "score": null
+        },
+        {
+          "ticker": "453850.KS",
+          "displayName": "453850.KS",
+          "remark": "ACE 미국30년국채액티브(H)",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 7600.0,
+          "weight": 0.045,
+          "score": null
+        }
+      ]
+    },
+    "HANMI_STATIC": {
+      "label": "한미정적자산배분",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "102110.KS",
+          "displayName": "102110.KS",
+          "remark": "TIGER 200",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 138670.0,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "360750.KS",
+          "displayName": "360750.KS",
+          "remark": "TIGER 미국S&P 500",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 28640.0,
+          "weight": 0.25,
+          "score": null
+        },
+        {
+          "ticker": "411060.KS",
+          "displayName": "411060.KS",
+          "remark": "ACE KRX금현물",
+          "sector": "금",
+          "category": "원자재",
+          "price": 27405.0,
+          "weight": 0.2,
+          "score": null
+        },
+        {
+          "ticker": "305080.KS",
+          "displayName": "305080.KS",
+          "remark": "TIGER 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 14005.0,
+          "weight": 0.0625,
+          "score": null
+        },
+        {
+          "ticker": "365780.KS",
+          "displayName": "365780.KS",
+          "remark": "ACE 국고채10년",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 83390.0,
+          "weight": 0.0625,
+          "score": null
+        },
+        {
+          "ticker": "451600.KS",
+          "displayName": "451600.KS",
+          "remark": "PLUS 국고채30년액티브",
+          "sector": "국고채",
+          "category": "채권",
+          "price": 86845.0,
+          "weight": 0.0625,
+          "score": null
+        },
+        {
+          "ticker": "464470.KS",
+          "displayName": "464470.KS",
+          "remark": "PLUS 미국채30년액티브",
+          "sector": "미국 장기채",
+          "category": "채권",
+          "price": 56810.0,
+          "weight": 0.0625,
+          "score": null
+        },
+        {
+          "ticker": "329750.KS",
+          "displayName": "329750.KS",
+          "remark": "TIGER 미국달러단기채권액티브",
+          "sector": "미국달러단기채권",
+          "category": "채권",
+          "price": 14560.0,
+          "weight": 0.025,
+          "score": null
+        },
+        {
+          "ticker": "488770.KS",
+          "displayName": "488770.KS",
+          "remark": "KODEX 머니마켓액티브",
+          "sector": "초단기채권",
+          "category": "채권",
+          "price": 104755.0,
+          "weight": 0.025,
+          "score": null
+        }
+      ]
+    },
+    "HANMI_DYNAMIC_STABLE": {
+      "label": "한미동적 - 안정형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "USD",
+          "displayName": "USD",
+          "remark": "USD : 현금(무이자 가정)",
+          "sector": "현금",
+          "category": "현금",
+          "price": 1.0,
+          "weight": 0.4,
+          "score": null
+        },
+        {
+          "ticker": "133690.KS",
+          "displayName": "133690.KS",
+          "remark": "TIGER 미국나스닥100",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 205050.0,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "360750.KS",
+          "displayName": "360750.KS",
+          "remark": "TIGER 미국S&P 500",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 28640.0,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "305080.KS",
+          "displayName": "305080.KS",
+          "remark": "TIGER 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 14005.0,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "329750.KS",
+          "displayName": "329750.KS",
+          "remark": "TIGER 미국달러단기채권액티브",
+          "sector": "미국달러단기채권",
+          "category": "채권",
+          "price": 14560.0,
+          "weight": 0.12,
+          "score": null
+        },
+        {
+          "ticker": "069500.KS",
+          "displayName": "069500.KS",
+          "remark": "KODEX 200",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 138580.0,
+          "weight": 0.12,
+          "score": null
+        }
+      ]
+    },
+    "HANMI_DYNAMIC_AGGRESSIVE": {
+      "label": "한미동적 - 공격형",
+      "asOfDate": "2026-06-30",
+      "applicableMonth": "2026년 7월",
+      "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
+      "holdings": [
+        {
+          "ticker": "069500.KS",
+          "displayName": "069500.KS",
+          "remark": "KODEX 200",
+          "sector": "국내 주식",
+          "category": "주식",
+          "price": 138580.0,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "133690.KS",
+          "displayName": "133690.KS",
+          "remark": "TIGER 미국나스닥100",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 205050.0,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "360750.KS",
+          "displayName": "360750.KS",
+          "remark": "TIGER 미국S&P 500",
+          "sector": "미국 주식",
+          "category": "주식",
+          "price": 28640.0,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "138230.KS",
+          "displayName": "138230.KS",
+          "remark": "TIGER 미국달러선물",
+          "sector": "미국달러선물",
+          "category": "외환",
+          "price": 18055.0,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "305080.KS",
+          "displayName": "305080.KS",
+          "remark": "TIGER 미국채10년선물",
+          "sector": "미국 중기채",
+          "category": "채권",
+          "price": 14005.0,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "0043B0.KS",
+          "displayName": "0043B0.KS",
+          "remark": "TIGER 머니마켓액티브",
+          "sector": "초단기채권",
+          "category": "채권",
+          "price": 102840.0,
+          "weight": 0.166667,
+          "score": null
+        }
+      ]
     }
   },
   "custom": {
@@ -854,7 +1598,7 @@
     },
     "admPreview": {
       "label": "가속듀얼모멘텀 차월 예상 티커 (프리뷰)",
-      "asOfDate": "2026-07-17",
+      "asOfDate": "2026-07-20",
       "applicableMonth": "2026년 8월 (예상·미확정)",
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust",
