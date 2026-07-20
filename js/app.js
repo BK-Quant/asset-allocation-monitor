@@ -262,7 +262,7 @@ function renderComparison(current, backtests) {
       .map(
         (r) => `
         <tr>
-          <td>${r.label}</td>
+          <td><a href="#strategy-${r.code}" class="compare-link" data-code="${r.code}">${r.label}</a></td>
           <td class="${r.stats.cagr >= 0 ? "pos" : "neg"}">${(r.stats.cagr * 100).toFixed(1)}%</td>
           <td class="neg">${(r.stats.mdd * 100).toFixed(1)}%</td>
           <td>${(r.stats.vol * 100).toFixed(1)}%</td>
@@ -281,6 +281,24 @@ function renderComparison(current, backtests) {
       sortKey = key;
       draw();
     });
+  });
+
+  // 전략명 클릭 → 하단 "전략별 이번달 배분" 카드로 스크롤 이동 + 잠깐 강조
+  tbody.addEventListener("click", (e) => {
+    const link = e.target.closest(".compare-link");
+    if (!link) return;
+    e.preventDefault();
+    const card = document.getElementById(`strategy-${link.dataset.code}`);
+    if (!card) return;
+    // 검색 필터로 카드가 숨겨져 있을 수 있으니 필터를 초기화하고 이동
+    const searchBox = document.getElementById("searchBox");
+    if (searchBox && searchBox.value) {
+      searchBox.value = "";
+      document.querySelectorAll(".strategy-card").forEach((c) => (c.style.display = ""));
+    }
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.classList.add("highlight");
+    setTimeout(() => card.classList.remove("highlight"), 1600);
   });
 }
 
@@ -355,6 +373,7 @@ function renderStrategies(current, backtests, prices) {
   for (const [code, s] of entries) {
     const card = document.createElement("div");
     card.className = "strategy-card";
+    card.id = `strategy-${code}`;
     card.dataset.search = `${s.label} ${code} ${s.holdings.map((h) => h.ticker + " " + h.displayName).join(" ")}`.toLowerCase();
 
     const bt = backtests[code];
