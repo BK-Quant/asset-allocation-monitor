@@ -29,6 +29,13 @@ function scoreClass(score) {
   return score >= 0 ? "pos" : "neg";
 }
 
+// 13612W 가중 모멘텀 스코어는 수익률이 아니라 가중치(12+4+2+1=19)가 곱해진 합산 스코어라
+// %로 표시하면 오해를 준다(레퍼런스 사이트처럼 원시 숫자 그대로 표기).
+function fmtScore(v) {
+  if (v == null) return "—";
+  return v.toFixed(3);
+}
+
 // ── 커스텀 지표 섹션 ──────────────────────────────────────────
 function renderCustomSection(current) {
   const c = current.custom;
@@ -44,8 +51,8 @@ function renderCustomSection(current) {
   const breadthLabel = breadth >= 1 ? "공격형 100% (Risk-ON)" : breadth <= 0 ? "방어형 100% (Risk-OFF)" : "혼합 50/50 (완충)";
   daaCard.innerHTML = `
     <h3>${c.daaCanary.label}</h3>
-    <div class="canary-row"><span>VWO (신흥국)</span><span class="${scoreClass(daaScores.VWO)}">${daaScores.VWO != null ? fmtPct(daaScores.VWO) : "—"}</span></div>
-    <div class="canary-row"><span>BND (미국종합채권)</span><span class="${scoreClass(daaScores.BND)}">${daaScores.BND != null ? fmtPct(daaScores.BND) : "—"}</span></div>
+    <div class="canary-row"><span>VWO (신흥국)</span><span class="${scoreClass(daaScores.VWO)}">${fmtScore(daaScores.VWO)}</span></div>
+    <div class="canary-row"><span>BND (미국종합채권)</span><span class="${scoreClass(daaScores.BND)}">${fmtScore(daaScores.BND)}</span></div>
     <div class="sub">
       <span class="badge ${breadthBadgeClass}">${breadthLabel}</span>
       기준일 ${c.daaCanary.asOfDate}
