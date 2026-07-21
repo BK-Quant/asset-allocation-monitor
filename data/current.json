@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-21 20:16 KST",
+    "generatedAt": "2026-07-21 20:18 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
     "latestDataDate": "2026-07-20"
@@ -1030,21 +1030,11 @@
     },
     "HANMI_DYNAMIC_AGGRESSIVE": {
       "label": "한미동적 - 공격형",
-      "description": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위로 올라선 종목을 (1개월+3개월 수익률) 순위로 골라 매수하고, 이미 보유 중인 종목은 종가가 150일 이동평균 아래로 떨어지기 전까지 계속 들고 간다(매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략). 최종 보유 종목 전체에 균등비중(1/N) — 한미동적-안정형과 달리 현금을 남기지 않고 항상 전액 투자.",
+      "description": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위로 올라선 종목만 후보로 삼아 (1개월+3개월 수익률)이 가장 강한 상위 2종목만 매수(종목당 50%). 이미 보유 중인 종목은 종가가 150일 이동평균 아래로 떨어지기 전까지 순위와 무관하게 계속 들고 간다(매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략) — 안정형과 달리 현금을 남기지 않고 항상 2종목에 전액 투자.",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
       "holdings": [
-        {
-          "ticker": "0043B0.KS",
-          "displayName": "TIGER 머니마켓액티브",
-          "remark": "TIGER 머니마켓액티브",
-          "sector": "초단기채권",
-          "category": "채권",
-          "price": 102840.0,
-          "weight": 0.166667,
-          "score": null
-        },
         {
           "ticker": "069500.KS",
           "displayName": "KODEX 200",
@@ -1052,7 +1042,7 @@
           "sector": "국내 주식",
           "category": "주식",
           "price": 138580.0,
-          "weight": 0.166667,
+          "weight": 0.5,
           "score": null
         },
         {
@@ -1062,37 +1052,7 @@
           "sector": "나스닥",
           "category": "주식",
           "price": 205050.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "138230.KS",
-          "displayName": "TIGER 미국달러선물",
-          "remark": "TIGER 미국달러선물",
-          "sector": "미국달러선물",
-          "category": "외환",
-          "price": 18055.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "305080.KS",
-          "displayName": "TIGER 미국채10년선물",
-          "remark": "TIGER 미국채10년선물",
-          "sector": "미국 중기채",
-          "category": "채권",
-          "price": 14005.0,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "360750.KS",
-          "displayName": "TIGER 미국S&P 500",
-          "remark": "TIGER 미국S&P 500",
-          "sector": "미국 주식",
-          "category": "주식",
-          "price": 28640.0,
-          "weight": 0.166667,
+          "weight": 0.5,
           "score": null
         }
       ]
