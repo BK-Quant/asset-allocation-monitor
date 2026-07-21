@@ -164,7 +164,7 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
             allocation = _hysteresis_sequence(ps, code, month_ends_all[start_pos:])[-1] if start_pos is not None else {}
         else:
             allocation = compute_allocation(ps, code, idx_current, **kwargs)
-        holdings = [build_holding_row(ps, t, w, idx_current) for t, w in sorted(allocation.items(), key=lambda x: -x[1])]
+        holdings = [build_holding_row(ps, t, w, idx_current) for t, w in sorted(allocation.items(), key=lambda x: (-x[1], x[0]))]
         strategies_out[code] = {
             "label": STRATEGY_LABELS[code],
             "description": STRATEGY_DESCRIPTIONS.get(code, ""),
