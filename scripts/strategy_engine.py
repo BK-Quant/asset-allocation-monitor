@@ -250,20 +250,15 @@ HANMI_DYNAMIC_STABLE_UNIVERSE = [
 
 
 def calc_HANMI_DYNAMIC_STABLE(ps, idx):
-    """한미동적-안정형. 8종목 유니버스 중 120일 이격도(가격/SMA120) > 100%인 종목을
-    종목당 고정 12%씩 매수(최대 96%, 나머지는 현금). 매도 조건(이격도<100)과 매수 조건이
-    동일 지표의 같은 임계값이라 이력(hysteresis) 없이 매달 그대로 재평가 가능."""
-    scored = []
+    """한미동적-안정형. 8종목 유니버스 각각에 동일비중 12.5%(=100%/8)를 배정하되,
+    120일 이격도(가격/SMA120)가 100% 미만(매수 조건 불만족)인 종목은 비중을 비워둔다
+    (현금으로 대체하지 않음 — 그만큼 미투자 상태로 남음). 매도 조건(이격도<100)과 매수
+    조건이 동일 지표의 같은 임계값이라 이력(hysteresis) 없이 매달 그대로 재평가 가능."""
+    allocations = {}
     for t in HANMI_DYNAMIC_STABLE_UNIVERSE:
         disparity120 = ps.get_sma_momentum(t, idx, 120)
-        disparity5 = ps.get_sma_momentum(t, idx, 5)
         if disparity120 is not None and disparity120 > 0:
-            scored.append({"ticker": t, "score": disparity5 if disparity5 is not None else 0.0})
-    scored = sort_by_score_desc(scored)
-    allocations = {x["ticker"]: 0.12 for x in scored}
-    cash = 1 - sum(allocations.values())
-    if cash > 1e-9:
-        allocations["USD"] = cash
+            allocations[t] = 1 / len(HANMI_DYNAMIC_STABLE_UNIVERSE)
     return allocations
 
 
@@ -590,24 +585,24 @@ STRATEGY_LABELS = {
 
 
 STRATEGY_DESCRIPTIONS = {
-    "PERM": "영구포트폴리오(Harry Browne). 주식(SPY)·장기채(TLT)·금(GLD)·현금성자산(BIL)에 각 25%씩 고정 배분. 시장 상황과 무관하게 매달 그대로 유지(리밸런싱만).",
-    "LAA": "Lethargic Asset Allocation. IWD(대형가치주)·IEF(중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 위'이거나 '실업률이 12개월 평균보다 높음' 중 하나라도 해당하면 QQQ(나스닥), 아니면 SHY(단기채)로 전환.",
-    "RAA": "5개 자산(QQQ·IWN·IEF·TLT·GLD)에 각 20%씩 배분하는 것이 기본. '실업률이 하락 추세(확장국면)'이거나 '카나리아(VWO·BND) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
-    "GTAA": "Faber GTAA5. SPY·EFA·IEF·PDBC·VNQ 5개 자산 중 210일 이동평균 위에 있는 자산만 각 20%씩 보유하고, 이동평균 아래인 자산 비중은 현금(USD)으로 대기.",
-    "PAA": "Protective Asset Allocation. 12개 자산(SPY,IWM,QQQ,VGK,EWJ,EEM,VNQ,PDBC,GLD,TLT,HYG,LQD) 중 252일 이동평균 위(양수 모멘텀)인 자산 개수(n)를 센다. n≤6이면 전액 IEF(안전자산), n>6이면 양수 모멘텀 상위 (n-6)개를 1/6씩 보유하고 나머지는 IEF로 채움 — 시장 폭이 넓을수록 공격적으로 투자.",
-    "DAA": "DAA-G12(Keller & Keuning, 2018). 카나리아(VWO·BND) 중 음수 모멘텀 개수(n)에 따라 공격/방어 비중을 3단계(breadth)로 나눈다: n=0→공격 100%, n=1→50%/50%, n=2→방어 100%. 공격자산군(12종목) 상위 6개는 균등가중, 방어자산군(SHY,IEF,LQD) 상위 1개에 나머지 전액. 모멘텀은 13612W(1/3/6/12개월 수익률에 12/4/2/1 가중).",
-    "VAA": "Vigilant Asset Allocation(VAA-G4). 공격자산군(SPY,EFA,EEM,AGG) 4개가 모두 양수 모멘텀이면 그중 1위 자산에 100% 집중투자, 하나라도 마이너스면 방어자산군(LQD,SHY,IEF) 중 1위로 전액 전환.",
-    "FAA": "Flexible Asset Allocation. 7개 자산(VTI,VEA,VWO,SHY,BND,PDBC,VNQ)을 모멘텀(높을수록 좋음)·변동성(낮을수록 좋음)·상관관계(낮을수록 좋음) 3개 지표의 순위 합산 점수로 평가해 상위 3개를 1/3씩 배분(단 개별 모멘텀이 마이너스면 그 몫은 현금).",
-    "AAA": "Adaptive Asset Allocation. 10개 자산(SPY,VGK,EWJ,EEM,VNQ,RWX,IEF,TLT,GLD,PDBC) 중 126일 수익률이 양수인 것만 후보로 남기고, 후보들 간 최소분산(공분산 역행렬 기반 Long-only MVP) 비중으로 배분해 변동성을 최소화.",
-    "DUAL": "전통 듀얼모멘텀(Antonacci GEM). SPY 12개월 수익률이 BIL(현금성)보다 높으면 주식 투자 — SPY와 EFA(선진국) 중 12개월 수익률이 더 높은 쪽에 100% 투자. SPY가 BIL보다 낮으면 AGG(채권)로 전액 대피.",
-    "CDM": "종합듀얼모멘텀. 4개 자산군 페어(SPY/EFA, LQD/HYG, VNQ/REM, TLT/GLD)마다 12개월 수익률이 높은 쪽을 고르되, 그 수익률이 BIL(현금)보다 낮으면 그 25%는 BIL로 대피 — 최대 4종목 25%씩.",
-    "ADM": "Accelerating Dual Momentum(Dushanov). SPY(미국대형)와 VSS(전세계ex-US 소형주) 중 1/3/6개월 모멘텀 합산 스코어가 더 높은 쪽에 100% 투자하되, 둘 다 음수면 TLT(장기국채) 단일 안전자산으로 전환.",
-    "DGA": "TIP(물가연동채) 252일 이동평균이 꺾이면(라이브 계산에서는 S&P500 배당수익률<1.6%, 금리스프레드<-0.5%p 조건도 함께 반영) 방어자산군(BIL,TLT,PDBC) 중 126일 모멘텀 1위로 전환, 아니면 공격자산군(QQQ,SCHD) 중 장기 모멘텀 1위에 100% 투자.",
-    "DYNBOND": "채권동적배분. 8개 채권(SHY,IEF,TLT,TIP,LQD,HYG,BWX,EMB) 중 126일 수익률 상위 3개를 각 1/3씩 보유하되, 개별 수익률이 마이너스면 그 몫은 현금.",
-    "KOALLWEATHER1": "K-올웨더 v1(김성일 이전 버전, 브라이언 제공). 주식 50%(선진국·나스닥·S&P500·신흥국)·대체투자 15%(금·테마주·반도체)·채권+외화 35%(국고채·미국채)로 고정 배분 — 모멘텀 계산 없이 매달 동일 비중 유지.",
-    "KOALLWEATHER2_GROWTH": "K-올웨더 v2 성장형(브라이언 제공, 위험감내도별 예시 표). 미국·중국·인도·한국 주식과 금, 미국채·국고채에 성장형 비중으로 고정 배분.",
-    "HANMI_STATIC": "한미정적자산배분(브라이언 제공). 한국주식(TIGER200) 25%, 미국주식(S&P500) 25%, 금 20%, 국내외 채권류 25%, 외화·현금성 5%로 고정 배분.",
-    "HANMI_DYNAMIC_STABLE": "한미동적-안정형(브라이언 제공). 8종목 유니버스 중 120일 이격도(가격/120일 이동평균)가 100%를 넘는 종목을 종목당 고정 12%씩 매수(최대 8종목·96%, 나머지는 현금). 이격도가 100% 아래로 떨어지면 매도 — 매수·매도가 같은 지표·같은 기준선이라 매달 새로 계산해도 정확함.",
+    "PERM": "영구포트폴리오(Harry Browne). SPY(미국 대형주)·TLT(미국 장기채)·GLD(금)·BIL(초단기국채) 4종목에 각 25%씩 고정 배분. 시장 상황과 무관하게 매달 그대로 유지(리밸런싱만).",
+    "LAA": "Lethargic Asset Allocation. IWD(미국 대형가치주)·IEF(미국 중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 위'이거나 '실업률이 12개월 평균보다 높음' 중 하나라도 해당하면 QQQ(나스닥), 아니면 SHY(미국 단기국채)로 전환.",
+    "RAA": "5개 자산 QQQ(나스닥)·IWN(미국 소형가치주)·IEF(미국 중기채)·TLT(미국 장기채)·GLD(금)에 각 20%씩 배분하는 것이 기본. '실업률이 하락 추세(확장국면)'이거나 '카나리아 VWO(신흥국주식)·BND(미국종합채권) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
+    "GTAA": "Faber GTAA5. SPY(미국 대형주)·EFA(선진국 주식)·IEF(미국 중기채)·PDBC(원자재)·VNQ(미국 리츠) 5개 자산 중 210일 이동평균 위에 있는 자산만 각 20%씩 보유하고, 이동평균 아래인 자산 비중은 현금(USD)으로 대기.",
+    "PAA": "Protective Asset Allocation. 공격 12종목 SPY(미국대형주)·IWM(미국소형주)·QQQ(나스닥)·VGK(유럽주식)·EWJ(일본주식)·EEM(신흥국주식)·VNQ(미국리츠)·PDBC(원자재)·GLD(금)·TLT(미국장기채)·HYG(하이일드채권)·LQD(회사채) 중 252일 이동평균 위(양수 모멘텀)인 자산 개수(n)를 센다. n≤6이면 전액 IEF(미국중기채, 안전자산), n>6이면 양수 모멘텀 상위 (n-6)개를 1/6씩 보유하고 나머지는 IEF로 채움 — 시장 폭이 넓을수록 공격적으로 투자.",
+    "DAA": "DAA-G12(Keller & Keuning, 2018). 카나리아 VWO(신흥국주식)·BND(미국종합채권) 중 음수 모멘텀 개수(n)에 따라 공격/방어 비중을 3단계(breadth)로 나눈다: n=0→공격 100%, n=1→50%/50%, n=2→방어 100%. 공격자산군 12종목(SPY·IWM·QQQ·VGK·EWJ·EEM·VNQ·PDBC·GLD·TLT·HYG·LQD) 상위 6개는 균등가중, 방어자산군 SHY(단기채)·IEF(중기채)·LQD(회사채) 중 상위 1개에 나머지 전액. 모멘텀은 13612W(1/3/6/12개월 수익률에 12/4/2/1 가중).",
+    "VAA": "Vigilant Asset Allocation(VAA-G4). 공격자산군 SPY(미국대형주)·EFA(선진국주식)·EEM(신흥국주식)·AGG(미국종합채권) 4개가 모두 양수 모멘텀이면 그중 1위 자산에 100% 집중투자, 하나라도 마이너스면 방어자산군 LQD(회사채)·SHY(단기채)·IEF(중기채) 중 1위로 전액 전환.",
+    "FAA": "Flexible Asset Allocation. 7개 자산 VTI(미국주식)·VEA(선진국주식)·VWO(신흥국주식)·SHY(미국단기채)·BND(미국종합채권)·PDBC(원자재)·VNQ(미국리츠)를 모멘텀(높을수록 좋음)·변동성(낮을수록 좋음)·상관관계(낮을수록 좋음) 3개 지표의 순위 합산 점수로 평가해 상위 3개를 1/3씩 배분(단 개별 모멘텀이 마이너스면 그 몫은 현금).",
+    "AAA": "Adaptive Asset Allocation. 10개 자산 SPY(미국대형주)·VGK(유럽주식)·EWJ(일본주식)·EEM(신흥국주식)·VNQ(미국리츠)·RWX(국제리츠)·IEF(미국중기채)·TLT(미국장기채)·GLD(금)·PDBC(원자재) 중 126일 수익률이 양수인 것만 후보로 남기고, 후보들 간 최소분산(공분산 역행렬 기반 Long-only MVP) 비중으로 배분해 변동성을 최소화.",
+    "DUAL": "전통 듀얼모멘텀(Antonacci GEM). SPY(미국대형주) 12개월 수익률이 BIL(초단기국채, 현금성)보다 높으면 주식 투자 — SPY와 EFA(선진국주식) 중 12개월 수익률이 더 높은 쪽에 100% 투자. SPY가 BIL보다 낮으면 AGG(미국종합채권)로 전액 대피.",
+    "CDM": "종합듀얼모멘텀. 4개 자산군 페어 SPY/EFA(미국·선진국주식), LQD/HYG(회사채·하이일드), VNQ/REM(미국리츠·모기지리츠), TLT/GLD(장기채·금)마다 12개월 수익률이 높은 쪽을 고르되, 그 수익률이 BIL(초단기국채)보다 낮으면 그 25%는 BIL로 대피 — 최대 4종목 25%씩.",
+    "ADM": "Accelerating Dual Momentum(Dushanov). SPY(미국대형주)와 VSS(전세계ex-US 소형주) 중 1/3/6개월 모멘텀 합산 스코어가 더 높은 쪽에 100% 투자하되, 둘 다 음수면 TLT(미국장기채) 단일 안전자산으로 전환.",
+    "DGA": "카나리아 TIP(물가연동채) 252일 이동평균이 꺾이면(라이브 계산에서는 S&P500 배당수익률<1.6%, 금리스프레드<-0.5%p 조건도 함께 반영) 방어자산군 BIL(초단기채)·TLT(장기채)·PDBC(원자재) 중 126일 모멘텀 1위로 전환, 아니면 공격자산군 QQQ(나스닥)·SCHD(미국고배당주) 중 장기 모멘텀 1위에 100% 투자.",
+    "DYNBOND": "채권동적배분. 8개 채권 SHY(미국단기채)·IEF(미국중기채)·TLT(미국장기채)·TIP(물가연동채)·LQD(회사채)·HYG(하이일드)·BWX(국제채권)·EMB(신흥국채권) 중 126일 수익률 상위 3개를 각 1/3씩 보유하되, 개별 수익률이 마이너스면 그 몫은 현금.",
+    "KOALLWEATHER1": "K-올웨더 v1(김성일 이전 버전, 브라이언 제공). 주식 50% — KODEX 선진국MSCI World 15%, PLUS 신흥국MSCI(합성H) 15%, KODEX 미국나스닥100TR 10%, KODEX 미국S&P500TR 10%. 대체투자 15% — ACE KRX금현물 10%, TIGER 미국필라델피아반도체나스닥 2%, KODEX AI전력핵심설비 1.5%, KODEX 에너지화학 1.5%. 채권+외화 35% — ACE 국고채10년 7.5%, RISE KIS국고채30년Enhanced 7.5%, TIGER 미국채10년선물 10%, PLUS 미국채30년액티브 10%. 모멘텀 계산 없이 매달 동일 비중 유지.",
+    "KOALLWEATHER2_GROWTH": "K-올웨더 v2 성장형(브라이언 제공, 위험감내도별 예시 표). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
+    "HANMI_STATIC": "한미정적자산배분(브라이언 제공). TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
+    "HANMI_DYNAMIC_STABLE": "한미동적-안정형(브라이언 제공). 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 120일 이격도(가격/120일 이동평균)가 100% 미만인 종목은 매수하지 않고 비중을 비워둔다(현금 대체 없음). 매수·매도가 같은 지표·같은 기준선이라 매달 새로 계산해도 정확함.",
 }
 
 

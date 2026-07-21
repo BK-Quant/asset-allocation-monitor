@@ -200,7 +200,7 @@ function renderComparison(current, backtests) {
     .map(
       (r) => `
       <label class="picker-item">
-        <input type="checkbox" value="${r.code}" />
+        <input type="checkbox" value="${r.code}" checked />
         <i style="background:${colorOf(r.code)}"></i>
         <span>${r.label}</span>
       </label>`
@@ -296,6 +296,13 @@ function renderComparison(current, backtests) {
       searchBox.value = "";
       document.querySelectorAll(".strategy-card").forEach((c) => (c.style.display = ""));
     }
+    // 세부 전략 소개(로직 설명)를 펼친 상태로 이동
+    const logicWrap = card.querySelector(".logic-wrap");
+    const btnLogic = card.querySelector(".btn-logic");
+    if (logicWrap && !logicWrap.classList.contains("open")) {
+      logicWrap.classList.add("open");
+      if (btnLogic) btnLogic.textContent = "로직 설명 접기";
+    }
     card.scrollIntoView({ behavior: "smooth", block: "center" });
     card.classList.add("highlight");
     setTimeout(() => card.classList.remove("highlight"), 1600);
@@ -365,6 +372,154 @@ function drawMultiLineChart(canvas, series) {
   ctx.fillText(longestSeries.dates[longestSeries.dates.length - 1] || "", padding.left + w, height - 6);
 }
 
+// ── 리밸런싱 계산기 ──────────────────────────────────────────
+// 전략마다 구성 종목이 전부 한국 상장(KRX, *.KS → 원화) 이거나 전부 미국 상장(달러)이라
+// 전략 단위로 통화를 판정한다(현재 데이터셋에는 한 전략 안에 두 통화가 섞인 경우 없음).
+function strategyCurrency(rows) {
+  return rows.length && rows.every((h) => h.ticker.endsWith(".KS")) ? "KRW" : "USD";
+}
+
+function fmtMoney(v, currency) {
+  if (v == null || !isFinite(v)) return "—";
+  return currency === "KRW" ? Math.round(v).toLocaleString() + "원" : "$" + v.toLocaleString(undefined, { maximumFractionDigits: 2 });
+}
+
+function rebalancePanelHTML(code, holdings) {
+  const radioName = `rbmode-${code}`;
+  const rows = holdings.filter((h) => h.weight > 0.0001);
+  const currency = strategyCurrency(rows);
+  const unitLabel = currency === "KRW" ? "원" : "달러";
+  return `
+    <div class="rebalance-tabs">
+      <button type="button" class="rb-tab active" data-mode="new">신규 투자</button>
+      <button type="button" class="rb-tab" data-mode="adjust">보유 조정</button>
+    </div>
+    <div class="rb-pane rb-pane-new">
+      <div class="rb-row">
+        <input type="number" class="rb-total-input" placeholder="총 투자금액(${unitLabel})" min="0" />
+        <button type="button" class="btn btn-accent rb-calc-new">계산</button>
+      </div>
+      <div class="rb-result"></div>
+    </div>
+    <div class="rb-pane rb-pane-adjust" hidden>
+      <div class="rb-mode-toggle">
+        <label><input type="radio" name="${radioName}" value="qty" checked /> 수량으로 입력</label>
+        <label><input type="radio" name="${radioName}" value="amount" /> 금액으로 입력</label>
+      </div>
+      <table class="rebalance-input-table">
+        <thead><tr><th>종목</th><th>목표비중</th><th>현재가</th><th>보유 입력</th></tr></thead>
+        <tbody>
+          ${rows
+            .map(
+              (h) => `
+            <tr>
+              <td>${h.displayName}</td>
+              <td>${fmtPct(h.weight)}</td>
+              <td>${fmtPrice(h.price)}</td>
+              <td><input type="number" class="rb-holding-input" data-ticker="${h.ticker}" placeholder="0" min="0" /></td>
+            </tr>`
+            )
+            .join("")}
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-accent rb-calc-adjust">계산</button>
+      <div class="rb-result"></div>
+    </div>
+  `;
+}
+
+function rebalanceResultTable(headerExtra, bodyRows) {
+  return `
+    <table class="rebalance-result-table">
+      <thead><tr><th>종목</th><th>목표비중</th>${headerExtra}<th>조정금액</th><th>조정수량</th></tr></thead>
+      <tbody>${bodyRows}</tbody>
+    </table>`;
+}
+
+function wireRebalancePanel(card, holdings) {
+  const wrap = card.querySelector(".rebalance-wrap");
+  const rows = holdings.filter((h) => h.weight > 0.0001);
+  const currency = strategyCurrency(rows);
+
+  // 탭 전환
+  wrap.querySelectorAll(".rb-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      wrap.querySelectorAll(".rb-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      wrap.querySelector(".rb-pane-new").hidden = tab.dataset.mode !== "new";
+      wrap.querySelector(".rb-pane-adjust").hidden = tab.dataset.mode !== "adjust";
+    });
+  });
+
+  // 신규 투자: 총액 입력 → 종목별 매수금액·수량
+  wrap.querySelector(".rb-calc-new").addEventListener("click", () => {
+    const total = parseFloat(wrap.querySelector(".rb-total-input").value);
+    const resultEl = wrap.querySelector(".rb-pane-new .rb-result");
+    if (!(total > 0)) {
+      resultEl.innerHTML = `<p class="rb-hint">총 투자금액을 입력해주세요.</p>`;
+      return;
+    }
+    const body = rows
+      .map((h) => {
+        const targetAmount = total * h.weight;
+        const qty = h.price ? Math.floor(targetAmount / h.price) : null;
+        return `
+        <tr>
+          <td>${h.displayName}</td>
+          <td>${fmtPct(h.weight)}</td>
+          <td class="pos">${fmtMoney(targetAmount, currency)}</td>
+          <td>${qty != null ? qty.toLocaleString() + "주" : "—"}</td>
+        </tr>`;
+      })
+      .join("");
+    resultEl.innerHTML = rebalanceResultTable("", body);
+  });
+
+  // 보유 조정: 종목별 현재 보유(수량 또는 금액) → 목표비중 기준 조정 필요분
+  wrap.querySelector(".rb-calc-adjust").addEventListener("click", () => {
+    const mode = wrap.querySelector('input[name^="rbmode-"]:checked').value;
+    const resultEl = wrap.querySelector(".rb-pane-adjust .rb-result");
+    const inputs = [...wrap.querySelectorAll(".rb-holding-input")];
+    const current = {};
+    let totalValue = 0;
+    for (const input of inputs) {
+      const h = rows.find((r) => r.ticker === input.dataset.ticker);
+      const raw = parseFloat(input.value) || 0;
+      const value = mode === "qty" ? raw * (h.price || 0) : raw;
+      current[h.ticker] = value;
+      totalValue += value;
+    }
+    if (totalValue <= 0) {
+      resultEl.innerHTML = `<p class="rb-hint">현재 보유 ${mode === "qty" ? "수량" : "금액"}을 하나 이상 입력해주세요.</p>`;
+      return;
+    }
+    const body = rows
+      .map((h) => {
+        const currentValue = current[h.ticker] || 0;
+        const targetValue = totalValue * h.weight;
+        const diffValue = targetValue - currentValue;
+        const diffQty = h.price ? Math.round(diffValue / h.price) : null;
+        const diffClass = diffValue >= 0 ? "pos" : "neg";
+        const diffLabel = diffValue >= 0 ? "매수" : "매도";
+        return `
+        <tr>
+          <td>${h.displayName}</td>
+          <td>${fmtPct(h.weight)}</td>
+          <td>${fmtMoney(currentValue, currency)}</td>
+          <td class="${diffClass}">${diffLabel} ${fmtMoney(Math.abs(diffValue), currency)}</td>
+          <td class="${diffClass}">${diffQty != null && diffQty !== 0 ? (diffQty > 0 ? "+" : "-") + Math.abs(diffQty).toLocaleString() + "주" : diffQty === 0 ? "0주" : "—"}</td>
+        </tr>`;
+      })
+      .join("");
+    resultEl.innerHTML = `
+      <p class="rb-hint">현재 평가금액 합계: <b>${fmtMoney(totalValue, currency)}</b> · 조정수량은 정수 주 단위로 반올림한 참고값입니다.</p>
+      <table class="rebalance-result-table">
+        <thead><tr><th>종목</th><th>목표비중</th><th>현재금액</th><th>조정금액</th><th>조정수량</th></tr></thead>
+        <tbody>${body}</tbody>
+      </table>`;
+  });
+}
+
 function renderStrategies(current, backtests, prices) {
   const list = document.getElementById("strategyList");
   list.innerHTML = "";
@@ -394,14 +549,17 @@ function renderStrategies(current, backtests, prices) {
       <div class="card-actions">
         <button class="btn btn-logic" type="button">로직 설명</button>
         <button class="btn btn-backtest" type="button">백테스트 보기</button>
+        <button class="btn btn-rebalance" type="button">리밸런싱 계산기</button>
       </div>
       <div class="logic-wrap">${s.description || "설명이 아직 없습니다."}</div>
       <div class="backtest-wrap">
         <canvas></canvas>
         ${statsHTML}
       </div>
+      <div class="rebalance-wrap">${rebalancePanelHTML(code, s.holdings)}</div>
     `;
     list.appendChild(card);
+    wireRebalancePanel(card, s.holdings);
 
     // 티커 클릭 → 가격 차트 모달
     card.querySelectorAll(".ticker-row").forEach((row) => {
@@ -428,6 +586,14 @@ function renderStrategies(current, backtests, prices) {
         drawn = true;
       }
       btnBt.textContent = btWrap.classList.contains("open") ? "백테스트 접기" : "백테스트 보기";
+    });
+
+    // 리밸런싱 계산기 토글
+    const btnRebalance = card.querySelector(".btn-rebalance");
+    const rebalanceWrap = card.querySelector(".rebalance-wrap");
+    btnRebalance.addEventListener("click", () => {
+      rebalanceWrap.classList.toggle("open");
+      btnRebalance.textContent = rebalanceWrap.classList.contains("open") ? "리밸런싱 계산기 접기" : "리밸런싱 계산기";
     });
   }
 }
