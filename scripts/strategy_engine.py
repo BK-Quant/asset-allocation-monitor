@@ -568,7 +568,7 @@ STRATEGY_LABELS = {
     "RAA": "RAA",
     "GTAA": "GTAA",
     "PAA": "PAA",
-    "DAA": "방어적자산배분(DAA-G12)",
+    "DAA": "DAA(G12)",
     "VAA": "VAA",
     "FAA": "FAA",
     "AAA": "AAA",
@@ -577,8 +577,8 @@ STRATEGY_LABELS = {
     "ADM": "가속듀얼모멘텀(ADM)",
     "DGA": "DGA",
     "DYNBOND": "채권동적배분",
-    "KOALLWEATHER1": "K-올웨더 v1",
-    "KOALLWEATHER2_GROWTH": "K-올웨더 v2 - 성장형",
+    "KOALLWEATHER1": "K-글로벌 자산배분",
+    "KOALLWEATHER2_GROWTH": "K-올웨더(마연굴)",
     "HANMI_STATIC": "한미정적자산배분",
     "HANMI_DYNAMIC_STABLE": "한미동적 - 안정형",
 }
@@ -599,10 +599,10 @@ STRATEGY_DESCRIPTIONS = {
     "ADM": "Accelerating Dual Momentum(Dushanov). SPY(미국대형주)와 VSS(전세계ex-US 소형주) 중 1/3/6개월 모멘텀 합산 스코어가 더 높은 쪽에 100% 투자하되, 둘 다 음수면 TLT(미국장기채) 단일 안전자산으로 전환.",
     "DGA": "카나리아 TIP(물가연동채) 252일 이동평균이 꺾이면(라이브 계산에서는 S&P500 배당수익률<1.6%, 금리스프레드<-0.5%p 조건도 함께 반영) 방어자산군 BIL(초단기채)·TLT(장기채)·PDBC(원자재) 중 126일 모멘텀 1위로 전환, 아니면 공격자산군 QQQ(나스닥)·SCHD(미국고배당주) 중 장기 모멘텀 1위에 100% 투자.",
     "DYNBOND": "채권동적배분. 8개 채권 SHY(미국단기채)·IEF(미국중기채)·TLT(미국장기채)·TIP(물가연동채)·LQD(회사채)·HYG(하이일드)·BWX(국제채권)·EMB(신흥국채권) 중 126일 수익률 상위 3개를 각 1/3씩 보유하되, 개별 수익률이 마이너스면 그 몫은 현금.",
-    "KOALLWEATHER1": "K-올웨더 v1(김성일 이전 버전, 브라이언 제공). 주식 50% — KODEX 선진국MSCI World 15%, PLUS 신흥국MSCI(합성H) 15%, KODEX 미국나스닥100TR 10%, KODEX 미국S&P500TR 10%. 대체투자 15% — ACE KRX금현물 10%, TIGER 미국필라델피아반도체나스닥 2%, KODEX AI전력핵심설비 1.5%, KODEX 에너지화학 1.5%. 채권+외화 35% — ACE 국고채10년 7.5%, RISE KIS국고채30년Enhanced 7.5%, TIGER 미국채10년선물 10%, PLUS 미국채30년액티브 10%. 모멘텀 계산 없이 매달 동일 비중 유지.",
-    "KOALLWEATHER2_GROWTH": "K-올웨더 v2 성장형(브라이언 제공, 위험감내도별 예시 표). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
-    "HANMI_STATIC": "한미정적자산배분(브라이언 제공). TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
-    "HANMI_DYNAMIC_STABLE": "한미동적-안정형(브라이언 제공). 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 120일 이격도(가격/120일 이동평균)가 100% 미만인 종목은 매수하지 않고 비중을 비워둔다(현금 대체 없음). 매수·매도가 같은 지표·같은 기준선이라 매달 새로 계산해도 정확함.",
+    "KOALLWEATHER1": "K-글로벌 자산배분(김성일 이전 버전). 주식 50% — KODEX 선진국MSCI World 15%, PLUS 신흥국MSCI(합성H) 15%, KODEX 미국나스닥100TR 10%, KODEX 미국S&P500TR 10%. 대체투자 15% — ACE KRX금현물 10%, TIGER 미국필라델피아반도체나스닥 2%, KODEX AI전력핵심설비 1.5%, KODEX 에너지화학 1.5%. 채권+외화 35% — ACE 국고채10년 7.5%, RISE KIS국고채30년Enhanced 7.5%, TIGER 미국채10년선물 10%, PLUS 미국채30년액티브 10%. 모멘텀 계산 없이 매달 동일 비중 유지. 이 중 대체투자의 5%(TIGER 미국필라델피아반도체나스닥·KODEX AI전력핵심설비·KODEX 에너지화학)는 알파 추구를 위한 전술적 배분으로, 1년 단위로 그 시점의 유망 섹터 ETF를 선정해 교체 편입하는 슬롯이다.",
+    "KOALLWEATHER2_GROWTH": "K-올웨더(마연굴)(위험감내도별 예시 표 중 성장형). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
+    "HANMI_STATIC": "한미정적자산배분. TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
+    "HANMI_DYNAMIC_STABLE": "한미동적-안정형. 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 종가가 120일 이동평균 이상인 종목만 보유한다(그 미만이면 매수하지 않고 비중을 비워둠 — 현금 대체 없음). 매달 그 시점의 종가로 다시 판단하므로, 120일 이동평균을 웃도는 동안은 계속 보유하고 밑돌면 보유를 정리한다.",
 }
 
 

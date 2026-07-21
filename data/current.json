@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-21 13:22 KST",
+    "generatedAt": "2026-07-21 19:12 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
     "latestDataDate": "2026-07-20"
@@ -292,7 +292,7 @@
       ]
     },
     "DAA": {
-      "label": "방어적자산배분(DAA-G12)",
+      "label": "DAA(G12)",
       "description": "DAA-G12(Keller & Keuning, 2018). 카나리아 VWO(신흥국주식)·BND(미국종합채권) 중 음수 모멘텀 개수(n)에 따라 공격/방어 비중을 3단계(breadth)로 나눈다: n=0→공격 100%, n=1→50%/50%, n=2→방어 100%. 공격자산군 12종목(SPY·IWM·QQQ·VGK·EWJ·EEM·VNQ·PDBC·GLD·TLT·HYG·LQD) 상위 6개는 균등가중, 방어자산군 SHY(단기채)·IEF(중기채)·LQD(회사채) 중 상위 1개에 나머지 전액. 모멘텀은 13612W(1/3/6/12개월 수익률에 12/4/2/1 가중).",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
@@ -643,8 +643,8 @@
       ]
     },
     "KOALLWEATHER1": {
-      "label": "K-올웨더 v1",
-      "description": "K-올웨더 v1(김성일 이전 버전, 브라이언 제공). 주식 50% — KODEX 선진국MSCI World 15%, PLUS 신흥국MSCI(합성H) 15%, KODEX 미국나스닥100TR 10%, KODEX 미국S&P500TR 10%. 대체투자 15% — ACE KRX금현물 10%, TIGER 미국필라델피아반도체나스닥 2%, KODEX AI전력핵심설비 1.5%, KODEX 에너지화학 1.5%. 채권+외화 35% — ACE 국고채10년 7.5%, RISE KIS국고채30년Enhanced 7.5%, TIGER 미국채10년선물 10%, PLUS 미국채30년액티브 10%. 모멘텀 계산 없이 매달 동일 비중 유지.",
+      "label": "K-글로벌 자산배분",
+      "description": "K-글로벌 자산배분(김성일 이전 버전). 주식 50% — KODEX 선진국MSCI World 15%, PLUS 신흥국MSCI(합성H) 15%, KODEX 미국나스닥100TR 10%, KODEX 미국S&P500TR 10%. 대체투자 15% — ACE KRX금현물 10%, TIGER 미국필라델피아반도체나스닥 2%, KODEX AI전력핵심설비 1.5%, KODEX 에너지화학 1.5%. 채권+외화 35% — ACE 국고채10년 7.5%, RISE KIS국고채30년Enhanced 7.5%, TIGER 미국채10년선물 10%, PLUS 미국채30년액티브 10%. 모멘텀 계산 없이 매달 동일 비중 유지. 이 중 대체투자의 5%(TIGER 미국필라델피아반도체나스닥·KODEX AI전력핵심설비·KODEX 에너지화학)는 알파 추구를 위한 전술적 배분으로, 1년 단위로 그 시점의 유망 섹터 ETF를 선정해 교체 편입하는 슬롯이다.",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
@@ -772,8 +772,8 @@
       ]
     },
     "KOALLWEATHER2_GROWTH": {
-      "label": "K-올웨더 v2 - 성장형",
-      "description": "K-올웨더 v2 성장형(브라이언 제공, 위험감내도별 예시 표). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
+      "label": "K-올웨더(마연굴)",
+      "description": "K-올웨더(마연굴)(위험감내도별 예시 표 중 성장형). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
@@ -872,7 +872,7 @@
     },
     "HANMI_STATIC": {
       "label": "한미정적자산배분",
-      "description": "한미정적자산배분(브라이언 제공). TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
+      "description": "한미정적자산배분. TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
@@ -971,7 +971,7 @@
     },
     "HANMI_DYNAMIC_STABLE": {
       "label": "한미동적 - 안정형",
-      "description": "한미동적-안정형(브라이언 제공). 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 120일 이격도(가격/120일 이동평균)가 100% 미만인 종목은 매수하지 않고 비중을 비워둔다(현금 대체 없음). 매수·매도가 같은 지표·같은 기준선이라 매달 새로 계산해도 정확함.",
+      "description": "한미동적-안정형. 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 종가가 120일 이동평균 이상인 종목만 보유한다(그 미만이면 매수하지 않고 비중을 비워둠 — 현금 대체 없음). 매달 그 시점의 종가로 다시 판단하므로, 120일 이동평균을 웃도는 동안은 계속 보유하고 밑돌면 보유를 정리한다.",
       "asOfDate": "2026-06-30",
       "applicableMonth": "2026년 7월",
       "timingNote": "기준: 2026-06-30 종가(전월 말) → 적용: 2026년 7월 보유",
