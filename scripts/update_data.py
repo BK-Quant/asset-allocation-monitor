@@ -37,7 +37,7 @@ TICKERS = [
     "SPY", "TLT", "GLD", "BIL", "IWD", "QQQ", "IEF", "SHY",
     "IWM", "VWO", "BND", "EFA", "PDBC", "VNQ", "VGK", "EWJ",
     "EEM", "HYG", "LQD", "REM", "TIP", "AGG", "SCZ", "VSS",
-    "BWX", "EMB", "RWX", "VTI", "VEA", "IWN", "SCHD",
+    "BWX", "EMB", "RWX", "VTI", "VEA", "IWN", "SCHD", "INDA",
     "363580.KS", "360750.KS", "411060.KS", "365780.KS", "284430.KS", "272580.KS",
     # ── K-올웨더v1/v2, 한미전략시리즈 추가 (2026-07-20) ──
     "251350.KS", "379810.KS", "379800.KS", "195980.KS", "487240.KS", "117460.KS",

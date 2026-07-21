@@ -17,6 +17,16 @@
 
 * { box-sizing: border-box; }
 
+/* ── 상단 네비게이션 (자산배분 ↔ 하락장 대응) ── */
+.site-nav { background: var(--bg-elevated); border-bottom: 1px solid var(--card-border); }
+.site-nav .wrap { display: flex; gap: 6px; }
+.site-nav .nav-link {
+  padding: 14px 18px; color: var(--text-dim); text-decoration: none;
+  font-weight: 700; font-size: 15px; border-bottom: 2px solid transparent;
+}
+.site-nav .nav-link:hover { color: var(--text); }
+.site-nav .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -200,6 +210,11 @@ main { padding: 32px 0 60px; }
 .picker-item input { accent-color: var(--accent); cursor: pointer; }
 .picker-item i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
 .picker-item:has(input:checked) { color: var(--text); border-color: var(--card-border); background: var(--bg-elevated); }
+.picker-item-ext { font-style: italic; }
+.picker-item-ext i { border-radius: 999px; }
+
+.compare-table tr.row-ext { font-style: italic; color: var(--text-dim); }
+.compare-table tr.row-ext td:first-child a { color: var(--text-dim); border-bottom-style: dotted; }
 
 .compare-chart-wrap {
   position: relative;

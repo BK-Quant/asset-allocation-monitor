@@ -1,9 +1,9 @@
 {
   "meta": {
-    "generatedAt": "2026-07-21 20:18 KST",
+    "generatedAt": "2026-07-21 23:25 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
-    "latestDataDate": "2026-07-20"
+    "latestDataDate": "2026-07-21"
   },
   "strategies": {
     "PERM": {
@@ -432,7 +432,7 @@
           "sector": "미국 장기채",
           "category": "채권",
           "price": 86.102,
-          "weight": 0.541663,
+          "weight": 0.541662,
           "score": null
         },
         {
@@ -442,7 +442,7 @@
           "sector": "원자재",
           "category": "원자재",
           "price": 15.88,
-          "weight": 0.209712,
+          "weight": 0.209713,
           "score": null
         },
         {
@@ -1072,13 +1072,13 @@
     },
     "daaCanaryPreview": {
       "label": "DAA 카나리아 지표 (최신 종가 기준 프리뷰)",
-      "asOfDate": "2026-07-20",
+      "asOfDate": "2026-07-21",
       "scores": {
-        "VWO": -0.127249,
-        "BND": 0.001309
+        "VWO": -0.105432,
+        "BND": -0.09825
       },
-      "breadth": 0.5,
-      "note": "음수 카나리아 1개 → 공격 50% / 방어 50% — 월말 확정 전 최신 종가 기준, 월말 재계산 시 바뀔 수 있음"
+      "breadth": 0.0,
+      "note": "음수 카나리아 2개 → 공격 0% / 방어 100% — 월말 확정 전 최신 종가 기준, 월말 재계산 시 바뀔 수 있음"
     },
     "admCurrent": {
       "label": "가속듀얼모멘텀 당월 확정 티커",
@@ -1089,7 +1089,7 @@
     },
     "admPreview": {
       "label": "가속듀얼모멘텀 차월 예상 티커 (프리뷰)",
-      "asOfDate": "2026-07-20",
+      "asOfDate": "2026-07-21",
       "applicableMonth": "2026년 8월 (예상·미확정)",
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust",

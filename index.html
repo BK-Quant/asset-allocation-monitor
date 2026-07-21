@@ -8,6 +8,12 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="nav-link active">자산배분</a>
+    <a href="bear-defense.html" class="nav-link">하락장 대응</a>
+  </div>
+</nav>
 <header class="site-header">
   <div class="wrap">
     <h1>자산배분모니터</h1>
@@ -26,7 +32,7 @@
   <section id="compareSection" class="panel">
     <div class="section-head">
       <h2>전략별 성과 비교</h2>
-      <div class="compare-legend-note">전략을 선택하면 그래프에 표시됩니다. 선택한 전략들이 <b>공통으로 겹치는 구간</b>부터 100으로 맞춰 비교합니다.</div>
+      <div class="compare-legend-note">전략을 선택하면 그래프에 표시됩니다. 선택한 전략들이 <b>공통으로 겹치는 구간</b>부터 100으로 맞춰 비교합니다. <i>기울임체(확장·프록시)</i> 항목은 신생 ETF의 상장 전 구간을 유사 자산 수익률로 대체해 늘린 참고용 백테스트입니다 — 실제 상품 수익률이 아닙니다.</div>
     </div>
     <div class="compare-picker-head">
       <span class="compare-picker-title">비교할 전략 선택</span>
@@ -84,6 +90,6 @@
   </div>
 </div>
 
-<script src="js/app.js?v=20260721i"></script>
+<script src="js/app.js?v=20260721j"></script>
 </body>
 </html>

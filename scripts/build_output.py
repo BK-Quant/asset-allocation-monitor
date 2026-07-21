@@ -20,8 +20,14 @@ from pathlib import Path
 from strategy_engine import (
     PriceSeries, STRATEGIES, STRATEGY_LABELS, STRATEGY_DESCRIPTIONS,
     KOALLWEATHER1_WEIGHTS, KOALLWEATHER2_PROFILES, HANMI_STATIC_WEIGHTS,
+    EXTENDED_PROXY_MAP, build_extended_price_series,
     compute_allocation, daa_canary_raw_scores,
 )
+
+# 프록시로 상장 전 구간을 스플라이스해 백테스트를 연장하는 "확장(프록시)" 모드 대상.
+# K-글로벌자산배분은 병목 종목(KODEX AI전력핵심설비)이 "매년 유망 섹터로 교체"하는
+# 슬롯이라 장기 프록시가 개념적으로 맞지 않아 제외했다.
+EXTENDED_BACKTEST_CODES = ["KOALLWEATHER2_GROWTH", "HANMI_STATIC"]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -257,14 +263,14 @@ def _first_fully_listed_index(ps, tickers, month_ends):
     return None
 
 
-def build_backtests(ps: PriceSeries, idx_current):
+def build_backtests(ps: PriceSeries, idx_current, codes=None):
     month_ends = [i for i in ps.month_end_indices() if i <= idx_current]
     generic_start = next((pos for pos, i in enumerate(month_ends) if i >= MIN_HISTORY_DAYS), None)
     if generic_start is None or generic_start >= len(month_ends) - 1:
         return {}
 
     out = {}
-    for code in STRATEGIES:
+    for code in (codes if codes is not None else STRATEGIES):
         kwargs = {"use_live_macro": False} if code == "DGA" else {}
         start_pos = generic_start
         required = REQUIRED_TICKERS.get(code)
@@ -316,6 +322,21 @@ def main():
     (DATA_DIR / "backtests.json").write_text(json.dumps(backtests, ensure_ascii=False), encoding="utf-8")
     n_points = len(next(iter(backtests.values()))["dates"]) if backtests else 0
     print(f"저장: data/backtests.json ({len(backtests)}개 전략 x 약 {n_points}개월)")
+
+    # ── 확장(프록시) 백테스트: 신생 ETF의 상장 전 구간을 유사 자산으로 스플라이스 ──
+    extended_ps = build_extended_price_series(ps)
+    extended_backtests = build_backtests(extended_ps, idx_current, codes=EXTENDED_BACKTEST_CODES)
+    extended_meta = {
+        code: {
+            "label": STRATEGY_LABELS[code],
+            "proxies": {t: EXTENDED_PROXY_MAP[t] for t in EXTENDED_PROXY_MAP if t in REQUIRED_TICKERS.get(code, [])},
+        }
+        for code in extended_backtests
+    }
+    (DATA_DIR / "backtests_extended.json").write_text(
+        json.dumps({"backtests": extended_backtests, "meta": extended_meta}, ensure_ascii=False), encoding="utf-8"
+    )
+    print(f"저장: data/backtests_extended.json ({len(extended_backtests)}개 전략 확장)")
 
 
 if __name__ == "__main__":

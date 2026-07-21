@@ -162,6 +162,54 @@ class PriceSeries:
         return info is not None and info["current"] < info["past12m"]
 
 
+# ── 확장(프록시) 백테스트 ───────────────────────────────────────
+# 일부 전략은 구성 ETF가 2021~2024년에 상장된 신생 상품이라 백테스트 구간이 짧다.
+# 아래 매핑은 그런 종목의 "상장 전" 구간을, 같은 자산군을 오래 추종해온 다른 티커의
+# 수익률로 대체(스플라이스)해서 백테스트 구간을 늘리기 위한 것이다. 실제 그 상품의
+# 과거 수익률이 아니라 유사 자산의 대역치이므로, 반드시 "확장(프록시)" 라벨과 함께만
+# 노출해야 한다(데이터 정직성 원칙 — 실제 수치와 절대 섞지 않음).
+EXTENDED_PROXY_MAP = {
+    "379800.KS": "SPY",   # KODEX 미국S&P500TR ← SPY
+    "411060.KS": "GLD",   # ACE KRX금현물 ← GLD
+    "453810.KS": "INDA",  # KODEX 인도Nifty50 ← iShares MSCI India
+    "453850.KS": "TLT",   # ACE 미국30년국채액티브(H) ← iShares 20+Y Treasury
+    "464470.KS": "TLT",   # PLUS 미국채30년액티브 ← 동일
+    "449170.KS": "BIL",   # TIGER KOFR금리액티브(합성) ← SPDR 1-3M T-Bill
+    "488770.KS": "BIL",   # KODEX 머니마켓액티브 ← 동일
+}
+
+
+def build_extended_price_series(ps):
+    """EXTENDED_PROXY_MAP에 있는 티커는 상장 전 구간을 프록시 티커의 수익률로
+    스플라이스한 새 PriceSeries를 반환한다. 상장일 시점 가격이 정확히 이어지도록
+    프록시 가격에 배율(scale)을 곱해 붙인다. 원본 ps는 건드리지 않는다."""
+    dates = ps.dates
+    new_prices = dict(ps.prices)
+    for ticker, proxy in EXTENDED_PROXY_MAP.items():
+        actual = ps.prices.get(ticker)
+        proxy_arr = ps.prices.get(proxy)
+        if actual is None or proxy_arr is None:
+            continue
+        first_idx = next((i for i, v in enumerate(actual) if v is not None), None)
+        if first_idx is None or not proxy_arr[first_idx]:
+            continue
+        scale = actual[first_idx] / proxy_arr[first_idx]
+        spliced = []
+        for i in range(len(dates)):
+            if i >= first_idx and actual[i] is not None:
+                spliced.append(actual[i])
+            elif proxy_arr[i] is not None:
+                spliced.append(proxy_arr[i] * scale)
+            else:
+                spliced.append(None)
+        new_prices[ticker] = spliced
+    extended = PriceSeries.__new__(PriceSeries)
+    extended.dates = dates
+    extended.prices = new_prices
+    extended.economic = ps.economic
+    return extended
+
+
 def sort_by_score_desc(rows):
     return sorted(rows, key=lambda r: (-r["score"], r["ticker"]))
 

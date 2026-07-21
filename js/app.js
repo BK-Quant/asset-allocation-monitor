@@ -177,7 +177,7 @@ function annualizedStats(bt) {
   return { cagr, mdd, vol, sharpe, years };
 }
 
-function renderComparison(current, backtests) {
+function renderComparison(current, backtests, extended) {
   const codes = Object.keys(backtests).filter((c) => backtests[c] && backtests[c].nav.length > 1);
   if (!codes.length) {
     document.getElementById("compareSection").style.display = "none";
@@ -187,21 +187,46 @@ function renderComparison(current, backtests) {
   const rows = codes.map((code) => {
     const bt = backtests[code];
     const stats = annualizedStats(bt);
-    return { code, label: current.strategies[code]?.label || code, bt, stats };
+    return { code, label: current.strategies[code]?.label || code, bt, stats, extended: false };
   }).filter((r) => r.stats);
 
   // 색상은 전체 목록 기준 고정 인덱스라 선택을 바꿔도 각 전략 색이 유지된다.
   const colorOf = (code) => COMPARE_COLORS[rows.findIndex((r) => r.code === code) % COMPARE_COLORS.length];
 
+  // ── 확장(프록시) 백테스트 — 신생 ETF 상장 전 구간을 유사 자산으로 스플라이스한
+  // 참고용 시리즈. 실제 데이터가 아니므로 코드에 __EXT를 붙여 별도 관리하고,
+  // 색상은 원본 전략과 동일하게(점선으로 구분), 기본은 선택 해제 상태로 둔다.
+  const extBacktests = (extended && extended.backtests) || {};
+  const extMeta = (extended && extended.meta) || {};
+  const extRows = Object.keys(extBacktests)
+    .filter((code) => extBacktests[code] && extBacktests[code].nav.length > 1)
+    .map((code) => {
+      const bt = extBacktests[code];
+      const stats = annualizedStats(bt);
+      const proxies = Object.values(extMeta[code]?.proxies || {}).join("/");
+      return {
+        code: `${code}__EXT`,
+        baseCode: code,
+        label: `${current.strategies[code]?.label || code} (확장·프록시${proxies ? ": " + proxies : ""})`,
+        bt,
+        stats,
+        extended: true,
+      };
+    })
+    .filter((r) => r.stats);
+
+  const allRows = rows.concat(extRows);
+  const colorOfRow = (r) => colorOf(r.extended ? r.baseCode : r.code);
+
   // ── 전략 선택 체크박스 ──
   const picker = document.getElementById("comparePicker");
-  const sortedForPicker = [...rows].sort((a, b) => a.label.localeCompare(b.label));
+  const sortedForPicker = [...allRows].sort((a, b) => a.label.localeCompare(b.label));
   picker.innerHTML = sortedForPicker
     .map(
       (r) => `
-      <label class="picker-item">
-        <input type="checkbox" value="${r.code}" checked />
-        <i style="background:${colorOf(r.code)}"></i>
+      <label class="picker-item${r.extended ? " picker-item-ext" : ""}">
+        <input type="checkbox" value="${r.code}" ${r.extended ? "" : "checked"} />
+        <i style="background:${colorOfRow(r)}${r.extended ? ";border:1px dashed currentColor;background:transparent" : ""}"></i>
         <span>${r.label}</span>
       </label>`
     )
@@ -220,7 +245,7 @@ function renderComparison(current, backtests) {
     chartCanvas.style.display = "";
     emptyHint.style.display = "none";
 
-    const selectedRows = rows.filter((r) => selected.includes(r.code));
+    const selectedRows = allRows.filter((r) => selected.includes(r.code));
     // 선택된 전략들끼리 공통으로 겹치는 구간(가장 늦게 시작한 전략의 시작일)부터 100으로 리베이스
     const commonStart = selectedRows.map((r) => r.bt.dates[0]).sort().pop();
     const series = selectedRows.map((r) => {
@@ -229,7 +254,7 @@ function renderComparison(current, backtests) {
       const baseNav = r.bt.nav[startIdx];
       const dates = r.bt.dates.slice(startIdx);
       const nav = r.bt.nav.slice(startIdx).map((v) => (v / baseNav) * 100);
-      return { code: r.code, label: r.label, dates, nav, color: colorOf(r.code) };
+      return { code: r.code, label: r.label, dates, nav, color: colorOfRow(r), dashed: r.extended };
     }).filter(Boolean);
     drawMultiLineChart(chartCanvas, series);
   }
@@ -250,7 +275,7 @@ function renderComparison(current, backtests) {
   const tbody = document.getElementById("compareTableBody");
 
   function draw() {
-    const sorted = [...rows].sort((a, b) => {
+    const sorted = [...allRows].sort((a, b) => {
       const av = sortKey === "label" ? a.label : a.stats[sortKey];
       const bv = sortKey === "label" ? b.label : b.stats[sortKey];
       if (av == null) return 1;
@@ -261,8 +286,8 @@ function renderComparison(current, backtests) {
     tbody.innerHTML = sorted
       .map(
         (r) => `
-        <tr>
-          <td><a href="#strategy-${r.code}" class="compare-link" data-code="${r.code}">${r.label}</a></td>
+        <tr class="${r.extended ? "row-ext" : ""}">
+          <td><a href="#strategy-${r.baseCode || r.code}" class="compare-link" data-code="${r.baseCode || r.code}">${r.label}</a></td>
           <td class="${r.stats.cagr >= 0 ? "pos" : "neg"}">${(r.stats.cagr * 100).toFixed(1)}%</td>
           <td class="neg">${(r.stats.mdd * 100).toFixed(1)}%</td>
           <td>${(r.stats.vol * 100).toFixed(1)}%</td>
@@ -361,7 +386,9 @@ function drawMultiLineChart(canvas, series) {
     });
     ctx.strokeStyle = s.color || COMPARE_COLORS[i % COMPARE_COLORS.length];
     ctx.lineWidth = 1.5;
+    ctx.setLineDash(s.dashed ? [5, 4] : []);
     ctx.stroke();
+    ctx.setLineDash([]);
   });
 
   const longestSeries = series.reduce((a, b) => (b.nav.length > a.nav.length ? b : a));
@@ -725,14 +752,15 @@ function wireSearch() {
 // ── 부트스트랩 ───────────────────────────────────────────────
 async function main() {
   try {
-    const [current, backtests, prices] = await Promise.all([
+    const [current, backtests, prices, extended] = await Promise.all([
       loadJSON("current.json"),
       loadJSON("backtests.json"),
       loadJSON("prices.json"),
+      loadJSON("backtests_extended.json").catch(() => ({ backtests: {}, meta: {} })),
     ]);
     renderMetaBar(current);
     renderCustomSection(current);
-    renderComparison(current, backtests);
+    renderComparison(current, backtests, extended);
     renderStrategies(current, backtests, prices);
     wireSearch();
   } catch (err) {
