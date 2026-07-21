@@ -262,6 +262,54 @@ def calc_HANMI_DYNAMIC_STABLE(ps, idx):
     return allocations
 
 
+HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE = [
+    "133690.KS", "360750.KS", "229200.KS", "069500.KS", "411060.KS",
+    "148070.KS", "305080.KS", "138230.KS", "0043B0.KS",
+]
+HANMI_DYNAMIC_AGGRESSIVE_MAX_HOLDINGS = 10
+
+
+def calc_HANMI_DYNAMIC_AGGRESSIVE(ps, idx, prev_holdings=None):
+    """한미동적-공격형. 매수(200일 이평 상향)와 매도(150일 이평 하향) 기준선이 달라
+    "지난달에 보유 중이었는가"를 알아야 하는 이력(hysteresis) 전략 — prev_holdings로
+    직전 시점의 보유 종목 집합을 넘겨받는다(호출부에서 워크포워드로 순차 추적).
+
+    1) 매도: prev_holdings 중 150일 이평 아래로 이탈한 종목은 정리.
+    2) 매수: 남은 보유 외 종목 중 200일 이평 위(상향)인 것을 (1개월+3개월 수익률)
+       내림차순으로 정렬해, 최대 보유 종목 수(10, 유니버스가 9개라 사실상 무제한)까지
+       빈 자리만큼 새로 편입.
+    3) 최종 보유 종목 전체에 균등비중(1/N) — 안정형과 달리 현금 잔여 없이 항상 풀인베스트."""
+    prev_holdings = prev_holdings or set()
+
+    still_held = set()
+    for t in prev_holdings:
+        sma150 = ps.get_sma_momentum(t, idx, 150)
+        if sma150 is not None and sma150 < 0:
+            continue  # 매도 조건 충족 → 정리
+        still_held.add(t)
+
+    candidates = []
+    for t in HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE:
+        if t in still_held:
+            continue
+        sma200 = ps.get_sma_momentum(t, idx, 200)
+        if sma200 is None or sma200 <= 0:
+            continue
+        r1m, r3m = ps.get_return(t, idx, 21), ps.get_return(t, idx, 63)
+        if r1m is None or r3m is None:
+            continue
+        candidates.append({"ticker": t, "score": r1m + r3m})
+    candidates = sort_by_score_desc(candidates)
+
+    slots = HANMI_DYNAMIC_AGGRESSIVE_MAX_HOLDINGS - len(still_held)
+    new_buys = [c["ticker"] for c in candidates[: max(0, slots)]]
+    final_holdings = still_held | set(new_buys)
+    if not final_holdings:
+        return {}
+    w = 1 / len(final_holdings)
+    return {t: w for t in final_holdings}
+
+
 def calc_LAA(ps, idx):
     uptrend = (ps.get_sma_momentum("SPY", idx, 200) or 0) > 0
     above_avg = ps.is_unemployment_above_average(ps.dates[idx])
@@ -560,6 +608,7 @@ STRATEGIES = {
     "KOALLWEATHER2_GROWTH": calc_KOALLWEATHER2("GROWTH"),
     "HANMI_STATIC": calc_HANMI_STATIC,
     "HANMI_DYNAMIC_STABLE": calc_HANMI_DYNAMIC_STABLE,
+    "HANMI_DYNAMIC_AGGRESSIVE": calc_HANMI_DYNAMIC_AGGRESSIVE,
 }
 
 STRATEGY_LABELS = {
@@ -581,6 +630,7 @@ STRATEGY_LABELS = {
     "KOALLWEATHER2_GROWTH": "K-올웨더(마연굴)",
     "HANMI_STATIC": "한미정적자산배분",
     "HANMI_DYNAMIC_STABLE": "한미동적 - 안정형",
+    "HANMI_DYNAMIC_AGGRESSIVE": "한미동적 - 공격형",
 }
 
 
@@ -603,11 +653,12 @@ STRATEGY_DESCRIPTIONS = {
     "KOALLWEATHER2_GROWTH": "K-올웨더(마연굴)(위험감내도별 예시 표 중 성장형). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
     "HANMI_STATIC": "한미정적자산배분. TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
     "HANMI_DYNAMIC_STABLE": "한미동적-안정형. 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 종가가 120일 이동평균 이상인 종목만 보유한다(그 미만이면 매수하지 않고 비중을 비워둠 — 현금 대체 없음). 매달 그 시점의 종가로 다시 판단하므로, 120일 이동평균을 웃도는 동안은 계속 보유하고 밑돌면 보유를 정리한다.",
+    "HANMI_DYNAMIC_AGGRESSIVE": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위로 올라선 종목을 (1개월+3개월 수익률) 순위로 골라 매수하고, 이미 보유 중인 종목은 종가가 150일 이동평균 아래로 떨어지기 전까지 계속 들고 간다(매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략). 최종 보유 종목 전체에 균등비중(1/N) — 한미동적-안정형과 달리 현금을 남기지 않고 항상 전액 투자.",
 }
 
 
 def compute_allocation(ps, code, idx, **kwargs):
     fn = STRATEGIES[code]
-    if code == "DGA":
+    if code in ("DGA", "HANMI_DYNAMIC_AGGRESSIVE"):
         return fn(ps, idx, **kwargs)
     return fn(ps, idx)
