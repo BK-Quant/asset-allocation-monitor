@@ -19,6 +19,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
       - name: 코스피 종가·1년고점 갱신
         run: python scripts/update_kospi.py
 

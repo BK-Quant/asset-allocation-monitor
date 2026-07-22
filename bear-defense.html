@@ -34,7 +34,9 @@
 .data-asof { font-size: 12px; color: var(--text-dim); margin: -4px 0 16px; }
 .data-asof b { color: var(--text); }
 
-.mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+.mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
+.refresh-btn { margin-left: auto; }
+.refresh-btn:disabled { opacity: 0.5; cursor: default; }
 .mode-btn {
   padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 999px;
   background: var(--card); border: 1px solid var(--card-border); color: var(--text-dim); cursor: pointer;
@@ -98,6 +100,7 @@
     <div class="mode-toggle">
       <button type="button" id="modeAutoBtn" class="mode-btn active">🔴 자동 (실시간 코스피)</button>
       <button type="button" id="modeManualBtn" class="mode-btn">✏️ 수동 (직접 입력)</button>
+      <button type="button" id="refreshBtn" class="mode-btn refresh-btn" title="최신 데이터 다시 불러오기">🔄 새로고침</button>
     </div>
     <div class="data-asof" id="dataAsOf" hidden></div>
     <div class="calc-inputs">
@@ -343,18 +346,19 @@ function render() {
 let mode = 'auto';
 let kospiCache = null;
 
-async function fetchKospi() {
-  if (kospiCache) return kospiCache;
-  const res = await fetch('data/kospi.json', { cache: 'no-store' });
+async function fetchKospi(forceRefresh) {
+  if (kospiCache && !forceRefresh) return kospiCache;
+  // 캐시버스터(타임스탬프)로 브라우저/CDN 캐시까지 우회해 매번 최신 커밋된 데이터를 받는다.
+  const res = await fetch(`data/kospi.json?t=${Date.now()}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('no data');
   kospiCache = await res.json();
   return kospiCache;
 }
 
-async function applyAutoMode() {
+async function applyAutoMode(forceRefresh) {
   const asof = $('dataAsOf');
   try {
-    const j = await fetchKospi();
+    const j = await fetchKospi(forceRefresh);
     $('refHigh').value = j.high1y;
     $('current').value = j.close;
     $('refHigh').disabled = true;
@@ -368,6 +372,25 @@ async function applyAutoMode() {
     asof.innerHTML = `⚠️ 실시간 데이터를 불러오지 못했습니다(data/kospi.json 없음). <b>수동모드</b>로 직접 입력해 주세요.`;
   }
   render();
+}
+
+async function refreshData() {
+  const btn = $('refreshBtn');
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = '🔄 갱신 중…';
+  try {
+    if (mode === 'auto') {
+      await applyAutoMode(true);
+    } else {
+      // 수동모드에서는 입력값을 건드리지 않고, 다음에 자동모드로 돌아갈 때 쓸 캐시만 최신화
+      kospiCache = null;
+      await fetchKospi(true);
+    }
+  } finally {
+    btn.textContent = original;
+    btn.disabled = false;
+  }
 }
 
 function applyManualMode() {
@@ -390,6 +413,7 @@ function setMode(m) {
 
 $('modeAutoBtn').addEventListener('click', () => setMode('auto'));
 $('modeManualBtn').addEventListener('click', () => setMode('manual'));
+$('refreshBtn').addEventListener('click', refreshData);
 
 setMode('auto');
 </script>
