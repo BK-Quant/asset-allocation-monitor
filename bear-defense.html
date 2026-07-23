@@ -306,12 +306,13 @@ function render() {
   const sec = $('summarySection'), body = $('summaryBody');
   if (curDD!=null && troughDD!=null) {
     sec.hidden = false;
-    let deployed = 0, nextBuy = null, nextSell = null;
+    let deployed = 0, nextBuy = null;
     BANDS.forEach(b => { if (troughDD <= -b.dd) deployed += b.buy; });   // 최저점까지 매수
     for (const b of BANDS) { if (troughDD > -b.dd) { nextBuy = b; break; } }
-    // 다음 매도(현재가 바로 위 매도트리거)
-    let best = Infinity;
-    BANDS.forEach(b => { const sp=high*(1-b.sellDD/100); if (troughDD<=-b.dd && cur<sp && sp<best){best=sp; nextSell=b;} });
+    // 보유 중인 구간을 얕은칸(개별 트리거)/깊은칸(전부 고가-3% 동일 트리거)으로 분리
+    const heldShallow = BANDS.filter(b => b.kind==='shallow' && troughDD <= -b.dd);
+    const heldDeep = BANDS.filter(b => b.kind==='deep' && troughDD <= -b.dd);
+    const deepExitPx = high*(1-DEEP_EXIT/100);
     const deployedAmt = validPool ? pool*deployed/100 : null;
     let html = `현재 낙폭 <b>${curDD.toFixed(1)}%</b> (고점 ${pt(high)} → 현재 ${pt(cur)})`;
     if (recovering) html += ` · 최저 <b>${troughDD.toFixed(1)}%</b>(${pt(troughPx)})에서 회복 중`;
@@ -323,12 +324,21 @@ function render() {
       const nAmt = validPool ? pool*nextBuy.buy/100 : null;
       acts.push(`📉 다음 매수: <span class="warn">−${nextBuy.dd}% (${pt(high*(1-nextBuy.dd/100))})</span> 도달 시 <b>${nextBuy.buy}%</b>${nAmt!=null?' ('+won(nAmt)+')':''} 매수`);
     }
-    if (nextSell) {
-      const sAmt = validPool ? pool*nextSell.buy/100 : null;
-      const sLabel = nextSell.kind==='shallow' ? `−${nextSell.sellDD}% 회복` : `고가 −${DEEP_EXIT}%`;
-      acts.push(`📈 다음 매도: <span class="warn">${pt(high*(1-nextSell.sellDD/100))} (${sLabel})</span> 도달 시 <b>−${nextSell.dd}% 물량 ${nextSell.buy}%</b>${sAmt!=null?' ('+won(sAmt)+')':''} 매도`);
+    // 얕은칸: 각자 다른 가격에서 개별 매도 — 아직 안 팔린 것만 나열
+    heldShallow.forEach(b => {
+      const sp = high*(1-b.sellDD/100);
+      if (cur >= sp) return; // 이미 매도 트리거 지남
+      const sAmt = validPool ? pool*b.buy/100 : null;
+      acts.push(`📈 다음 매도: <span class="warn">${pt(sp)} (−${b.sellDD}% 회복)</span> 도달 시 <b>−${b.dd}% 물량 ${b.buy}%</b>${sAmt!=null?' ('+won(sAmt)+')':''} 매도`);
+    });
+    // 깊은칸: 전부 옛 고점 -3% 동일가에서 한꺼번에 매도 — 보유중인 구간 합산해 한 줄로
+    if (heldDeep.length && cur < deepExitPx) {
+      const deepBuyPct = heldDeep.reduce((s,b) => s+b.buy, 0);
+      const deepAmt = validPool ? pool*deepBuyPct/100 : null;
+      const bandList = heldDeep.map(b => `−${b.dd}%`).join('·');
+      acts.push(`🎯 깊은구간 매도목표: <span class="warn">${pt(deepExitPx)} (옛 고점 −${DEEP_EXIT}%)</span> 도달 시 보유중인 ${bandList} 물량 합 <b>${deepBuyPct}%</b>${deepAmt!=null?' ('+won(deepAmt)+')':''} 일괄매도`);
     }
-    if (!nextBuy && !nextSell) acts.push(`<span class="warn">전 구간 매수 완료. 회복을 기다려 매도 단계.</span>`);
+    if (!nextBuy && acts.length===0) acts.push(`<span class="warn">전 구간 매수 완료, 보유 물량 없음.</span>`);
     body.innerHTML = html + acts.join('<br>');
   } else {
     sec.hidden = true;
