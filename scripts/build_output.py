@@ -304,6 +304,35 @@ def build_backtests(ps: PriceSeries, idx_current, codes=None):
     return out
 
 
+def build_previews(ps, idx_current, idx_latest, current, backtests):
+    """월중 잠정 손익 미리보기. "이번달 확정 배분"(current.json에 이미 계산돼 있는
+    holdings, 즉 전월 말 종가 기준으로 고정된 종목·비중)을 그대로 유지한다고 가정하고,
+    idx_current(전월 말)→idx_latest(최신 종가) 구간의 수익률을 마지막 확정 NAV에 곱해
+    "지금 이 순간 이번달이 끝난다면"의 잠정 NAV를 계산한다. 다음 달 첫 확정 갱신 전까지는
+    최신 종가에 따라 계속 바뀌는 미확정 수치임을 프론트에서 명시해야 한다."""
+    previews = {}
+    if idx_latest == idx_current:
+        return previews  # 최신 데이터가 곧 전월 말 종가와 같으면(월초) 잠정치 의미 없음
+    for code, s in current["strategies"].items():
+        bt = backtests.get(code)
+        if not bt or not bt["nav"]:
+            continue
+        period_return = 0.0
+        for h in s["holdings"]:
+            ticker, weight = h["ticker"], h["weight"]
+            if ticker == "USD":
+                continue
+            p_from, p_to = ps.get_price(ticker, idx_current), ps.get_price(ticker, idx_latest)
+            if p_from and p_to:
+                period_return += weight * ((p_to - p_from) / p_from)
+        previews[code] = {
+            "asOfDate": ps.dates[idx_latest],
+            "nav": round(bt["nav"][-1] * (1 + period_return), 4),
+            "returnSinceConfirmed": round(period_return, 6),
+        }
+    return previews
+
+
 def main():
     prices_json = load_json(DATA_DIR / "prices.json")
     economic_json = load_json(DATA_DIR / "economic.json") if (DATA_DIR / "economic.json").exists() else {}
@@ -315,13 +344,15 @@ def main():
     idx_latest = ps.last_index()
 
     current = build_current(ps, idx_current, idx_latest, today.strftime("%Y-%m-%d %H:%M KST"))
-    (DATA_DIR / "current.json").write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"저장: data/current.json (기준일 {current['meta']['basisDate']} → 적용월 {current['meta']['applicableMonth']})")
 
     backtests = build_backtests(ps, idx_current)
     (DATA_DIR / "backtests.json").write_text(json.dumps(backtests, ensure_ascii=False), encoding="utf-8")
     n_points = len(next(iter(backtests.values()))["dates"]) if backtests else 0
     print(f"저장: data/backtests.json ({len(backtests)}개 전략 x 약 {n_points}개월)")
+
+    current["previews"] = build_previews(ps, idx_current, idx_latest, current, backtests)
+    (DATA_DIR / "current.json").write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"저장: data/current.json (기준일 {current['meta']['basisDate']} → 적용월 {current['meta']['applicableMonth']}, 잠정 미리보기 {len(current['previews'])}개)")
 
     # ── 확장(프록시) 백테스트: 신생 ETF의 상장 전 구간을 유사 자산으로 스플라이스 ──
     extended_ps = build_extended_price_series(ps)

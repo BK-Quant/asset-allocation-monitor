@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-07-29 16:42 KST",
+    "generatedAt": "2026-07-30 00:37 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
     "latestDataDate": "2026-07-28"
@@ -1094,6 +1094,103 @@
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust",
       "note": "월말 확정 전 최신 종가 기준 프리뷰 — 월말 재계산 시 바뀔 수 있음"
+    }
+  },
+  "previews": {
+    "PERM": {
+      "asOfDate": "2026-07-28",
+      "nav": 271.7936,
+      "returnSinceConfirmed": -0.006007
+    },
+    "LAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 389.1011,
+      "returnSinceConfirmed": -0.01195
+    },
+    "RAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 251.8005,
+      "returnSinceConfirmed": -0.019182
+    },
+    "GTAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 209.0501,
+      "returnSinceConfirmed": 0.021189
+    },
+    "PAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 238.8765,
+      "returnSinceConfirmed": -0.041155
+    },
+    "DAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 354.8524,
+      "returnSinceConfirmed": -0.032106
+    },
+    "VAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 285.2692,
+      "returnSinceConfirmed": -0.088437
+    },
+    "FAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 260.826,
+      "returnSinceConfirmed": 0.036745
+    },
+    "AAA": {
+      "asOfDate": "2026-07-28",
+      "nav": 197.0932,
+      "returnSinceConfirmed": 0.007622
+    },
+    "DUAL": {
+      "asOfDate": "2026-07-28",
+      "nav": 358.8101,
+      "returnSinceConfirmed": -0.007914
+    },
+    "CDM": {
+      "asOfDate": "2026-07-28",
+      "nav": 240.9372,
+      "returnSinceConfirmed": -0.001535
+    },
+    "ADM": {
+      "asOfDate": "2026-07-28",
+      "nav": 435.2134,
+      "returnSinceConfirmed": -0.007914
+    },
+    "DGA": {
+      "asOfDate": "2026-07-28",
+      "nav": 860.3687,
+      "returnSinceConfirmed": 0.002824
+    },
+    "DYNBOND": {
+      "asOfDate": "2026-07-28",
+      "nav": 173.1534,
+      "returnSinceConfirmed": -0.005898
+    },
+    "KOALLWEATHER1": {
+      "asOfDate": "2026-07-28",
+      "nav": 134.0632,
+      "returnSinceConfirmed": -0.075446
+    },
+    "KOALLWEATHER2_GROWTH": {
+      "asOfDate": "2026-07-28",
+      "nav": 158.5008,
+      "returnSinceConfirmed": -0.075832
+    },
+    "HANMI_STATIC": {
+      "asOfDate": "2026-07-28",
+      "nav": 166.0575,
+      "returnSinceConfirmed": -0.115229
+    },
+    "HANMI_DYNAMIC_STABLE": {
+      "asOfDate": "2026-07-28",
+      "nav": 224.7236,
+      "returnSinceConfirmed": -0.077134
+    },
+    "HANMI_DYNAMIC_AGGRESSIVE": {
+      "asOfDate": "2026-07-28",
+      "nav": 464.2336,
+      "returnSinceConfirmed": -0.216226
     }
   }
 }

@@ -307,6 +307,21 @@ main { padding: 32px 0 60px; }
   display: inline-block;
 }
 
+.backtest-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  background: var(--bg-elevated);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin-bottom: 12px;
+}
+.backtest-preview b.pos { color: var(--green); }
+.backtest-preview b.neg { color: var(--red); }
+
 .holdings-table {
   width: 100%;
   border-collapse: collapse;

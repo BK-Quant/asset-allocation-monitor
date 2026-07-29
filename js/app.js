@@ -560,6 +560,7 @@ function renderStrategies(current, backtests, prices) {
 
     const bt = backtests[code];
     const stats = backtestStats(bt);
+    const preview = current.previews && current.previews[code];
     const statsHTML = stats
       ? `<div class="backtest-stats">
            <span>총수익 <b>${(stats.totalReturn * 100).toFixed(0)}%</b></span>
@@ -568,10 +569,17 @@ function renderStrategies(current, backtests, prices) {
            <span>${stats.years.toFixed(1)}년</span>
          </div>`
       : `<div class="backtest-stats">백테스트 데이터 없음</div>`;
+    const previewHTML = preview
+      ? `<div class="backtest-preview">
+           <span class="badge preview">월중 잠정·미확정</span>
+           <span>${preview.asOfDate} 종가 기준 이번달 <b class="${preview.returnSinceConfirmed >= 0 ? "pos" : "neg"}">${preview.returnSinceConfirmed >= 0 ? "+" : ""}${(preview.returnSinceConfirmed * 100).toFixed(1)}%</b> (전월 말 확정 배분을 그대로 들고 있다고 가정 — 월말 재확정 전까지 계속 바뀜)</span>
+         </div>`
+      : "";
 
     card.innerHTML = `
       <h3>${s.label}</h3>
       <div class="timing-note">${s.timingNote}</div>
+      ${previewHTML}
       ${holdingsTableHTML(s.holdings)}
       <div class="card-actions">
         <button class="btn btn-logic" type="button">로직 설명</button>
@@ -609,7 +617,7 @@ function renderStrategies(current, backtests, prices) {
       const opening = !btWrap.classList.contains("open");
       btWrap.classList.toggle("open");
       if (opening && !drawn && bt) {
-        drawBacktestChart(btWrap.querySelector("canvas"), bt);
+        drawBacktestChart(btWrap.querySelector("canvas"), bt, preview);
         drawn = true;
       }
       btnBt.textContent = btWrap.classList.contains("open") ? "백테스트 접기" : "백테스트 보기";
@@ -631,7 +639,7 @@ function renderStrategies(current, backtests, prices) {
  * 호스팅하든 항상 동작하도록 하기 위함)
  */
 function drawLineChart(canvas, values, dates, opts = {}) {
-  const { color = "#4fd1c5", fill = "rgba(79,209,197,0.10)", height = 160, yFormat = (v) => v.toFixed(1) } = opts;
+  const { color = "#4fd1c5", fill = "rgba(79,209,197,0.10)", height = 160, yFormat = (v) => v.toFixed(1), previewCount = 0 } = opts;
   const dpr = window.devicePixelRatio || 1;
   const cssWidth = canvas.parentElement.clientWidth || 320;
   canvas.style.width = cssWidth + "px";
@@ -670,11 +678,12 @@ function drawLineChart(canvas, values, dates, opts = {}) {
     ctx.fillText(yFormat(v), padding.left - 6, y);
   });
 
-  // 선 + 아래 채우기
+  // 선 + 아래 채우기 (확정 구간만 — 잠정 구간 있으면 제외하고 그 아래에서 점선으로 이어그림)
+  const confirmedEnd = previewCount > 0 ? values.length - 1 - previewCount : values.length - 1;
   ctx.beginPath();
   let started = false;
   values.forEach((v, i) => {
-    if (v == null) return;
+    if (v == null || i > confirmedEnd) return;
     const x = xFor(i), y = yFor(v);
     if (!started) {
       ctx.moveTo(x, y);
@@ -686,11 +695,27 @@ function drawLineChart(canvas, values, dates, opts = {}) {
   ctx.strokeStyle = color;
   ctx.lineWidth = 1.5;
   ctx.stroke();
-  ctx.lineTo(xFor(values.length - 1), padding.top + h);
+  ctx.lineTo(xFor(confirmedEnd), padding.top + h);
   ctx.lineTo(xFor(0), padding.top + h);
   ctx.closePath();
   ctx.fillStyle = fill;
   ctx.fill();
+
+  // 잠정(미확정) 구간 — 점선으로 구분해서 이어그림
+  if (previewCount > 0) {
+    ctx.beginPath();
+    for (let i = confirmedEnd; i < values.length; i++) {
+      if (values[i] == null) continue;
+      const x = xFor(i), y = yFor(values[i]);
+      if (i === confirmedEnd) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = "#f0b429";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
 
   // x축 라벨 (시작/끝 날짜)
   ctx.fillStyle = "#9aa8c2";
@@ -700,8 +725,16 @@ function drawLineChart(canvas, values, dates, opts = {}) {
   ctx.fillText(dates[dates.length - 1] || "", padding.left + w, height - 6);
 }
 
-function drawBacktestChart(canvas, bt) {
-  drawLineChart(canvas, bt.nav, bt.dates, { color: "#4fd1c5", fill: "rgba(79,209,197,0.10)", height: 160, yFormat: (v) => v.toFixed(0) });
+function drawBacktestChart(canvas, bt, preview) {
+  const nav = preview ? bt.nav.concat([preview.nav]) : bt.nav;
+  const dates = preview ? bt.dates.concat([preview.asOfDate]) : bt.dates;
+  drawLineChart(canvas, nav, dates, {
+    color: "#4fd1c5",
+    fill: "rgba(79,209,197,0.10)",
+    height: 160,
+    yFormat: (v) => v.toFixed(0),
+    previewCount: preview ? 1 : 0,
+  });
 }
 
 // ── 티커 가격 모달 ───────────────────────────────────────────
