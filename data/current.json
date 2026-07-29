@@ -1,9 +1,9 @@
 {
   "meta": {
-    "generatedAt": "2026-07-21 23:25 KST",
+    "generatedAt": "2026-07-29 16:42 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
-    "latestDataDate": "2026-07-21"
+    "latestDataDate": "2026-07-28"
   },
   "strategies": {
     "PERM": {
@@ -432,7 +432,7 @@
           "sector": "미국 장기채",
           "category": "채권",
           "price": 86.102,
-          "weight": 0.541662,
+          "weight": 0.541664,
           "score": null
         },
         {
@@ -452,7 +452,7 @@
           "sector": "미국 대형주",
           "category": "주식",
           "price": 746.77,
-          "weight": 0.144225,
+          "weight": 0.144223,
           "score": null
         },
         {
@@ -1072,10 +1072,10 @@
     },
     "daaCanaryPreview": {
       "label": "DAA 카나리아 지표 (최신 종가 기준 프리뷰)",
-      "asOfDate": "2026-07-21",
+      "asOfDate": "2026-07-28",
       "scores": {
-        "VWO": -0.105432,
-        "BND": -0.09825
+        "VWO": -0.038524,
+        "BND": -0.121863
       },
       "breadth": 0.0,
       "note": "음수 카나리아 2개 → 공격 0% / 방어 100% — 월말 확정 전 최신 종가 기준, 월말 재계산 시 바뀔 수 있음"
@@ -1089,7 +1089,7 @@
     },
     "admPreview": {
       "label": "가속듀얼모멘텀 차월 예상 티커 (프리뷰)",
-      "asOfDate": "2026-07-21",
+      "asOfDate": "2026-07-28",
       "applicableMonth": "2026년 8월 (예상·미확정)",
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust",
