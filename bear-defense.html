@@ -372,7 +372,7 @@ async function applyAutoMode() {
     $('autoTagHigh').hidden = false;
     $('autoTagCur').hidden = false;
     asof.hidden = false;
-    asof.innerHTML = `데이터 기준: <b>${j.closeDate}</b> 종가 (코스피 ${j.close.toLocaleString('ko-KR')}, 1년고점 ${j.high1y.toLocaleString('ko-KR')}) · 매 평일 16:00 KST 자동갱신 · 자동모드에서는 잠김, 수정하려면 수동모드로 전환`;
+    asof.innerHTML = `데이터 기준: <b>${j.closeDate}</b> 종가 (코스피 ${j.close.toLocaleString('ko-KR')}, 1년고점 ${j.high1y.toLocaleString('ko-KR')}) · 매 평일 17:00 KST 자동갱신 · 자동모드에서는 잠김, 수정하려면 수동모드로 전환`;
   } catch (e) {
     asof.hidden = false;
     asof.innerHTML = `⚠️ 실시간 데이터를 불러오지 못했습니다(data/kospi.json 없음). <b>수동모드</b>로 직접 입력해 주세요.`;
