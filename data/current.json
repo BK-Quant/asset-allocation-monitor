@@ -1,9 +1,9 @@
 {
   "meta": {
-    "generatedAt": "2026-07-30 00:37 KST",
+    "generatedAt": "2026-07-31 21:05 KST",
     "basisDate": "2026-06-30",
     "applicableMonth": "2026년 7월",
-    "latestDataDate": "2026-07-28"
+    "latestDataDate": "2026-07-30"
   },
   "strategies": {
     "PERM": {
@@ -432,7 +432,7 @@
           "sector": "미국 장기채",
           "category": "채권",
           "price": 86.102,
-          "weight": 0.541664,
+          "weight": 0.541661,
           "score": null
         },
         {
@@ -452,7 +452,7 @@
           "sector": "미국 대형주",
           "category": "주식",
           "price": 746.77,
-          "weight": 0.144223,
+          "weight": 0.144225,
           "score": null
         },
         {
@@ -462,7 +462,7 @@
           "sector": "미국 리츠",
           "category": "리츠",
           "price": 96.43,
-          "weight": 0.1044,
+          "weight": 0.104401,
           "score": null
         },
         {
@@ -665,7 +665,7 @@
           "remark": "KODEX 선진국MSCI World",
           "sector": "선진국 주식",
           "category": "주식",
-          "price": 42605.0,
+          "price": 42413.2617,
           "weight": 0.15,
           "score": null
         },
@@ -685,7 +685,7 @@
           "remark": "KODEX 미국S&P500TR",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 26115.0,
+          "price": 25973.3164,
           "weight": 0.1,
           "score": null
         },
@@ -695,7 +695,7 @@
           "remark": "KODEX 미국나스닥100TR",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 30690.0,
+          "price": 30594.0566,
           "weight": 0.1,
           "score": null
         },
@@ -715,7 +715,7 @@
           "remark": "PLUS 미국채30년액티브",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 56810.0,
+          "price": 56699.0234,
           "weight": 0.1,
           "score": null
         },
@@ -745,7 +745,7 @@
           "remark": "TIGER 미국필라델피아반도체나스닥",
           "sector": "미국 반도체",
           "category": "주식",
-          "price": 55910.0,
+          "price": 55842.8594,
           "weight": 0.02,
           "score": null
         },
@@ -755,7 +755,7 @@
           "remark": "KODEX 에너지화학",
           "sector": "국내 테마주(에너지화학)",
           "category": "주식",
-          "price": 13245.0,
+          "price": 13204.5303,
           "weight": 0.015,
           "score": null
         },
@@ -765,7 +765,7 @@
           "remark": "KODEX AI전력핵심설비",
           "sector": "국내 테마주(AI전력)",
           "category": "주식",
-          "price": 42650.0,
+          "price": 42642.0742,
           "weight": 0.015,
           "score": null
         }
@@ -784,7 +784,7 @@
           "remark": "KODEX 미국S&P500TR",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 26115.0,
+          "price": 25973.3164,
           "weight": 0.24,
           "score": null
         },
@@ -814,7 +814,7 @@
           "remark": "KODEX 차이나CSI300",
           "sector": "중국 주식",
           "category": "주식",
-          "price": 18325.0,
+          "price": 18180.1934,
           "weight": 0.08,
           "score": null
         },
@@ -834,7 +834,7 @@
           "remark": "KODEX 인도Nifty50",
           "sector": "인도 주식",
           "category": "주식",
-          "price": 13280.0,
+          "price": 13198.0449,
           "weight": 0.08,
           "score": null
         },
@@ -854,7 +854,7 @@
           "remark": "ACE 미국30년국채액티브(H)",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 7600.0,
+          "price": 7572.9868,
           "weight": 0.07,
           "score": null
         },
@@ -883,7 +883,7 @@
           "remark": "TIGER 200",
           "sector": "국내 주식",
           "category": "주식",
-          "price": 138670.0,
+          "price": 138463.6875,
           "weight": 0.25,
           "score": null
         },
@@ -893,7 +893,7 @@
           "remark": "TIGER 미국S&P 500",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 28640.0,
+          "price": 28569.084,
           "weight": 0.25,
           "score": null
         },
@@ -943,7 +943,7 @@
           "remark": "PLUS 미국채30년액티브",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 56810.0,
+          "price": 56699.0234,
           "weight": 0.0625,
           "score": null
         },
@@ -982,7 +982,7 @@
           "remark": "KODEX 200",
           "sector": "국내 주식",
           "category": "주식",
-          "price": 138580.0,
+          "price": 138296.9844,
           "weight": 0.125,
           "score": null
         },
@@ -992,7 +992,7 @@
           "remark": "TIGER 미국나스닥100",
           "sector": "나스닥",
           "category": "주식",
-          "price": 205050.0,
+          "price": 204755.0625,
           "weight": 0.125,
           "score": null
         },
@@ -1022,7 +1022,7 @@
           "remark": "TIGER 미국S&P 500",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 28640.0,
+          "price": 28569.084,
           "weight": 0.125,
           "score": null
         }
@@ -1041,7 +1041,7 @@
           "remark": "KODEX 200",
           "sector": "국내 주식",
           "category": "주식",
-          "price": 138580.0,
+          "price": 138296.9844,
           "weight": 0.5,
           "score": null
         },
@@ -1051,7 +1051,7 @@
           "remark": "TIGER 미국나스닥100",
           "sector": "나스닥",
           "category": "주식",
-          "price": 205050.0,
+          "price": 204755.0625,
           "weight": 0.5,
           "score": null
         }
@@ -1072,10 +1072,10 @@
     },
     "daaCanaryPreview": {
       "label": "DAA 카나리아 지표 (최신 종가 기준 프리뷰)",
-      "asOfDate": "2026-07-28",
+      "asOfDate": "2026-07-30",
       "scores": {
-        "VWO": -0.038524,
-        "BND": -0.121863
+        "VWO": -0.092295,
+        "BND": -0.119444
       },
       "breadth": 0.0,
       "note": "음수 카나리아 2개 → 공격 0% / 방어 100% — 월말 확정 전 최신 종가 기준, 월말 재계산 시 바뀔 수 있음"
@@ -1089,7 +1089,7 @@
     },
     "admPreview": {
       "label": "가속듀얼모멘텀 차월 예상 티커 (프리뷰)",
-      "asOfDate": "2026-07-28",
+      "asOfDate": "2026-07-30",
       "applicableMonth": "2026년 8월 (예상·미확정)",
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust",
@@ -1098,99 +1098,99 @@
   },
   "previews": {
     "PERM": {
-      "asOfDate": "2026-07-28",
-      "nav": 271.7936,
-      "returnSinceConfirmed": -0.006007
+      "asOfDate": "2026-07-30",
+      "nav": 272.1869,
+      "returnSinceConfirmed": -0.004569
     },
     "LAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 389.1011,
-      "returnSinceConfirmed": -0.01195
+      "asOfDate": "2026-07-30",
+      "nav": 391.3542,
+      "returnSinceConfirmed": -0.006227
     },
     "RAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 251.8005,
-      "returnSinceConfirmed": -0.019182
+      "asOfDate": "2026-07-30",
+      "nav": 251.8609,
+      "returnSinceConfirmed": -0.018949
     },
     "GTAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 209.0501,
-      "returnSinceConfirmed": 0.021189
+      "asOfDate": "2026-07-30",
+      "nav": 210.3844,
+      "returnSinceConfirmed": 0.027707
     },
     "PAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 238.8765,
-      "returnSinceConfirmed": -0.041155
+      "asOfDate": "2026-07-30",
+      "nav": 241.4024,
+      "returnSinceConfirmed": -0.031017
     },
     "DAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 354.8524,
-      "returnSinceConfirmed": -0.032106
+      "asOfDate": "2026-07-30",
+      "nav": 357.8709,
+      "returnSinceConfirmed": -0.023874
     },
     "VAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 285.2692,
-      "returnSinceConfirmed": -0.088437
+      "asOfDate": "2026-07-30",
+      "nav": 290.8985,
+      "returnSinceConfirmed": -0.070458
     },
     "FAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 260.826,
-      "returnSinceConfirmed": 0.036745
+      "asOfDate": "2026-07-30",
+      "nav": 261.9422,
+      "returnSinceConfirmed": 0.041187
     },
     "AAA": {
-      "asOfDate": "2026-07-28",
-      "nav": 197.0932,
-      "returnSinceConfirmed": 0.007622
+      "asOfDate": "2026-07-30",
+      "nav": 196.1789,
+      "returnSinceConfirmed": 0.002953
     },
     "DUAL": {
-      "asOfDate": "2026-07-28",
-      "nav": 358.8101,
-      "returnSinceConfirmed": -0.007914
+      "asOfDate": "2026-07-30",
+      "nav": 359.2105,
+      "returnSinceConfirmed": -0.006803
     },
     "CDM": {
-      "asOfDate": "2026-07-28",
-      "nav": 240.9372,
-      "returnSinceConfirmed": -0.001535
+      "asOfDate": "2026-07-30",
+      "nav": 241.4413,
+      "returnSinceConfirmed": 0.000558
     },
     "ADM": {
-      "asOfDate": "2026-07-28",
-      "nav": 435.2134,
-      "returnSinceConfirmed": -0.007914
+      "asOfDate": "2026-07-30",
+      "nav": 435.7009,
+      "returnSinceConfirmed": -0.006803
     },
     "DGA": {
-      "asOfDate": "2026-07-28",
-      "nav": 860.3687,
-      "returnSinceConfirmed": 0.002824
+      "asOfDate": "2026-07-30",
+      "nav": 860.5612,
+      "returnSinceConfirmed": 0.003043
     },
     "DYNBOND": {
-      "asOfDate": "2026-07-28",
-      "nav": 173.1534,
-      "returnSinceConfirmed": -0.005898
+      "asOfDate": "2026-07-30",
+      "nav": 172.9914,
+      "returnSinceConfirmed": -0.006831
     },
     "KOALLWEATHER1": {
-      "asOfDate": "2026-07-28",
-      "nav": 134.0632,
-      "returnSinceConfirmed": -0.075446
+      "asOfDate": "2026-07-30",
+      "nav": 131.1714,
+      "returnSinceConfirmed": -0.095389
     },
     "KOALLWEATHER2_GROWTH": {
-      "asOfDate": "2026-07-28",
-      "nav": 158.5008,
-      "returnSinceConfirmed": -0.075832
+      "asOfDate": "2026-07-30",
+      "nav": 155.4514,
+      "returnSinceConfirmed": -0.093612
     },
     "HANMI_STATIC": {
-      "asOfDate": "2026-07-28",
-      "nav": 166.0575,
-      "returnSinceConfirmed": -0.115229
+      "asOfDate": "2026-07-30",
+      "nav": 160.9173,
+      "returnSinceConfirmed": -0.142617
     },
     "HANMI_DYNAMIC_STABLE": {
-      "asOfDate": "2026-07-28",
-      "nav": 224.7236,
-      "returnSinceConfirmed": -0.077134
+      "asOfDate": "2026-07-30",
+      "nav": 220.326,
+      "returnSinceConfirmed": -0.095193
     },
     "HANMI_DYNAMIC_AGGRESSIVE": {
-      "asOfDate": "2026-07-28",
-      "nav": 464.2336,
-      "returnSinceConfirmed": -0.216226
+      "asOfDate": "2026-07-30",
+      "nav": 473.3641,
+      "returnSinceConfirmed": -0.258595
     }
   }
 }
