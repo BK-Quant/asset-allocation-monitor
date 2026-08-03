@@ -358,6 +358,59 @@ def calc_HANMI_DYNAMIC_AGGRESSIVE(ps, idx, prev_holdings=None):
     return {t: w for t in final_holdings}
 
 
+def simulate_hanmi_aggressive_daily(ps, upto_idx, min_history_days=252):
+    """한미동적-공격형의 정확한 매수/매도 타이밍 재현.
+
+    ⚠️ calc_HANMI_DYNAMIC_AGGRESSIVE()는 월말 스냅샷만 보고 매도를 판단해서, 월중에
+    150일 이평을 하루짜리로 이탈했다가 월말에 회복되는 경우를 놓친다(실측: 2026-07-28~30에
+    KODEX 200·TIGER 미국나스닥100이 각각 SMA150을 하루~며칠 이탈했다가 07-31에 회복 —
+    월말만 보면 계속 보유로 잘못 판정됨).
+
+    브라이언 확인 기준(2026-08-01):
+      - 매도: 종가 기준 150일 이평을 단 하루만 이탈해도 즉시 매도(매일 체크, 확인기간 없음).
+      - 매수: "월말 종가로 결정하고 다음 거래일에 체결" — 즉 매수 판단 자체는 월말 인덱스의
+        데이터로 확정되고(체결 타이밍만 다음날), 그 달 안에 매도로 빈 자리가 생겨도 즉시
+        재매수하지 않고 그 달 월말 평가 때 한 번에 채운다.
+
+    이 함수는 거래일 단위로 순회하며:
+      1) 보유 종목은 매일 150일 이평 이탈 여부를 확인해 즉시 매도.
+      2) 월말 인덱스에서만(그 시점 데이터 기준) 빈 자리를 (1개월+3개월 수익률) 상위
+         종목으로 채운다 — 체결은 다음 달 첫 거래일이지만 결정은 이 월말 데이터로 확정.
+    각 월말 인덱스 시점의 배분 스냅샷을 {idx: {ticker: weight}} 형태로 반환한다
+    (build_current/build_backtests가 그대로 사용)."""
+    month_ends = ps.month_end_indices()
+    month_end_set = set(i for i in month_ends if i <= upto_idx)
+
+    held = set()
+    snapshots = {}
+    for idx in range(min_history_days, upto_idx + 1):
+        for t in list(held):
+            sma150 = ps.get_sma_momentum(t, idx, 150)
+            if sma150 is not None and sma150 < 0:
+                held.discard(t)  # 매도 조건(A) 매일 체크
+
+        if idx in month_end_set:
+            candidates = []
+            for t in HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE:
+                if t in held:
+                    continue
+                sma200 = ps.get_sma_momentum(t, idx, 200)
+                if sma200 is None or sma200 <= 0:
+                    continue
+                r1m, r3m = ps.get_return(t, idx, 21), ps.get_return(t, idx, 63)
+                if r1m is None or r3m is None:
+                    continue
+                candidates.append({"ticker": t, "score": r1m + r3m})
+            candidates = sort_by_score_desc(candidates)
+            slots = HANMI_DYNAMIC_AGGRESSIVE_MAX_HOLDINGS - len(held)
+            for c in candidates[: max(0, slots)]:
+                held.add(c["ticker"])
+
+        if idx in month_end_set:
+            snapshots[idx] = {t: 1 / len(held) for t in held} if held else {}
+    return snapshots
+
+
 def calc_LAA(ps, idx):
     uptrend = (ps.get_sma_momentum("SPY", idx, 200) or 0) > 0
     above_avg = ps.is_unemployment_above_average(ps.dates[idx])
@@ -701,7 +754,7 @@ STRATEGY_DESCRIPTIONS = {
     "KOALLWEATHER2_GROWTH": "K-올웨더(마연굴)(위험감내도별 예시 표 중 성장형). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
     "HANMI_STATIC": "한미정적자산배분. TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
     "HANMI_DYNAMIC_STABLE": "한미동적-안정형. 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 종가가 120일 이동평균 이상인 종목만 보유한다(그 미만이면 매수하지 않고 비중을 비워둠 — 현금 대체 없음). 매달 그 시점의 종가로 다시 판단하므로, 120일 이동평균을 웃도는 동안은 계속 보유하고 밑돌면 보유를 정리한다.",
-    "HANMI_DYNAMIC_AGGRESSIVE": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위로 올라선 종목만 후보로 삼아 (1개월+3개월 수익률)이 가장 강한 상위 2종목만 매수(종목당 50%). 이미 보유 중인 종목은 종가가 150일 이동평균 아래로 떨어지기 전까지 순위와 무관하게 계속 들고 간다(매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략) — 안정형과 달리 현금을 남기지 않고 항상 2종목에 전액 투자.",
+    "HANMI_DYNAMIC_AGGRESSIVE": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, KOSEF 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위인 종목만 후보로 삼아 (1개월+3개월 수익률)이 가장 강한 상위 2종목만 매수(종목당 50%). 매도(150일 이동평균 이탈)는 거래일마다 체크해 하루만 이탈해도 즉시 매도하고, 빈 자리는 그 달 월말 종가로 결정해 다음 달 첫 거래일에 체결 — 매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략(2026-08-01 젠포트 실화면 대조 검증 완료: 2026-07-31 기준 전액 현금 일치).",
 }
 
 

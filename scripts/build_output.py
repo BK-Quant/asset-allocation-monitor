@@ -21,7 +21,7 @@ from strategy_engine import (
     PriceSeries, STRATEGIES, STRATEGY_LABELS, STRATEGY_DESCRIPTIONS,
     KOALLWEATHER1_WEIGHTS, KOALLWEATHER2_PROFILES, HANMI_STATIC_WEIGHTS,
     EXTENDED_PROXY_MAP, build_extended_price_series,
-    compute_allocation, daa_canary_raw_scores,
+    compute_allocation, daa_canary_raw_scores, simulate_hanmi_aggressive_daily,
 )
 
 # 프록시로 상장 전 구간을 스플라이스해 백테스트를 연장하는 "확장(프록시)" 모드 대상.
@@ -61,7 +61,7 @@ TICKER_REMARK = {
     "308620.KS": "KODEX 미국채10년선물", "453850.KS": "ACE 미국30년국채액티브(H)", "449170.KS": "TIGER KOFR금리액티브(합성)",
     "102110.KS": "TIGER 200", "451600.KS": "PLUS 국고채30년액티브", "488770.KS": "KODEX 머니마켓액티브",
     "148070.KS": "KOSEF 국고채10년", "133690.KS": "TIGER 미국나스닥100", "069500.KS": "KODEX 200",
-    "229200.KS": "KODEX 코스닥150", "138230.KS": "TIGER 미국달러선물", "0043B0.KS": "TIGER 머니마켓액티브",
+    "229200.KS": "KODEX 코스닥150", "138230.KS": "KOSEF 미국달러선물", "0043B0.KS": "TIGER 머니마켓액티브",
     "305080.KS": "TIGER 미국채10년선물", "329750.KS": "TIGER 미국달러단기채권액티브",
     "USD": "USD : 현금(무이자 가정)",
 }
@@ -139,19 +139,9 @@ def build_holding_row(ps, ticker, weight, idx, score=None):
 
 
 # 매수·매도 임계값이 달라 "지난달 보유 여부"를 기억해야 하는 이력(hysteresis) 전략 목록.
-# 이런 전략은 매 시점을 독립적으로 계산할 수 없어, 월별 시퀀스를 prev_holdings를 이어가며
-# 순서대로 계산해야 한다(당월 확정 계산도 결국 이 순차 시뮬레이션의 마지막 결과를 쓴다).
+# 매도(150일선 이탈)는 월중 하루짜리 이탈도 놓치면 안 되므로 일별로 체크해야 한다
+# (simulate_hanmi_aggressive_daily 참고 — 월말 스냅샷만 보면 월중 반나절 이탈을 놓친다).
 HYSTERESIS_STRATEGIES = {"HANMI_DYNAMIC_AGGRESSIVE"}
-
-
-def _hysteresis_sequence(ps, code, month_ends):
-    prev_holdings = None
-    allocations = []
-    for idx in month_ends:
-        allocation = compute_allocation(ps, code, idx, prev_holdings=prev_holdings)
-        allocations.append(allocation)
-        prev_holdings = set(allocation.keys())
-    return allocations
 
 
 def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
@@ -165,9 +155,7 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
     for code in STRATEGIES:
         kwargs = {"use_live_macro": True} if code == "DGA" else {}
         if code in HYSTERESIS_STRATEGIES:
-            month_ends_all = [i for i in ps.month_end_indices() if i <= idx_current]
-            start_pos = next((pos for pos, i in enumerate(month_ends_all) if i >= MIN_HISTORY_DAYS), None)
-            allocation = _hysteresis_sequence(ps, code, month_ends_all[start_pos:])[-1] if start_pos is not None else {}
+            allocation = simulate_hanmi_aggressive_daily(ps, idx_current).get(idx_current, {})
         else:
             allocation = compute_allocation(ps, code, idx_current, **kwargs)
         holdings = [build_holding_row(ps, t, w, idx_current) for t, w in sorted(allocation.items(), key=lambda x: (-x[1], x[0]))]
@@ -286,11 +274,11 @@ def build_backtests(ps: PriceSeries, idx_current, codes=None):
             continue
 
         rebalance_points = month_ends[start_pos:]
-        hysteresis_allocations = _hysteresis_sequence(ps, code, rebalance_points) if code in HYSTERESIS_STRATEGIES else None
+        hysteresis_snapshots = simulate_hanmi_aggressive_daily(ps, idx_current) if code in HYSTERESIS_STRATEGIES else None
         dates, nav = [ps.dates[rebalance_points[0]]], [100.0]
         for t in range(len(rebalance_points) - 1):
             i_from, i_to = rebalance_points[t], rebalance_points[t + 1]
-            allocation = hysteresis_allocations[t] if hysteresis_allocations is not None else compute_allocation(ps, code, i_from, **kwargs)
+            allocation = hysteresis_snapshots.get(i_from, {}) if hysteresis_snapshots is not None else compute_allocation(ps, code, i_from, **kwargs)
             period_return = 0.0
             for ticker, weight in allocation.items():
                 if ticker == "USD":
