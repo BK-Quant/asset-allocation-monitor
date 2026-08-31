@@ -1,17 +1,17 @@
 {
   "meta": {
-    "generatedAt": "2026-08-31 09:17 KST",
-    "basisDate": "2026-07-31",
-    "applicableMonth": "2026년 8월",
-    "latestDataDate": "2026-08-28"
+    "generatedAt": "2026-09-01 08:35 KST",
+    "basisDate": "2026-08-31",
+    "applicableMonth": "2026년 9월",
+    "latestDataDate": "2026-08-31"
   },
   "strategies": {
     "PERM": {
       "label": "영구포트폴리오",
       "description": "영구포트폴리오(Harry Browne). SPY(미국 대형주)·TLT(미국 장기채)·GLD(금)·BIL(초단기국채) 4종목에 각 25%씩 고정 배분. 시장 상황과 무관하게 매달 그대로 유지(리밸런싱만).",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "BIL",
@@ -19,7 +19,7 @@
           "remark": "BIL : SPDR Bloomberg 1-3 Month T-Bill ETF",
           "sector": "초단기채권",
           "category": "채권",
-          "price": 91.407,
+          "price": 91.66,
           "weight": 0.25,
           "score": null
         },
@@ -29,7 +29,7 @@
           "remark": "GLD : SPDR Gold Trust",
           "sector": "금",
           "category": "원자재",
-          "price": 371.54,
+          "price": 408.42,
           "weight": 0.25,
           "score": null
         },
@@ -39,7 +39,7 @@
           "remark": "SPY : SPDR S&P 500 ETF Trust",
           "sector": "미국 대형주",
           "category": "주식",
-          "price": 747.03,
+          "price": 767.05,
           "weight": 0.25,
           "score": null
         },
@@ -49,7 +49,7 @@
           "remark": "TLT : iShares 20+ Year Treasury Bond ETF",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 81.92,
+          "price": 82.52,
           "weight": 0.25,
           "score": null
         }
@@ -58,9 +58,9 @@
     "LAA": {
       "label": "LAA",
       "description": "Lethargic Asset Allocation. IWD(미국 대형가치주)·IEF(미국 중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 위'이거나 '실업률이 12개월 평균보다 높음' 중 하나라도 해당하면 QQQ(나스닥), 아니면 SHY(미국 단기국채)로 전환.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "GLD",
@@ -68,7 +68,7 @@
           "remark": "GLD : SPDR Gold Trust",
           "sector": "금",
           "category": "원자재",
-          "price": 371.54,
+          "price": 408.42,
           "weight": 0.25,
           "score": null
         },
@@ -78,7 +78,7 @@
           "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
           "sector": "미국 중기채",
           "category": "채권",
-          "price": 92.632,
+          "price": 92.74,
           "weight": 0.25,
           "score": null
         },
@@ -88,7 +88,7 @@
           "remark": "IWD : iShares Russell 1000 Value ETF",
           "sector": "미국 대형가치주",
           "category": "주식",
-          "price": 251.82,
+          "price": 256.91,
           "weight": 0.25,
           "score": null
         },
@@ -98,7 +98,7 @@
           "remark": "QQQ : Invesco QQQ Trust",
           "sector": "나스닥",
           "category": "주식",
-          "price": 687.99,
+          "price": 716.76,
           "weight": 0.25,
           "score": null
         }
@@ -107,9 +107,9 @@
     "RAA": {
       "label": "RAA",
       "description": "5개 자산 QQQ(나스닥)·IWN(미국 소형가치주)·IEF(미국 중기채)·TLT(미국 장기채)·GLD(금)에 각 20%씩 배분하는 것이 기본. '실업률이 하락 추세(확장국면)'이거나 '카나리아 VWO(신흥국주식)·BND(미국종합채권) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "IEF",
@@ -117,7 +117,7 @@
           "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
           "sector": "미국 중기채",
           "category": "채권",
-          "price": 92.632,
+          "price": 92.74,
           "weight": 0.5,
           "score": null
         },
@@ -127,7 +127,7 @@
           "remark": "TLT : iShares 20+ Year Treasury Bond ETF",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 81.92,
+          "price": 82.52,
           "weight": 0.5,
           "score": null
         }
@@ -136,9 +136,9 @@
     "GTAA": {
       "label": "GTAA",
       "description": "Faber GTAA5. SPY(미국 대형주)·EFA(선진국 주식)·IEF(미국 중기채)·PDBC(원자재)·VNQ(미국 리츠) 5개 자산 중 210일 이동평균 위에 있는 자산만 각 20%씩 보유하고, 이동평균 아래인 자산 비중은 현금(USD)으로 대기.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "EFA",
@@ -146,7 +146,7 @@
           "remark": "EFA : iShares MSCI EAFE ETF",
           "sector": "선진국 주식",
           "category": "주식",
-          "price": 105.58,
+          "price": 107.45,
           "weight": 0.2,
           "score": null
         },
@@ -156,7 +156,7 @@
           "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
           "sector": "원자재",
           "category": "원자재",
-          "price": 17.56,
+          "price": 18.65,
           "weight": 0.2,
           "score": null
         },
@@ -166,7 +166,7 @@
           "remark": "SPY : SPDR S&P 500 ETF Trust",
           "sector": "미국 대형주",
           "category": "주식",
-          "price": 747.03,
+          "price": 767.05,
           "weight": 0.2,
           "score": null
         },
@@ -186,7 +186,7 @@
           "remark": "VNQ : Vanguard Real Estate Index Fund",
           "sector": "미국 리츠",
           "category": "리츠",
-          "price": 98.95,
+          "price": 96.44,
           "weight": 0.2,
           "score": null
         }
@@ -195,9 +195,9 @@
     "PAA": {
       "label": "PAA",
       "description": "Protective Asset Allocation. 공격 12종목 SPY(미국대형주)·IWM(미국소형주)·QQQ(나스닥)·VGK(유럽주식)·EWJ(일본주식)·EEM(신흥국주식)·VNQ(미국리츠)·PDBC(원자재)·GLD(금)·TLT(미국장기채)·HYG(하이일드채권)·LQD(회사채) 중 252일 이동평균 위(양수 모멘텀)인 자산 개수(n)를 센다. n≤6이면 전액 IEF(미국중기채, 안전자산), n>6이면 양수 모멘텀 상위 (n-6)개를 1/6씩 보유하고 나머지는 IEF로 채움 — 시장 폭이 넓을수록 공격적으로 투자.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "IEF",
@@ -205,7 +205,66 @@
           "remark": "IEF : iShares 7-10 Year Treasury Bond ETF",
           "sector": "미국 중기채",
           "category": "채권",
-          "price": 92.632,
+          "price": 92.74,
+          "weight": 0.333333,
+          "score": null
+        },
+        {
+          "ticker": "EEM",
+          "displayName": "EEM",
+          "remark": "EEM : iShares MSCI Emerging Markets ETF",
+          "sector": "신흥국 주식",
+          "category": "주식",
+          "price": 67.02,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "EWJ",
+          "displayName": "EWJ",
+          "remark": "EWJ : iShares MSCI Japan ETF",
+          "sector": "일본 주식",
+          "category": "주식",
+          "price": 95.88,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "PDBC",
+          "displayName": "PDBC",
+          "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
+          "sector": "원자재",
+          "category": "원자재",
+          "price": 18.65,
+          "weight": 0.166667,
+          "score": null
+        },
+        {
+          "ticker": "QQQ",
+          "displayName": "QQQ",
+          "remark": "QQQ : Invesco QQQ Trust",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 716.76,
+          "weight": 0.166667,
+          "score": null
+        }
+      ]
+    },
+    "DAA": {
+      "label": "DAA(G12)",
+      "description": "DAA-G12(Keller & Keuning, 2018). 카나리아 VWO(신흥국주식)·BND(미국종합채권) 중 음수 모멘텀 개수(n)에 따라 공격/방어 비중을 3단계(breadth)로 나눈다: n=0→공격 100%, n=1→50%/50%, n=2→방어 100%. 공격자산군 12종목(SPY·IWM·QQQ·VGK·EWJ·EEM·VNQ·PDBC·GLD·TLT·HYG·LQD) 상위 6개는 균등가중, 방어자산군 SHY(단기채)·IEF(중기채)·LQD(회사채) 중 상위 1개에 나머지 전액. 모멘텀은 13612W(1/3/6/12개월 수익률에 12/4/2/1 가중).",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
+      "holdings": [
+        {
+          "ticker": "SHY",
+          "displayName": "SHY",
+          "remark": "SHY : iShares 1-3 Year Treasury Bond ETF",
+          "sector": "미국 단기국채",
+          "category": "채권",
+          "price": 81.89,
           "weight": 0.5,
           "score": null
         },
@@ -215,47 +274,8 @@
           "remark": "EEM : iShares MSCI Emerging Markets ETF",
           "sector": "신흥국 주식",
           "category": "주식",
-          "price": 64.09,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "IWM",
-          "displayName": "IWM",
-          "remark": "IWM : iShares Russell 2000 ETF",
-          "sector": "미국 소형주",
-          "category": "주식",
-          "price": 291.2,
-          "weight": 0.166667,
-          "score": null
-        },
-        {
-          "ticker": "PDBC",
-          "displayName": "PDBC",
-          "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
-          "sector": "원자재",
-          "category": "원자재",
-          "price": 17.56,
-          "weight": 0.166667,
-          "score": null
-        }
-      ]
-    },
-    "DAA": {
-      "label": "DAA(G12)",
-      "description": "DAA-G12(Keller & Keuning, 2018). 카나리아 VWO(신흥국주식)·BND(미국종합채권) 중 음수 모멘텀 개수(n)에 따라 공격/방어 비중을 3단계(breadth)로 나눈다: n=0→공격 100%, n=1→50%/50%, n=2→방어 100%. 공격자산군 12종목(SPY·IWM·QQQ·VGK·EWJ·EEM·VNQ·PDBC·GLD·TLT·HYG·LQD) 상위 6개는 균등가중, 방어자산군 SHY(단기채)·IEF(중기채)·LQD(회사채) 중 상위 1개에 나머지 전액. 모멘텀은 13612W(1/3/6/12개월 수익률에 12/4/2/1 가중).",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
-      "holdings": [
-        {
-          "ticker": "SHY",
-          "displayName": "SHY",
-          "remark": "SHY : iShares 1-3 Year Treasury Bond ETF",
-          "sector": "미국 단기국채",
-          "category": "채권",
-          "price": 81.749,
-          "weight": 0.5,
+          "price": 67.02,
+          "weight": 0.083333,
           "score": null
         },
         {
@@ -264,17 +284,17 @@
           "remark": "EWJ : iShares MSCI Japan ETF",
           "sector": "일본 주식",
           "category": "주식",
-          "price": 92.39,
+          "price": 95.88,
           "weight": 0.083333,
           "score": null
         },
         {
-          "ticker": "IWM",
-          "displayName": "IWM",
-          "remark": "IWM : iShares Russell 2000 ETF",
-          "sector": "미국 소형주",
-          "category": "주식",
-          "price": 291.2,
+          "ticker": "GLD",
+          "displayName": "GLD",
+          "remark": "GLD : SPDR Gold Trust",
+          "sector": "금",
+          "category": "원자재",
+          "price": 408.42,
           "weight": 0.083333,
           "score": null
         },
@@ -284,7 +304,17 @@
           "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
           "sector": "원자재",
           "category": "원자재",
-          "price": 17.56,
+          "price": 18.65,
+          "weight": 0.083333,
+          "score": null
+        },
+        {
+          "ticker": "QQQ",
+          "displayName": "QQQ",
+          "remark": "QQQ : Invesco QQQ Trust",
+          "sector": "나스닥",
+          "category": "주식",
+          "price": 716.76,
           "weight": 0.083333,
           "score": null
         },
@@ -294,27 +324,7 @@
           "remark": "SPY : SPDR S&P 500 ETF Trust",
           "sector": "미국 대형주",
           "category": "주식",
-          "price": 747.03,
-          "weight": 0.083333,
-          "score": null
-        },
-        {
-          "ticker": "VGK",
-          "displayName": "VGK",
-          "remark": "VGK : Vanguard European Stock Index Fund",
-          "sector": "유럽 주식",
-          "category": "주식",
-          "price": 90.59,
-          "weight": 0.083333,
-          "score": null
-        },
-        {
-          "ticker": "VNQ",
-          "displayName": "VNQ",
-          "remark": "VNQ : Vanguard Real Estate Index Fund",
-          "sector": "미국 리츠",
-          "category": "리츠",
-          "price": 98.95,
+          "price": 767.05,
           "weight": 0.083333,
           "score": null
         }
@@ -323,9 +333,9 @@
     "VAA": {
       "label": "VAA",
       "description": "Vigilant Asset Allocation(VAA-G4). 공격자산군 SPY(미국대형주)·EFA(선진국주식)·EEM(신흥국주식)·AGG(미국종합채권) 4개가 모두 양수 모멘텀이면 그중 1위 자산에 100% 집중투자, 하나라도 마이너스면 방어자산군 LQD(회사채)·SHY(단기채)·IEF(중기채) 중 1위로 전액 전환.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "SHY",
@@ -333,7 +343,7 @@
           "remark": "SHY : iShares 1-3 Year Treasury Bond ETF",
           "sector": "미국 단기국채",
           "category": "채권",
-          "price": 81.749,
+          "price": 81.89,
           "weight": 1.0,
           "score": null
         }
@@ -342,17 +352,27 @@
     "FAA": {
       "label": "FAA",
       "description": "Flexible Asset Allocation. 7개 자산 VTI(미국주식)·VEA(선진국주식)·VWO(신흥국주식)·SHY(미국단기채)·BND(미국종합채권)·PDBC(원자재)·VNQ(미국리츠)를 모멘텀(높을수록 좋음)·변동성(낮을수록 좋음)·상관관계(낮을수록 좋음) 3개 지표의 순위 합산 점수로 평가해 상위 3개를 1/3씩 배분(단 개별 모멘텀이 마이너스면 그 몫은 현금).",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
+        {
+          "ticker": "VEA",
+          "displayName": "VEA",
+          "remark": "VEA : Vanguard FTSE Developed Markets ETF",
+          "sector": "선진국 주식",
+          "category": "주식",
+          "price": 72.92,
+          "weight": 0.333333,
+          "score": null
+        },
         {
           "ticker": "VNQ",
           "displayName": "VNQ",
           "remark": "VNQ : Vanguard Real Estate Index Fund",
           "sector": "미국 리츠",
           "category": "리츠",
-          "price": 98.95,
+          "price": 96.44,
           "weight": 0.333333,
           "score": null
         },
@@ -362,17 +382,7 @@
           "remark": "VTI : Vanguard Total Stock Market ETF",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 368.21,
-          "weight": 0.333333,
-          "score": null
-        },
-        {
-          "ticker": "VWO",
-          "displayName": "VWO",
-          "remark": "VWO : Vanguard Emerging Markets Stock Index Fund",
-          "sector": "신흥국 주식",
-          "category": "주식",
-          "price": 58.75,
+          "price": 378.15,
           "weight": 0.333333,
           "score": null
         }
@@ -381,9 +391,9 @@
     "AAA": {
       "label": "AAA",
       "description": "Adaptive Asset Allocation. 10개 자산 SPY(미국대형주)·VGK(유럽주식)·EWJ(일본주식)·EEM(신흥국주식)·VNQ(미국리츠)·RWX(국제리츠)·IEF(미국중기채)·TLT(미국장기채)·GLD(금)·PDBC(원자재) 중 126일 수익률이 양수인 것만 후보로 남기고, 후보들 간 최소분산(공분산 역행렬 기반 Long-only MVP) 비중으로 배분해 변동성을 최소화.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "SPY",
@@ -391,8 +401,8 @@
           "remark": "SPY : SPDR S&P 500 ETF Trust",
           "sector": "미국 대형주",
           "category": "주식",
-          "price": 747.03,
-          "weight": 0.386769,
+          "price": 767.05,
+          "weight": 0.386975,
           "score": null
         },
         {
@@ -401,8 +411,8 @@
           "remark": "VNQ : Vanguard Real Estate Index Fund",
           "sector": "미국 리츠",
           "category": "리츠",
-          "price": 98.95,
-          "weight": 0.360575,
+          "price": 96.44,
+          "weight": 0.336498,
           "score": null
         },
         {
@@ -411,8 +421,8 @@
           "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
           "sector": "원자재",
           "category": "원자재",
-          "price": 17.56,
-          "weight": 0.252655,
+          "price": 18.65,
+          "weight": 0.276526,
           "score": null
         },
         {
@@ -421,7 +431,7 @@
           "remark": "EEM : iShares MSCI Emerging Markets ETF",
           "sector": "신흥국 주식",
           "category": "주식",
-          "price": 64.09,
+          "price": 67.02,
           "weight": 0.0,
           "score": null
         },
@@ -431,7 +441,7 @@
           "remark": "EWJ : iShares MSCI Japan ETF",
           "sector": "일본 주식",
           "category": "주식",
-          "price": 92.39,
+          "price": 95.88,
           "weight": 0.0,
           "score": null
         },
@@ -441,7 +451,7 @@
           "remark": "VGK : Vanguard European Stock Index Fund",
           "sector": "유럽 주식",
           "category": "주식",
-          "price": 90.59,
+          "price": 91.66,
           "weight": 0.0,
           "score": null
         }
@@ -450,9 +460,9 @@
     "DUAL": {
       "label": "전통듀얼모멘텀",
       "description": "전통 듀얼모멘텀(Antonacci GEM). SPY(미국대형주) 12개월 수익률이 BIL(초단기국채, 현금성)보다 높으면 주식 투자 — SPY와 EFA(선진국주식) 중 12개월 수익률이 더 높은 쪽에 100% 투자. SPY가 BIL보다 낮으면 AGG(미국종합채권)로 전액 대피.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "EFA",
@@ -460,7 +470,7 @@
           "remark": "EFA : iShares MSCI EAFE ETF",
           "sector": "선진국 주식",
           "category": "주식",
-          "price": 105.58,
+          "price": 107.45,
           "weight": 1.0,
           "score": null
         }
@@ -469,9 +479,9 @@
     "CDM": {
       "label": "종합듀얼모멘텀",
       "description": "종합듀얼모멘텀. 4개 자산군 페어 SPY/EFA(미국·선진국주식), LQD/HYG(회사채·하이일드), VNQ/REM(미국리츠·모기지리츠), TLT/GLD(장기채·금)마다 12개월 수익률이 높은 쪽을 고르되, 그 수익률이 BIL(초단기국채)보다 낮으면 그 25%는 BIL로 대피 — 최대 4종목 25%씩.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "EFA",
@@ -479,7 +489,7 @@
           "remark": "EFA : iShares MSCI EAFE ETF",
           "sector": "선진국 주식",
           "category": "주식",
-          "price": 105.58,
+          "price": 107.45,
           "weight": 0.25,
           "score": null
         },
@@ -489,7 +499,7 @@
           "remark": "GLD : SPDR Gold Trust",
           "sector": "금",
           "category": "원자재",
-          "price": 371.54,
+          "price": 408.42,
           "weight": 0.25,
           "score": null
         },
@@ -499,7 +509,7 @@
           "remark": "HYG : iShares iBoxx $ High Yield Corporate Bond ETF",
           "sector": "미국 하이일드 채권",
           "category": "채권",
-          "price": 79.096,
+          "price": 79.81,
           "weight": 0.25,
           "score": null
         },
@@ -509,7 +519,7 @@
           "remark": "VNQ : Vanguard Real Estate Index Fund",
           "sector": "미국 리츠",
           "category": "리츠",
-          "price": 98.95,
+          "price": 96.44,
           "weight": 0.25,
           "score": null
         }
@@ -518,9 +528,9 @@
     "ADM": {
       "label": "가속듀얼모멘텀(ADM)",
       "description": "Accelerating Dual Momentum(Dushanov). SPY(미국대형주)와 VSS(전세계ex-US 소형주) 중 1/3/6개월 모멘텀 합산 스코어가 더 높은 쪽에 100% 투자하되, 둘 다 음수면 TLT(미국장기채) 단일 안전자산으로 전환.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "SPY",
@@ -528,7 +538,7 @@
           "remark": "SPY : SPDR S&P 500 ETF Trust",
           "sector": "미국 대형주",
           "category": "주식",
-          "price": 747.03,
+          "price": 767.05,
           "weight": 1.0,
           "score": null
         }
@@ -537,9 +547,9 @@
     "DGA": {
       "label": "DGA",
       "description": "카나리아 TIP(물가연동채) 252일 이동평균이 꺾이면(라이브 계산에서는 S&P500 배당수익률<1.6%, 금리스프레드<-0.5%p 조건도 함께 반영) 방어자산군 BIL(초단기채)·TLT(장기채)·PDBC(원자재) 중 126일 모멘텀 1위로 전환, 아니면 공격자산군 QQQ(나스닥)·SCHD(미국고배당주) 중 장기 모멘텀 1위에 100% 투자.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "PDBC",
@@ -547,7 +557,7 @@
           "remark": "PDBC : Invesco Optimum Yield Diversified Commodity Strategy ETF",
           "sector": "원자재",
           "category": "원자재",
-          "price": 17.56,
+          "price": 18.65,
           "weight": 1.0,
           "score": null
         }
@@ -556,27 +566,17 @@
     "DYNBOND": {
       "label": "채권동적배분",
       "description": "채권동적배분. 8개 채권 SHY(미국단기채)·IEF(미국중기채)·TLT(미국장기채)·TIP(물가연동채)·LQD(회사채)·HYG(하이일드)·BWX(국제채권)·EMB(신흥국채권) 중 126일 수익률 상위 3개를 각 1/3씩 보유하되, 개별 수익률이 마이너스면 그 몫은 현금.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
-        {
-          "ticker": "EMB",
-          "displayName": "EMB",
-          "remark": "EMB : iShares J.P. Morgan USD EM Bond ETF",
-          "sector": "신흥국 채권",
-          "category": "채권",
-          "price": 94.246,
-          "weight": 0.333333,
-          "score": null
-        },
         {
           "ticker": "HYG",
           "displayName": "HYG",
           "remark": "HYG : iShares iBoxx $ High Yield Corporate Bond ETF",
           "sector": "미국 하이일드 채권",
           "category": "채권",
-          "price": 79.096,
+          "price": 79.81,
           "weight": 0.333333,
           "score": null
         },
@@ -586,7 +586,17 @@
           "remark": "SHY : iShares 1-3 Year Treasury Bond ETF",
           "sector": "미국 단기국채",
           "category": "채권",
-          "price": 81.749,
+          "price": 81.89,
+          "weight": 0.333333,
+          "score": null
+        },
+        {
+          "ticker": "USD",
+          "displayName": "USD",
+          "remark": "USD : 현금(무이자 가정)",
+          "sector": "현금",
+          "category": "현금",
+          "price": 1.0,
           "weight": 0.333333,
           "score": null
         }
@@ -595,9 +605,9 @@
     "KOALLWEATHER1": {
       "label": "K-글로벌 자산배분",
       "description": "K-글로벌 자산배분(김성일 이전 버전). 주식 50% — KODEX 선진국MSCI World 15%, PLUS 신흥국MSCI(합성H) 15%, KODEX 미국나스닥100TR 10%, KODEX 미국S&P500TR 10%. 대체투자 15% — ACE KRX금현물 10%, TIGER 미국필라델피아반도체나스닥 2%, KODEX AI전력핵심설비 1.5%, KODEX 에너지화학 1.5%. 채권+외화 35% — ACE 국고채10년 7.5%, RISE KIS국고채30년Enhanced 7.5%, TIGER 미국채10년선물 10%, PLUS 미국채30년액티브 10%. 모멘텀 계산 없이 매달 동일 비중 유지. 이 중 대체투자의 5%(TIGER 미국필라델피아반도체나스닥·KODEX AI전력핵심설비·KODEX 에너지화학)는 알파 추구를 위한 전술적 배분으로, 1년 단위로 그 시점의 유망 섹터 ETF를 선정해 교체 편입하는 슬롯이다.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "195980.KS",
@@ -605,7 +615,7 @@
           "remark": "PLUS 신흥국MSCI(합성H)",
           "sector": "신흥국 주식",
           "category": "주식",
-          "price": 14980.0,
+          "price": 15260.0,
           "weight": 0.15,
           "score": null
         },
@@ -615,7 +625,7 @@
           "remark": "KODEX 선진국MSCI World",
           "sector": "선진국 주식",
           "category": "주식",
-          "price": 39520.0,
+          "price": 38805.0,
           "weight": 0.15,
           "score": null
         },
@@ -625,7 +635,7 @@
           "remark": "TIGER 미국채10년선물",
           "sector": "미국 중기채",
           "category": "채권",
-          "price": 12725.0,
+          "price": 12175.0,
           "weight": 0.1,
           "score": null
         },
@@ -635,7 +645,7 @@
           "remark": "KODEX 미국S&P500TR",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 24030.0,
+          "price": 23755.0,
           "weight": 0.1,
           "score": null
         },
@@ -645,7 +655,7 @@
           "remark": "KODEX 미국나스닥100TR",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 26875.0,
+          "price": 26695.0,
           "weight": 0.1,
           "score": null
         },
@@ -655,7 +665,7 @@
           "remark": "ACE KRX금현물",
           "sector": "금",
           "category": "원자재",
-          "price": 26080.0,
+          "price": 27425.0,
           "weight": 0.1,
           "score": null
         },
@@ -665,7 +675,7 @@
           "remark": "PLUS 미국채30년액티브",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 49664.5156,
+          "price": 47720.0,
           "weight": 0.1,
           "score": null
         },
@@ -675,7 +685,7 @@
           "remark": "ACE 국고채10년",
           "sector": "국고채",
           "category": "채권",
-          "price": 82685.0,
+          "price": 82625.0,
           "weight": 0.075,
           "score": null
         },
@@ -685,7 +695,7 @@
           "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
           "sector": "국고채",
           "category": "채권",
-          "price": 52530.0,
+          "price": 52320.0,
           "weight": 0.075,
           "score": null
         },
@@ -695,7 +705,7 @@
           "remark": "TIGER 미국필라델피아반도체나스닥",
           "sector": "미국 반도체",
           "category": "주식",
-          "price": 43650.0,
+          "price": 41145.0,
           "weight": 0.02,
           "score": null
         },
@@ -705,7 +715,7 @@
           "remark": "KODEX 에너지화학",
           "sector": "국내 테마주(에너지화학)",
           "category": "주식",
-          "price": 12165.0,
+          "price": 14130.0,
           "weight": 0.015,
           "score": null
         },
@@ -715,7 +725,7 @@
           "remark": "KODEX AI전력핵심설비",
           "sector": "국내 테마주(AI전력)",
           "category": "주식",
-          "price": 30720.0,
+          "price": 36800.0,
           "weight": 0.015,
           "score": null
         }
@@ -724,9 +734,9 @@
     "KOALLWEATHER2_GROWTH": {
       "label": "K-올웨더(마연굴)",
       "description": "K-올웨더(마연굴)(위험감내도별 예시 표 중 성장형). KODEX 미국S&P500TR 24%, ACE KRX금현물 19%, RISE/KBSTAR KIS국고채30년Enhanced 14%, KOSEF 200TR 8%, KODEX 차이나CSI300 8%, KODEX 인도Nifty50 8%, KODEX 미국채10년선물 7%, ACE 미국30년국채액티브(H) 7%, TIGER KOFR금리액티브(합성) 5%로 고정 배분.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "379800.KS",
@@ -734,7 +744,7 @@
           "remark": "KODEX 미국S&P500TR",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 24030.0,
+          "price": 23755.0,
           "weight": 0.24,
           "score": null
         },
@@ -744,7 +754,7 @@
           "remark": "ACE KRX금현물",
           "sector": "금",
           "category": "원자재",
-          "price": 26080.0,
+          "price": 27425.0,
           "weight": 0.19,
           "score": null
         },
@@ -754,7 +764,7 @@
           "remark": "RISE/KBSTAR KIS국고채30년Enhanced",
           "sector": "국고채",
           "category": "채권",
-          "price": 52530.0,
+          "price": 52320.0,
           "weight": 0.14,
           "score": null
         },
@@ -764,7 +774,7 @@
           "remark": "KODEX 차이나CSI300",
           "sector": "중국 주식",
           "category": "주식",
-          "price": 15665.0,
+          "price": 15190.0,
           "weight": 0.08,
           "score": null
         },
@@ -774,7 +784,7 @@
           "remark": "KOSEF 200TR",
           "sector": "국내 주식",
           "category": "주식",
-          "price": 142690.0,
+          "price": 141325.0,
           "weight": 0.08,
           "score": null
         },
@@ -784,7 +794,7 @@
           "remark": "KODEX 인도Nifty50",
           "sector": "인도 주식",
           "category": "주식",
-          "price": 12270.0,
+          "price": 11620.0,
           "weight": 0.08,
           "score": null
         },
@@ -794,7 +804,7 @@
           "remark": "KODEX 미국채10년선물",
           "sector": "미국 중기채",
           "category": "채권",
-          "price": 11945.0,
+          "price": 11445.0,
           "weight": 0.07,
           "score": null
         },
@@ -804,7 +814,7 @@
           "remark": "ACE 미국30년국채액티브(H)",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 7184.1255,
+          "price": 7185.0,
           "weight": 0.07,
           "score": null
         },
@@ -814,7 +824,7 @@
           "remark": "TIGER KOFR금리액티브(합성)",
           "sector": "초단기채권(KOFR)",
           "category": "채권",
-          "price": 111485.0,
+          "price": 111735.0,
           "weight": 0.05,
           "score": null
         }
@@ -823,9 +833,9 @@
     "HANMI_STATIC": {
       "label": "한미정적자산배분",
       "description": "한미정적자산배분. TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "102110.KS",
@@ -833,7 +843,7 @@
           "remark": "TIGER 200",
           "sector": "국내 주식",
           "category": "주식",
-          "price": 109520.0,
+          "price": 107875.0,
           "weight": 0.25,
           "score": null
         },
@@ -843,7 +853,7 @@
           "remark": "TIGER 미국S&P 500",
           "sector": "미국 주식",
           "category": "주식",
-          "price": 26545.0,
+          "price": 26130.0,
           "weight": 0.25,
           "score": null
         },
@@ -853,7 +863,7 @@
           "remark": "ACE KRX금현물",
           "sector": "금",
           "category": "원자재",
-          "price": 26080.0,
+          "price": 27425.0,
           "weight": 0.2,
           "score": null
         },
@@ -863,7 +873,7 @@
           "remark": "TIGER 미국채10년선물",
           "sector": "미국 중기채",
           "category": "채권",
-          "price": 12725.0,
+          "price": 12175.0,
           "weight": 0.0625,
           "score": null
         },
@@ -873,7 +883,7 @@
           "remark": "ACE 국고채10년",
           "sector": "국고채",
           "category": "채권",
-          "price": 82685.0,
+          "price": 82625.0,
           "weight": 0.0625,
           "score": null
         },
@@ -883,7 +893,7 @@
           "remark": "PLUS 국고채30년액티브",
           "sector": "국고채",
           "category": "채권",
-          "price": 85465.0,
+          "price": 84755.0,
           "weight": 0.0625,
           "score": null
         },
@@ -893,7 +903,7 @@
           "remark": "PLUS 미국채30년액티브",
           "sector": "미국 장기채",
           "category": "채권",
-          "price": 49664.5156,
+          "price": 47720.0,
           "weight": 0.0625,
           "score": null
         },
@@ -903,7 +913,7 @@
           "remark": "TIGER 미국달러단기채권액티브",
           "sector": "미국달러단기채권",
           "category": "채권",
-          "price": 13460.0,
+          "price": 12945.0,
           "weight": 0.025,
           "score": null
         },
@@ -913,7 +923,7 @@
           "remark": "KODEX 머니마켓액티브",
           "sector": "초단기채권",
           "category": "채권",
-          "price": 105105.0,
+          "price": 105380.0,
           "weight": 0.025,
           "score": null
         }
@@ -922,48 +932,17 @@
     "HANMI_DYNAMIC_STABLE": {
       "label": "한미동적 - 안정형",
       "description": "한미동적-안정형. 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 종가가 120일 이동평균 이상인 종목만 보유한다(그 미만이면 매수하지 않고 비중을 비워둠 — 현금 대체 없음). 매달 그 시점의 종가로 다시 판단하므로, 120일 이동평균을 웃도는 동안은 계속 보유하고 밑돌면 보유를 정리한다.",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
-      "holdings": [
-        {
-          "ticker": "069500.KS",
-          "displayName": "KODEX 200",
-          "remark": "KODEX 200",
-          "sector": "국내 주식",
-          "category": "주식",
-          "price": 108820.0,
-          "weight": 0.125,
-          "score": null
-        },
-        {
-          "ticker": "133690.KS",
-          "displayName": "TIGER 미국나스닥100",
-          "remark": "TIGER 미국나스닥100",
-          "sector": "나스닥",
-          "category": "주식",
-          "price": 179850.0,
-          "weight": 0.125,
-          "score": null
-        },
-        {
-          "ticker": "360750.KS",
-          "displayName": "TIGER 미국S&P 500",
-          "remark": "TIGER 미국S&P 500",
-          "sector": "미국 주식",
-          "category": "주식",
-          "price": 26545.0,
-          "weight": 0.125,
-          "score": null
-        }
-      ]
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
+      "holdings": []
     },
     "HANMI_DYNAMIC_AGGRESSIVE": {
       "label": "한미동적 - 공격형",
       "description": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, KOSEF 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위인 종목만 후보로 삼아 (1개월+3개월 수익률)이 가장 강한 상위 2종목만 매수(종목당 50%). 매도(150일 이동평균 이탈)는 거래일마다 체크해 하루만 이탈해도 즉시 매도하고, 빈 자리는 그 달 월말 종가로 결정해 다음 달 첫 거래일에 체결 — 매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략(2026-08-01 젠포트 실화면 대조 검증 완료: 2026-07-31 기준 전액 현금 일치).",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
-      "timingNote": "기준: 2026-07-31 종가(전월 말) → 적용: 2026년 8월 보유",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
+      "timingNote": "기준: 2026-08-31 종가(전월 말) → 적용: 2026년 9월 보유",
       "holdings": [
         {
           "ticker": "0043B0.KS",
@@ -971,17 +950,17 @@
           "remark": "TIGER 머니마켓액티브",
           "sector": "초단기채권",
           "category": "채권",
-          "price": 103200.0,
+          "price": 103505.0,
           "weight": 0.5,
           "score": null
         },
         {
-          "ticker": "360750.KS",
-          "displayName": "TIGER 미국S&P 500",
-          "remark": "TIGER 미국S&P 500",
-          "sector": "미국 주식",
+          "ticker": "069500.KS",
+          "displayName": "KODEX 200",
+          "remark": "KODEX 200",
+          "sector": "국내 주식",
           "category": "주식",
-          "price": 26545.0,
+          "price": 107615.0,
           "weight": 0.5,
           "score": null
         }
@@ -991,10 +970,10 @@
   "custom": {
     "daaCanary": {
       "label": "DAA 카나리아 지표 (VWO·BND 원시 가중 모멘텀, 13612W)",
-      "asOfDate": "2026-07-31",
+      "asOfDate": "2026-08-31",
       "scores": {
-        "VWO": 0.142522,
-        "BND": -0.155351
+        "VWO": 0.819963,
+        "BND": -0.034978
       },
       "riskOn": false,
       "breadth": 0.5,
@@ -1002,125 +981,29 @@
     },
     "daaCanaryPreview": {
       "label": "DAA 카나리아 지표 (최신 종가 기준 프리뷰)",
-      "asOfDate": "2026-08-28",
+      "asOfDate": "2026-08-31",
       "scores": {
-        "VWO": 0.908386,
-        "BND": -0.016601
+        "VWO": 0.819963,
+        "BND": -0.034978
       },
       "breadth": 0.5,
       "note": "음수 카나리아 1개 → 공격 50% / 방어 50% — 월말 확정 전 최신 종가 기준, 월말 재계산 시 바뀔 수 있음"
     },
     "admCurrent": {
       "label": "가속듀얼모멘텀 당월 확정 티커",
-      "asOfDate": "2026-07-31",
-      "applicableMonth": "2026년 8월",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 9월",
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust"
     },
     "admPreview": {
       "label": "가속듀얼모멘텀 차월 예상 티커 (프리뷰)",
-      "asOfDate": "2026-08-28",
-      "applicableMonth": "2026년 9월 (예상·미확정)",
+      "asOfDate": "2026-08-31",
+      "applicableMonth": "2026년 10월 (예상·미확정)",
       "ticker": "SPY",
       "remark": "SPY : SPDR S&P 500 ETF Trust",
       "note": "월말 확정 전 최신 종가 기준 프리뷰 — 월말 재계산 시 바뀔 수 있음"
     }
   },
-  "previews": {
-    "PERM": {
-      "asOfDate": "2026-08-28",
-      "nav": 281.0356,
-      "returnSinceConfirmed": 0.036196
-    },
-    "LAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 407.2339,
-      "returnSinceConfirmed": 0.042518
-    },
-    "RAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 252.5539,
-      "returnSinceConfirmed": 0.007036
-    },
-    "GTAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 213.5989,
-      "returnSinceConfirmed": 0.016026
-    },
-    "PAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 246.2774,
-      "returnSinceConfirmed": 0.01959
-    },
-    "DAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 362.0477,
-      "returnSinceConfirmed": 0.011571
-    },
-    "VAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 293.6864,
-      "returnSinceConfirmed": 0.001725
-    },
-    "FAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 266.4011,
-      "returnSinceConfirmed": 0.015908
-    },
-    "AAA": {
-      "asOfDate": "2026-08-28",
-      "nav": 199.1254,
-      "returnSinceConfirmed": 0.017267
-    },
-    "DUAL": {
-      "asOfDate": "2026-08-28",
-      "nav": 369.1313,
-      "returnSinceConfirmed": 0.020269
-    },
-    "CDM": {
-      "asOfDate": "2026-08-28",
-      "nav": 246.9554,
-      "returnSinceConfirmed": 0.027914
-    },
-    "ADM": {
-      "asOfDate": "2026-08-28",
-      "nav": 451.9505,
-      "returnSinceConfirmed": 0.029878
-    },
-    "DGA": {
-      "asOfDate": "2026-08-28",
-      "nav": 839.4322,
-      "returnSinceConfirmed": 0.047267
-    },
-    "DYNBOND": {
-      "asOfDate": "2026-08-28",
-      "nav": 173.8246,
-      "returnSinceConfirmed": 0.005567
-    },
-    "KOALLWEATHER1": {
-      "asOfDate": "2026-08-28",
-      "nav": 135.2939,
-      "returnSinceConfirmed": 0.006878
-    },
-    "KOALLWEATHER2_GROWTH": {
-      "asOfDate": "2026-08-28",
-      "nav": 159.6118,
-      "returnSinceConfirmed": 0.005298
-    },
-    "HANMI_STATIC": {
-      "asOfDate": "2026-08-28",
-      "nav": 170.3939,
-      "returnSinceConfirmed": 0.004652
-    },
-    "HANMI_DYNAMIC_STABLE": {
-      "asOfDate": "2026-08-28",
-      "nav": 225.3134,
-      "returnSinceConfirmed": -0.003382
-    },
-    "HANMI_DYNAMIC_AGGRESSIVE": {
-      "asOfDate": "2026-08-28",
-      "nav": 590.6031,
-      "returnSinceConfirmed": -0.003562
-    }
-  }
+  "previews": {}
 }
