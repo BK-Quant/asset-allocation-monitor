@@ -92,6 +92,71 @@ def _http_post_json(url, payload, timeout=60):
         return json.loads(resp.read().decode("utf-8"))
 
 
+PENDING_BARS = {}  # symbol -> 마지막 유효 종가 이후, 봉은 있는데 종가가 null인 날짜들
+
+
+def unfinished_us_sessions(now_utc=None):
+    """이미 끝난 미국 거래일인데 Yahoo가 종가를 아직 비워둔 날짜 {date: [symbols]}.
+
+    2026-10-01 실측: 09-30 봉이 생겼지만 종가가 전부 null이었다. 그 날을 조용히 빼면
+    9월 말일이 09-29로 잡혀 10월 배분을 틀린 기준으로 계산·커밋한다(previous_complete_month_index는
+    '그 달의 있는 날짜 중 마지막'을 고르기 때문). 정규장 마감(20:00/21:00 UTC)+여유를 22:00 UTC로 본다.
+    """
+    now_utc = now_utc or datetime.now(timezone.utc)
+    out = {}
+    for symbol, dates in PENDING_BARS.items():
+        if symbol.endswith(".KS"):
+            continue
+        for d in dates:
+            close_utc = datetime.strptime(d, "%Y-%m-%d").replace(tzinfo=timezone.utc) + timedelta(hours=22)
+            if now_utc >= close_utc:
+                out.setdefault(d, []).append(symbol)
+    return out
+
+
+def _naver_us_closes(symbol):
+    """네이버 해외주식 일봉 {YYYY-MM-DD: 종가}. 거래소별 접미사: 나스닥 '.O', Cboe BZX(SCHD·INDA) '.K'."""
+    for code in (symbol, symbol + ".O", symbol + ".K", symbol + ".N"):
+        url = f"https://api.stock.naver.com/chart/foreign/item/{urllib.parse.quote(code)}?periodType=dayCandle"
+        try:
+            data = _http_get_json(url)
+        except Exception:
+            continue
+        infos = data.get("priceInfos") or []
+        if infos:
+            return {f"{p['localDate'][:4]}-{p['localDate'][4:6]}-{p['localDate'][6:]}": float(p["closePrice"])
+                    for p in infos if p.get("closePrice") is not None}
+    return {}
+
+
+def fill_pending_from_naver(price_maps, now_utc=None):
+    """끝난 미국 세션인데 Yahoo 종가가 빈 봉을 네이버 종가로 채운다.
+
+    마지막 봉은 이후 배당 소급조정이 아직 없어 '수정종가 = 원종가'라 원종가로 채워도 된다.
+    단 바로 전 유효일 종가가 두 소스에서 0.2% 이내로 일치할 때만 채운다(티커 오매칭·배당락 방어).
+    다음 실행은 Yahoo를 처음부터 다시 받으므로, 채운 값은 Yahoo가 정상화되면 자동으로 교체된다.
+    """
+    filled = {}
+    for d, syms in sorted(unfinished_us_sessions(now_utc).items()):
+        for s in syms:
+            nv = _naver_us_closes(s)
+            yahoo = price_maps.get(s) or {}
+            if not nv or d not in nv or not yahoo:
+                continue
+            last_valid = max(yahoo)
+            ref_y, ref_n = yahoo[last_valid], nv.get(last_valid)
+            if not ref_n or abs(ref_n / ref_y - 1) > 0.002:
+                print(f"  [{s}] 네이버 대체 거부: {last_valid} 종가 불일치 (Yahoo {ref_y} / 네이버 {ref_n})")
+                continue
+            yahoo[d] = round(nv[d], 4)
+            PENDING_BARS[s] = [x for x in PENDING_BARS.get(s, []) if x != d]
+            filled.setdefault(d, []).append(s)
+            time.sleep(0.1)
+    for d, syms in filled.items():
+        print(f"  {d} Yahoo 종가 공백 → 네이버 종가로 대체: {len(syms)}종목")
+    return filled
+
+
 def fetch_ticker(symbol, from_date, to_date):
     """Yahoo Finance에서 {YYYY-MM-DD: 조정종가} 딕셔너리를 가져온다."""
     period1 = int(datetime.strptime(from_date, "%Y-%m-%d").replace(tzinfo=timezone.utc).timestamp())
@@ -135,11 +200,16 @@ def fetch_ticker(symbol, from_date, to_date):
         return None
 
     price_by_date = {}
+    null_dates = []
     for ts, price in zip(timestamps, selected_prices):
-        if price is None:
-            continue
         date_str = datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d")
+        if price is None:
+            null_dates.append(date_str)
+            continue
         price_by_date[date_str] = round(float(price), 4)
+    if price_by_date:
+        last_valid = max(price_by_date)
+        PENDING_BARS[symbol] = [d for d in null_dates if d > last_valid]
 
     if len(price_by_date) < 10:
         print(f"  [{symbol}] Only {len(price_by_date)} days, skipping")
@@ -316,7 +386,17 @@ def main():
     if failed:
         print(f"\nWARNING: 실패한 티커: {', '.join(failed)}")
 
+    filled = fill_pending_from_naver(price_maps)
+    pending = unfinished_us_sessions()
+    if pending:
+        for d, syms in sorted(pending.items()):
+            print(f"\nERROR: {d} 미국 정규장은 끝났는데 Yahoo 종가가 비어 있음 ({len(syms)}종목: {', '.join(syms[:6])}...)")
+        print("데이터 미확정 — 이 상태로 계산하면 월말 기준일이 하루 당겨진다. 저장하지 않고 중단. 잠시 후 재실행할 것.")
+        sys.exit(2)
+
     payload = build_aligned_payload(price_maps)
+    if filled:
+        payload["meta"]["fallbackFills"] = {"source": "Naver 해외주식 일봉(원종가)", "dates": filled}
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     PRICES_PATH.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
