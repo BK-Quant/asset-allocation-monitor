@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-10-01 09:30 KST",
+    "generatedAt": "2026-10-01 10:10 KST",
     "basisDate": "2026-09-30",
     "applicableMonth": "2026년 10월",
     "latestDataDate": "2026-09-30"
@@ -392,7 +392,7 @@
           "sector": "미국 대형주",
           "category": "주식",
           "price": 762.63,
-          "weight": 0.407831,
+          "weight": 0.40783,
           "score": null
         },
         {
@@ -402,7 +402,7 @@
           "sector": "미국 리츠",
           "category": "리츠",
           "price": 89.63,
-          "weight": 0.333007,
+          "weight": 0.333008,
           "score": null
         },
         {
