@@ -168,43 +168,141 @@ class PriceSeries:
 # 수익률로 대체(스플라이스)해서 백테스트 구간을 늘리기 위한 것이다. 실제 그 상품의
 # 과거 수익률이 아니라 유사 자산의 대역치이므로, 반드시 "확장(프록시)" 라벨과 함께만
 # 노출해야 한다(데이터 정직성 원칙 — 실제 수치와 절대 섞지 않음).
+# 프록시 규칙은 로컬 연구 엔진(퀀트/한미공격형_개선/aa_ext.py PROXY, 퀀트/자산배분_개선/ov.py 현금금리)과 같다.
+#   (프록시, 원화환산 여부, 래그)  — 프록시가 리스트면 수익률 가중 블렌드. "CD"는 한국 3개월 금리(전월값) − 0.1%.
+#   원화환산: 달러 자산 수익률에 원달러 환율(KRW=X) 변화를 곱한다. 래그 1: 미국 종가 D를 한국 D+1에 쓴다.
+#   블렌드 구성에 다른 한국 ETF가 들어가면(혼합형) 그 ETF의 확장 시계열을 쓴다(2차 패스).
 EXTENDED_PROXY_MAP = {
-    "379800.KS": "SPY",   # KODEX 미국S&P500TR ← SPY
-    "411060.KS": "GLD",   # ACE KRX금현물 ← GLD
-    "453810.KS": "INDA",  # KODEX 인도Nifty50 ← iShares MSCI India
-    "453850.KS": "TLT",   # ACE 미국30년국채액티브(H) ← iShares 20+Y Treasury
-    "464470.KS": "TLT",   # PLUS 미국채30년액티브 ← 동일
-    "449170.KS": "BIL",   # TIGER KOFR금리액티브(합성) ← SPDR 1-3M T-Bill
-    "488770.KS": "BIL",   # KODEX 머니마켓액티브 ← 동일
+    # 코스피200 지수는 야후에서 장기 데이터가 안 내려와 같은 지수를 추종하는 KODEX 200(2002년 상장)으로 잇는다
+    "102110.KS": ("069500.KS", False, 0), "294400.KS": ("069500.KS", False, 0),
+    "229200.KS": ("^KQ11", False, 0),
+    "133690.KS": ("QQQ", True, 1), "379810.KS": ("QQQ", True, 1), "381180.KS": ("QQQ", True, 1),
+    # K-글로벌 섹터 슬롯(매년 교체)은 연구 문서와 같이 나스닥100으로 근사
+    "487240.KS": ("QQQ", True, 1), "117460.KS": ("QQQ", True, 1),
+    "360750.KS": ("SPY", True, 1), "379800.KS": ("SPY", True, 1),
+    "305080.KS": ("IEF", True, 0), "308620.KS": ("IEF", True, 0),
+    "464470.KS": ("TLT", True, 0), "453850.KS": ("TLT", False, 0),  # 453850은 환헤지
+    "411060.KS": ("GLD", True, 1),
+    "148070.KS": ("IEF", False, 1), "365780.KS": ("IEF", False, 1),   # 국고채 ← 미국채 현지수익률
+    "451600.KS": ("TLT", False, 1), "385560.KS": ("TLT", False, 1),
+    "138230.KS": ("KRW=X", False, 0), "329750.KS": ("KRW=X", False, 0),  # 환노출 달러 자산 ~ 환율 지배
+    "195980.KS": ("EEM", False, 1),                                   # 환헤지 신흥국
+    "251350.KS": ([("SPY", 0.65), ("EFA", 0.35)], True, 1),           # MSCI World 근사
+    "453810.KS": ("INDA", True, 0),
+    "488770.KS": ("CD", False, 0), "0043B0.KS": ("CD", False, 0), "449170.KS": ("CD", False, 0),
+    "434060.KS": ([("251350.KS", 0.65), ("195980.KS", 0.15), ("148070.KS", 0.20)], False, 0),  # TDF2050 근사
+    "284430.KS": ([("069500.KS", 0.40), ("305080.KS", 0.60)], False, 0),                      # 200미국채혼합 근사
 }
+EXTENDED_PROXY_SUMMARY = "지수·미국ETF 원화환산, 현금성은 CD금리"
+CASH_SPREAD = 0.001       # CD금리 − 0.1%
+CASH_FALLBACK_ANNUAL = 0.025  # kr3m 데이터가 없을 때만 쓰는 정액 (연구 엔진 aa_ext와 동일)
+
+
+def _calendar_days(d0, d1):
+    from datetime import date
+    return (date.fromisoformat(d1) - date.fromisoformat(d0)).days
+
+
+def _cash_daily_returns(ps):
+    """i−1→i 현금 수익률. 한국 3개월 금리(FRED IR3TIB01KRM156N)의 '전월' 값 − 0.1%, 달력일 기준 복리."""
+    rates = {}
+    for row in (ps.economic or {}).get("kr3m") or []:
+        rates[row["date"][:7]] = row["value"] / 100
+    months = sorted(rates)
+    out = [0.0] * len(ps.dates)
+    for i in range(1, len(ps.dates)):
+        y, m = int(ps.dates[i][:4]), int(ps.dates[i][5:7])
+        y, m = (y - 1, 12) if m == 1 else (y, m - 1)
+        key = f"{y:04d}-{m:02d}"
+        if rates:
+            prior = [k for k in months if k <= key]
+            r = rates[prior[-1]] if prior else rates[months[0]]
+            r = max(r - CASH_SPREAD, 0.0)
+        else:
+            r = CASH_FALLBACK_ANNUAL
+        out[i] = (1 + r) ** (_calendar_days(ps.dates[i - 1], ps.dates[i]) / 365) - 1
+    return out
+
+
+def _lagged(arr, lag):
+    return ([None] * lag + arr[:-lag]) if lag else arr
+
+
+def _proxy_level(prices, spec, need_fx, lag, n, cash_r):
+    """프록시 수익률을 누적한 레벨 시계열(시작 전 None)."""
+    if spec == "CD":
+        lvl, v = [None] * n, 1.0
+        lvl[0] = v
+        for i in range(1, n):
+            v *= 1 + cash_r[i]
+            lvl[i] = v
+        return lvl
+    parts = spec if isinstance(spec, list) else [(spec, 1.0)]
+    comps = []
+    for sym, w in parts:
+        arr = prices.get(sym)
+        if arr is None:
+            return None
+        comps.append((_lagged(arr, lag), w))
+    fx = _lagged(prices.get("KRW=X") or [None] * n, lag) if need_fx else None
+    lvl, v, started = [None] * n, 1.0, False
+    for i in range(1, n):
+        rs, ok = 0.0, True
+        for a, w in comps:
+            if a[i] is None or not a[i - 1]:
+                ok = False
+                break
+            rs += w * (a[i] / a[i - 1] - 1)
+        if ok and need_fx:
+            if fx[i] is None or not fx[i - 1]:
+                ok = False
+            else:
+                rs = (1 + rs) * (fx[i] / fx[i - 1]) - 1
+        if not ok:
+            if started:
+                lvl[i] = v  # 중간 결측은 직전값 유지
+            continue
+        if not started:
+            started = True
+            lvl[i - 1] = v
+        v *= 1 + rs
+        lvl[i] = v
+    return lvl
 
 
 def build_extended_price_series(ps):
-    """EXTENDED_PROXY_MAP에 있는 티커는 상장 전 구간을 프록시 티커의 수익률로
-    스플라이스한 새 PriceSeries를 반환한다. 상장일 시점 가격이 정확히 이어지도록
-    프록시 가격에 배율(scale)을 곱해 붙인다. 원본 ps는 건드리지 않는다."""
-    dates = ps.dates
+    """EXTENDED_PROXY_MAP의 한국 ETF는 상장 전 구간을 프록시 수익률로 스플라이스한 새 PriceSeries를 반환한다.
+    상장일 가격에서 정확히 이어지도록 배율을 맞춘다. 상장 후는 실제 가격 그대로. 원본 ps는 건드리지 않는다."""
+    n = len(ps.dates)
+    cash_r = _cash_daily_returns(ps)
     new_prices = dict(ps.prices)
-    for ticker, proxy in EXTENDED_PROXY_MAP.items():
+
+    def splice(ticker, spec, need_fx, lag, source):
         actual = ps.prices.get(ticker)
-        proxy_arr = ps.prices.get(proxy)
-        if actual is None or proxy_arr is None:
-            continue
-        first_idx = next((i for i, v in enumerate(actual) if v is not None), None)
-        if first_idx is None or not proxy_arr[first_idx]:
-            continue
-        scale = actual[first_idx] / proxy_arr[first_idx]
-        spliced = []
-        for i in range(len(dates)):
-            if i >= first_idx and actual[i] is not None:
-                spliced.append(actual[i])
-            elif proxy_arr[i] is not None:
-                spliced.append(proxy_arr[i] * scale)
-            else:
-                spliced.append(None)
-        new_prices[ticker] = spliced
+        lvl = _proxy_level(source, spec, need_fx, lag, n, cash_r)
+        if lvl is None:
+            return
+        fi = next((i for i, v in enumerate(actual) if v is not None), None) if actual else None
+        if fi is None:
+            new_prices[ticker] = lvl
+            return
+        if lvl[fi] is None:
+            return
+        scale = actual[fi] / lvl[fi]
+        new_prices[ticker] = [actual[i] if (i >= fi and actual[i] is not None)
+                              else (lvl[i] * scale if lvl[i] is not None else None) for i in range(n)]
+
+    def is_blend_of_kr(spec):
+        parts = spec if isinstance(spec, list) else [(spec, 1.0)]
+        return any(s.endswith(".KS") for s, _ in parts)
+    for ticker, (spec, need_fx, lag) in EXTENDED_PROXY_MAP.items():
+        if not is_blend_of_kr(spec):
+            splice(ticker, spec, need_fx, lag, ps.prices)
+    for ticker, (spec, need_fx, lag) in EXTENDED_PROXY_MAP.items():
+        if is_blend_of_kr(spec):
+            splice(ticker, spec, need_fx, lag, new_prices)
     extended = PriceSeries.__new__(PriceSeries)
-    extended.dates = dates
+    extended.dates = ps.dates
     extended.prices = new_prices
     extended.economic = ps.economic
     return extended
@@ -409,6 +507,199 @@ def simulate_hanmi_aggressive_daily(ps, upto_idx, min_history_days=252):
         if idx in month_end_set:
             snapshots[idx] = {t: 1 / len(held) for t in held} if held else {}
     return snapshots
+
+
+# ═══════════════════ 개선판 (퀀트/자산배분_개선 · 한미공격형_개선 검증 결과) ═══════════════════
+# 원본 전략은 그대로 두고 개선판을 별도 전략으로 추가한다. 규칙 출처:
+#   - 안정형 R3·한미정적 R1·K-글로벌 R2: 자산배분_개선/00_결론.md (2026-10-18)
+#   - 공격형 2차안: 한미공격형_개선/2차안_조건식.md (2026-11-03 채택, 11-13 재검토 후 유지)
+# 필터로 비운 몫은 원화 현금(CD/MMF)으로 둔다 — 사이트에서는 KODEX 머니마켓액티브(488770)로 표시.
+CASH_PARKING_TICKER = "488770.KS"
+
+
+def strict_13612w(ps, ticker, idx):
+    """13612W = 12×R(21일) + 4×R(63일) + 2×R(126일) + 1×R(252일).
+    네 구간이 모두 있어야 값을 낸다(상장 1년 미만이면 None → 필터 판정 안 함, 그대로 보유)."""
+    rets = [ps.get_return(ticker, idx, d) for d in (21, 63, 126, 252)]
+    if any(r is None for r in rets):
+        return None
+    if ps.get_price_n_days_ago(ticker, idx, 252) is None:
+        return None
+    return 12 * rets[0] + 4 * rets[1] + 2 * rets[2] + rets[3]
+
+
+def _apply_13612w_filter(ps, idx, weights, filtered):
+    """filtered에 속한 종목 중 13612W<0인 것의 비중을 현금 파킹 종목으로 옮긴다."""
+    out = {}
+    cash = 0.0
+    for t, w in weights.items():
+        if t in filtered:
+            score = strict_13612w(ps, t, idx)
+            if score is not None and score < 0:
+                cash += w
+                continue
+        out[t] = out.get(t, 0.0) + w
+    if cash > 0:
+        out[CASH_PARKING_TICKER] = out.get(CASH_PARKING_TICKER, 0.0) + cash
+    return out
+
+
+HANMI_STATIC_R1_FILTERED = {"305080.KS", "365780.KS", "451600.KS", "464470.KS"}  # 채권 ETF
+
+
+def calc_HANMI_STATIC_R1(ps, idx):
+    """한미정적 + R1: 채권 ETF 각각 13612W<0이면 그 비중을 현금(CD/MMF)으로. 나머지는 고정비중 그대로."""
+    return _apply_13612w_filter(ps, idx, HANMI_STATIC_WEIGHTS, HANMI_STATIC_R1_FILTERED)
+
+
+KOALLWEATHER1_R2_FILTERED = {  # 주식·섹터·채권 ETF (금 411060은 판정하지 않고 상시 보유)
+    "251350.KS", "379810.KS", "379800.KS", "195980.KS", "487240.KS", "117460.KS", "381180.KS",
+    "365780.KS", "385560.KS", "305080.KS", "464470.KS",
+}
+
+
+def calc_KOALLWEATHER1_R2(ps, idx):
+    """K-글로벌 + R2: 주식·섹터·채권 ETF 각각 13612W<0이면 현금(CD/MMF)으로. 금은 상시 보유."""
+    return _apply_13612w_filter(ps, idx, KOALLWEATHER1_WEIGHTS, KOALLWEATHER1_R2_FILTERED)
+
+
+HANMI_STABLE_R3_WEIGHT = 0.12  # 원 운용(한미안정형#6)과 같은 종목당 12% (8종목 96% + 상시 현금 4%)
+HANMI_STABLE_R3_ALWAYS = {"411060.KS", "329750.KS"}  # 금·달러 상시 보유
+
+
+def calc_HANMI_DYNAMIC_STABLE_R3(ps, idx):
+    """한미동적-안정형 개선판(R3): 8종목 각 12%, 주식·채권은 13612W<0이면 현금(CD/MMF),
+    금·달러는 상시 보유, 월 1회(전월 말 종가) 판정. 미보유분(기본 4% 포함)은 현금 파킹."""
+    weights = {t: HANMI_STABLE_R3_WEIGHT for t in HANMI_DYNAMIC_STABLE_UNIVERSE}
+    filtered = set(HANMI_DYNAMIC_STABLE_UNIVERSE) - HANMI_STABLE_R3_ALWAYS
+    out = _apply_13612w_filter(ps, idx, weights, filtered)
+    rest = 1.0 - sum(out.values())
+    if rest > 1e-9:
+        out[CASH_PARKING_TICKER] = out.get(CASH_PARKING_TICKER, 0.0) + rest
+    return out
+
+
+AGG_V2_SLOPE_DAYS = 40      # 매수 C / 매도 A: 40일 이동평균의 1일 변화율 부호
+AGG_V2_EXIT_SCORE = 0.06    # 월말 매도 B·C: (1+3+6개월 수익률) < 6%
+
+
+def _agg_v2_score(ps, t, idx):
+    rets = [ps.get_return(t, idx, d) for d in (21, 63, 126)]
+    return None if any(r is None for r in rets) else sum(rets)
+
+
+def _sma40_slope(ps, t, idx):
+    a, b = ps.get_sma(t, idx, AGG_V2_SLOPE_DAYS), ps.get_sma(t, idx - 1, AGG_V2_SLOPE_DAYS)
+    return None if a is None or b is None else a - b
+
+
+def simulate_hanmi_aggressive_v2_daily(ps, upto_idx, min_history_days=252):
+    """한미동적-공격형 2차안 일별 시뮬레이션. 9종목 황금나비 유니버스, 최대 2종목 50%씩.
+      - 매도 A (매일): 40일 이동평균이 전일보다 낮아지면 매도.
+      - 매도 B (월 마지막 거래일): (1+3+6개월 수익률) < 6% 인 보유종목 매도 → 머니마켓 고착 해소.
+      - 매수 (월말 종가로 결정, 다음 거래일 체결): 종가 > 200일선 그리고 40일선 상승 중인 종목을
+        (1+3+6개월 수익률) 내림차순으로 빈 자리만큼 편입. 방금 매도된 종목도 조건이 맞으면 재매수.
+    반환: (월말 스냅샷 {idx: {ticker: weight}}, 월말 NAV {idx: nav}) — NAV는 월중 매도를 반영한 일별 경로."""
+    month_end_set = set(i for i in ps.month_end_indices() if i <= upto_idx)
+    held = []
+    snapshots, navs = {}, {}
+    nav = 100.0
+    for idx in range(min_history_days, upto_idx + 1):
+        if idx > min_history_days:
+            r = 0.0
+            for t in held:  # 전일 종가 기준 보유분이 오늘 수익을 낸다 (종목당 50%, 빈 슬롯은 현금 0%)
+                p0, p1 = ps.get_price(t, idx - 1), ps.get_price(t, idx)
+                if p0 and p1:
+                    r += 0.5 * (p1 / p0 - 1)
+            nav *= 1 + r
+        held = [t for t in held if not ((_sma40_slope(ps, t, idx) or 0) < 0)]
+        if idx in month_end_set:
+            held = [t for t in held if not ((_agg_v2_score(ps, t, idx) if _agg_v2_score(ps, t, idx) is not None else 1) < AGG_V2_EXIT_SCORE)]
+            cands = []
+            for t in HANMI_DYNAMIC_AGGRESSIVE_UNIVERSE:
+                if t in held:
+                    continue
+                d200 = ps.get_sma_momentum(t, idx, 200)
+                slope = _sma40_slope(ps, t, idx)
+                score = _agg_v2_score(ps, t, idx)
+                if d200 is None or d200 <= 0 or slope is None or slope <= 0 or score is None:
+                    continue
+                cands.append({"ticker": t, "score": score})
+            for c in sort_by_score_desc(cands)[: max(0, 2 - len(held))]:
+                held.append(c["ticker"])
+            snapshots[idx] = {t: 0.5 for t in held}
+            navs[idx] = nav
+    return snapshots, navs
+
+
+# ── 연금 계좌용: ADM + 카나리아 점수 전략 (자산배분_개선/irp_final.py · irp_signal.py, 2026-10-18 확정) ──
+PENSION_RISKY = ["195980.KS", "069500.KS", "229200.KS", "360750.KS", "133690.KS", "411060.KS", "251350.KS"]
+PENSION_BONDS = ["148070.KS", "385560.KS", "464470.KS", "329750.KS"]
+PENSION_BALANCED = ["434060.KS", "284430.KS"]  # KODEX TDF2050액티브, KODEX 200미국채혼합50 (IRP 3점 슬롯)
+PENSION_MMF = "0043B0.KS"                      # TIGER 머니마켓액티브
+
+
+def _avg136(ps, t, idx):
+    """종목 순위 모멘텀 = 1·3·6개월(21·63·126거래일) 수익률 평균."""
+    rets = [ps.get_return(t, idx, d) for d in (21, 63, 126)]
+    return None if any(r is None for r in rets) else sum(rets) / 3
+
+
+def _ranked(ps, tickers, idx):
+    rows = [{"ticker": t, "score": s} for t in tickers if (s := _avg136(ps, t, idx)) is not None]
+    return sort_by_score_desc(rows)
+
+
+def pension_score(ps, idx):
+    """점수 = 미국 ADM(SPY·VSS 중 1·3·6개월 평균이 높은 쪽이 양수면 1) + DAA 카나리아(VWO·BND 13612W 양수 개수 0~2)."""
+    adm_scores = [s for s in (_avg136(ps, t, idx) for t in ("SPY", "VSS")) if s is not None]
+    adm = 1 if adm_scores and max(adm_scores) > 0 else 0
+    canary = sum(1 for t in ("VWO", "BND") if (strict_13612w(ps, t, idx) or 0) > 0)
+    return adm, canary
+
+
+def _pension_allocation(ps, idx, full_equity_at_3):
+    adm, canary = pension_score(ps, idx)
+    total = adm + canary
+    attack = total >= 2 or (total == 1 and canary == 1)
+    eq = _ranked(ps, PENSION_RISKY, idx)
+    bd = _ranked(ps, PENSION_BONDS, idx)
+    bond = bd[0]["ticker"] if bd and bd[0]["score"] > 0 else PENSION_MMF
+    out = {}
+
+    def add(t, w):
+        out[t] = out.get(t, 0.0) + w
+
+    if attack:
+        eq_share = 1.0 if (full_equity_at_3 and total >= 3) else 0.70
+        for row in eq[:3]:
+            add(row["ticker"] if row["score"] > 0 else PENSION_MMF, eq_share / 3)
+        if eq_share < 1.0:
+            if total >= 3:
+                bl = _ranked(ps, PENSION_BALANCED, idx)
+                add(bl[0]["ticker"] if bl else bond, 0.30)
+            else:
+                add(bond, 0.30)
+    else:
+        add(bond, 0.30)
+        add(PENSION_MMF, 0.70)
+    return out
+
+
+def calc_PENSION_IRP(ps, idx):
+    """IRP용 ADM+카나리아 최종안. 공격(3점·2점·카나리아 1개인 1점) = 주식 상위 3종 23.3%씩(모멘텀≤0이면 MMF)
+    + 30%(3점은 혼합형 상위, 그 외 채권 상위·≤0이면 MMF). 방어 = 채권 상위 30% + MMF 70%. 위험자산 70% 한도 준수."""
+    return _pension_allocation(ps, idx, full_equity_at_3=False)
+
+
+def calc_PENSION_SAVINGS_MOMENTUM(ps, idx):
+    """연금저축용 모멘텀형. IRP 규칙과 같되 3점(최강 국면)이면 혼합형 대신 주식 상위 3종에 1/3씩 100%(위험자산 한도 없음)."""
+    return _pension_allocation(ps, idx, full_equity_at_3=True)
+
+
+def calc_HANMI_DYNAMIC_AGGRESSIVE_V2(ps, idx):
+    """단독 호출용(느림): idx 시점까지 일별 시뮬레이션 후 그 월말 스냅샷. build_output은 시뮬레이션을 한 번만 돌려 재사용한다."""
+    return simulate_hanmi_aggressive_v2_daily(ps, idx)[0].get(idx, {})
 
 
 def calc_LAA(ps, idx):
@@ -710,6 +1001,12 @@ STRATEGIES = {
     "HANMI_STATIC": calc_HANMI_STATIC,
     "HANMI_DYNAMIC_STABLE": calc_HANMI_DYNAMIC_STABLE,
     "HANMI_DYNAMIC_AGGRESSIVE": calc_HANMI_DYNAMIC_AGGRESSIVE,
+    "HANMI_STATIC_R1": calc_HANMI_STATIC_R1,
+    "KOALLWEATHER1_R2": calc_KOALLWEATHER1_R2,
+    "HANMI_DYNAMIC_STABLE_R3": calc_HANMI_DYNAMIC_STABLE_R3,
+    "HANMI_DYNAMIC_AGGRESSIVE_V2": calc_HANMI_DYNAMIC_AGGRESSIVE_V2,
+    "PENSION_IRP": calc_PENSION_IRP,
+    "PENSION_SAVINGS_MOMENTUM": calc_PENSION_SAVINGS_MOMENTUM,
 }
 
 STRATEGY_LABELS = {
@@ -732,6 +1029,12 @@ STRATEGY_LABELS = {
     "HANMI_STATIC": "한미정적자산배분",
     "HANMI_DYNAMIC_STABLE": "한미동적 - 안정형",
     "HANMI_DYNAMIC_AGGRESSIVE": "한미동적 - 공격형",
+    "HANMI_STATIC_R1": "한미정적자산배분 R1 (채권 필터)",
+    "KOALLWEATHER1_R2": "K-글로벌 자산배분 R2 (주식·채권 필터)",
+    "HANMI_DYNAMIC_STABLE_R3": "한미동적 - 안정형 개선판 (R3)",
+    "HANMI_DYNAMIC_AGGRESSIVE_V2": "한미동적 - 공격형 2차안 (ISA)",
+    "PENSION_IRP": "연금 ADM+카나리아 (IRP용)",
+    "PENSION_SAVINGS_MOMENTUM": "연금 모멘텀형 (연금저축용)",
 }
 
 
@@ -755,6 +1058,12 @@ STRATEGY_DESCRIPTIONS = {
     "HANMI_STATIC": "한미정적자산배분. TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, TIGER 미국채10년선물 6.25%, ACE 국고채10년 6.25%, PLUS 국고채30년액티브 6.25%, PLUS 미국채30년액티브 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%로 고정 배분.",
     "HANMI_DYNAMIC_STABLE": "한미동적-안정형. 8종목 유니버스(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150) 각각에 동일비중 12.5%(=100%/8)를 배정하되, 종가가 120일 이동평균 이상인 종목만 보유한다(그 미만이면 매수하지 않고 비중을 비워둠 — 현금 대체 없음). 매달 그 시점의 종가로 다시 판단하므로, 120일 이동평균을 웃도는 동안은 계속 보유하고 밑돌면 보유를 정리한다.",
     "HANMI_DYNAMIC_AGGRESSIVE": "한미동적-공격형. 9종목 유니버스(TIGER 미국나스닥100, TIGER 미국S&P500, KODEX 코스닥150, KODEX 200, ACE KRX금현물, KOSEF 국고채10년, TIGER 미국채10년선물, KOSEF 미국달러선물, TIGER 머니마켓액티브) 중 종가가 200일 이동평균 위인 종목만 후보로 삼아 (1개월+3개월 수익률)이 가장 강한 상위 2종목만 매수(종목당 50%). 매도(150일 이동평균 이탈)는 거래일마다 체크해 하루만 이탈해도 즉시 매도하고, 빈 자리는 그 달 월말 종가로 결정해 다음 달 첫 거래일에 체결 — 매수·매도 기준선이 달라 지난달 보유 여부를 기억하는 이력 기반 전략(2026-08-01 젠포트 실화면 대조 검증 완료: 2026-07-31 기준 전액 현금 일치).",
+    "HANMI_STATIC_R1": "한미정적자산배분에 R1 채권 필터를 더한 개선판. 고정비중(TIGER 200 25%, TIGER 미국S&P500 25%, ACE KRX금현물 20%, 채권 4종 각 6.25%, TIGER 미국달러단기채권액티브 2.5%, KODEX 머니마켓액티브 2.5%)은 그대로 두고, 채권 4종(TIGER 미국채10년선물·ACE 국고채10년·PLUS 국고채30년액티브·PLUS 미국채30년액티브)만 매달 13612W 모멘텀(1·3·6·12개월 수익률에 12·4·2·1 가중)을 계산해 음수인 종목의 비중을 현금(CD/MMF, 여기서는 KODEX 머니마켓액티브로 표시)으로 옮긴다. 상장 1년 미만이라 13612W를 못 구하는 종목은 판정하지 않고 보유.",
+    "KOALLWEATHER1_R2": "K-글로벌 자산배분에 R2 필터를 더한 개선판. 고정비중(주식 50%·대체 15%·채권 35%)에서 주식·섹터·채권 ETF 각각의 13612W 모멘텀(1·3·6·12개월 수익률에 12·4·2·1 가중)이 음수면 그 비중을 현금(CD/MMF, 여기서는 KODEX 머니마켓액티브로 표시)으로 옮긴다. ACE KRX금현물은 판정하지 않고 항상 보유. 매달 전월 말 종가로 판정. 상장 1년 미만이라 13612W를 못 구하는 종목은 판정하지 않고 보유.",
+    "HANMI_DYNAMIC_STABLE_R3": "한미동적-안정형 개선판(R3). 같은 8종목(KOSEF 국고채10년, TIGER 미국채10년선물, TIGER 미국달러단기채권액티브, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 200, KODEX 코스닥150)에 각 12%를 배정한다. 주식·채권 6종은 매달 13612W 모멘텀(1·3·6·12개월 수익률에 12·4·2·1 가중)이 음수면 현금으로 비우고, 금(ACE KRX금현물)과 달러(TIGER 미국달러단기채권액티브)는 판정 없이 항상 보유한다. 비운 몫과 기본 4%는 현금(CD/MMF, 여기서는 KODEX 머니마켓액티브로 표시). 원형 대비 바뀐 점: 120일선 → 13612W, 매일 판정 → 월 1회, 금·달러 상시 보유, 노는 현금에 이자.",
+    "HANMI_DYNAMIC_AGGRESSIVE_V2": "한미동적-공격형 2차안(2026-11-03 채택). 같은 9종목 유니버스에서 최대 2종목을 50%씩 보유한다. 매수: 월말 종가 기준으로 종가가 200일 이동평균 위이고 40일 이동평균이 상승 중(전일 대비)인 종목을 (1+3+6개월 수익률) 내림차순으로 빈 자리만큼 골라 다음 거래일에 매수. 매도: ① 거래일마다 40일 이동평균이 전일보다 낮아지면 매도, ② 월 마지막 거래일에 (1+3+6개월 수익률)이 6% 미만인 보유 종목 매도(머니마켓 ETF가 슬롯을 영구 점유하던 고착 문제 해소). 매도된 종목도 조건이 맞으면 다음 날 재매수. 백테스트 NAV는 월중 매도를 반영한 일별 경로로 계산.",
+    "PENSION_IRP": "IRP용 ADM+카나리아 최종안(2026-10-18 확정). 매달 전월 말 종가로 점수(0~3점)를 매긴다: 미국 ADM(SPY·VSS 중 1·3·6개월 수익률 평균이 높은 쪽이 양수면 1점) + DAA 카나리아(VWO·BND의 13612W 모멘텀이 양수인 개수, 0~2점). 공격 국면(3점·2점·카나리아 1개인 1점): 주식 7종(PLUS 신흥국MSCI, KODEX 200, KODEX 코스닥150, TIGER 미국S&P500, TIGER 미국나스닥100, ACE KRX금현물, KODEX 선진국MSCI World) 중 1·3·6개월 수익률 평균 상위 3종에 23.3%씩(모멘텀이 0 이하면 그 몫은 TIGER 머니마켓액티브) + 나머지 30%는 3점이면 혼합형(KODEX TDF2050액티브·KODEX 200미국채혼합50) 상위, 2점 이하면 채권 4종(KOSEF 국고채10년, RISE KIS국고채30년Enhanced, PLUS 미국채30년액티브, TIGER 미국달러단기채권액티브) 상위(모멘텀 0 이하면 MMF). 방어 국면(0점·ADM만 켜진 1점): 채권 상위 30% + MMF 70%. IRP 위험자산 70% 한도를 지키도록 설계.",
+    "PENSION_SAVINGS_MOMENTUM": "연금저축용 모멘텀형. IRP용 ADM+카나리아와 같은 점수·종목·규칙을 쓰되, 3점(가장 강한 상승 국면)일 때는 혼합형 30% 대신 주식 상위 3종에 1/3씩 100% 투자한다(연금저축은 위험자산 70% 한도가 없어서). 2점 이하는 IRP와 동일. 2026-10-25 점수별 변경안(3점 상위4 등)은 검토 후 적용하지 않고 이 규칙을 유지.",
 }
 
 

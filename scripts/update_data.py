@@ -46,7 +46,19 @@ TICKERS = [
     "102110.KS", "451600.KS", "488770.KS",
     "148070.KS", "133690.KS", "069500.KS", "229200.KS",
     "138230.KS", "0043B0.KS", "305080.KS", "329750.KS",
+    # ── IRP ADM+카나리아 최종안 혼합형 슬롯 (2026-11-19) ──
+    "434060.KS",  # KODEX TDF2050액티브
+    # ── 확장(프록시) 백테스트용 참고 시계열 (2026-11-19) — 한국 거래일 계열이라 .KS처럼 취급 ──
+    # (코스피200은 야후 지수 데이터가 짧아 KODEX 200 069500으로 대체 — strategy_engine.EXTENDED_PROXY_MAP)
+    "^KQ11", "KRW=X",
 ]
+
+# .KS가 아니지만 미국 달력에 섞으면 안 되는 비(非)미국 시계열 — 한국 ETF처럼 forward-fill만 한다.
+NON_US_REFERENCE = {"^KQ11", "KRW=X"}
+
+
+def is_us_symbol(symbol):
+    return not symbol.endswith(".KS") and symbol not in NON_US_REFERENCE
 
 # 백테스트용으로 최대한 긴 히스토리를 요청한다. Yahoo가 상장일 이전 데이터는 어차피
 # 반환하지 않으므로, 시작일을 넉넉히 과거로 잡아도 문제 없다.
@@ -105,7 +117,7 @@ def unfinished_us_sessions(now_utc=None):
     now_utc = now_utc or datetime.now(timezone.utc)
     out = {}
     for symbol, dates in PENDING_BARS.items():
-        if symbol.endswith(".KS"):
+        if not is_us_symbol(symbol):
             continue
         for d in dates:
             close_utc = datetime.strptime(d, "%Y-%m-%d").replace(tzinfo=timezone.utc) + timedelta(hours=22)
@@ -229,7 +241,7 @@ def build_aligned_payload(price_maps):
     # 대부분 전략(미국 티커만 사용)의 백테스트 깊이를 최대한 확보한다.
     us_dates = set()
     for symbol, price_by_date in price_maps.items():
-        if not symbol.endswith(".KS"):
+        if is_us_symbol(symbol):
             us_dates |= set(price_by_date.keys())
 
     aligned_dates = sorted(us_dates)
@@ -323,6 +335,29 @@ def fetch_t10y3m_spread():
     return {"date": tnx["date"], "value": round(tnx["value"] - irx["value"], 4), "source": "Yahoo ^TNX-^IRX proxy"}
 
 
+FRED_KR3M_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=IR3TIB01KRM156N"
+
+
+def fetch_kr3m(previous=None):
+    """한국 3개월 금리(FRED IR3TIB01KRM156N, 월별 %) — 확장 백테스트의 현금(CD/MMF) 프록시용.
+    실패하면 직전 economic.json 값을 그대로 쓴다(월별 지표라 며칠 늦어도 무방)."""
+    try:
+        text = _http_get_text(f"{FRED_KR3M_CSV_URL}&cosd=2000-01-01")
+        rows = []
+        for line in text.splitlines()[1:]:
+            if not line.strip():
+                continue
+            date, value = line.split(",", 1)
+            if value.strip() in (".", ""):
+                continue
+            rows.append({"date": date, "value": float(value)})
+        if len(rows) > 12:
+            return rows
+    except Exception as e:
+        print(f"  [KR3M] FRED fetch failed, keeping previous series: {e}")
+    return previous or []
+
+
 def fetch_sp500_dividend_yield():
     text = unescape(_http_get_text(SP500_DIVIDEND_YIELD_URL)).replace("<!-- -->", "")
     marker = "Current S&P 500 Dividend Yield"
@@ -348,11 +383,19 @@ def build_economic_payload(prices_payload):
     spy_prices = prices_payload.get("SPY") or []
     sp500_last = spy_prices[-1] if spy_prices else None
     sp500_ma200 = calculate_sma(spy_prices, 200)
+    previous_kr3m = []
+    if ECONOMIC_PATH.exists():
+        try:
+            previous_kr3m = json.loads(ECONOMIC_PATH.read_text(encoding="utf-8")).get("kr3m") or []
+        except Exception:
+            previous_kr3m = []
+    kr3m = fetch_kr3m(previous_kr3m)
     KST = timezone(timedelta(hours=9))
     today = datetime.now(KST).strftime("%Y-%m-%d")
     return {
         "lastUpdated": today,
-        "source": "BLS (LNS14000000), Yahoo Finance (SPY proxy), FRED (T10Y3M), US500.com",
+        "source": "BLS (LNS14000000), Yahoo Finance (SPY proxy), FRED (T10Y3M, IR3TIB01KRM156N), US500.com",
+        "kr3m": kr3m,
         "unemployment": unemployment,
         "sp500_ma200": round(sp500_ma200, 4) if sp500_ma200 is not None else None,
         "sp500_last": sp500_last,

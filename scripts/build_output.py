@@ -20,14 +20,19 @@ from pathlib import Path
 from strategy_engine import (
     PriceSeries, STRATEGIES, STRATEGY_LABELS, STRATEGY_DESCRIPTIONS,
     KOALLWEATHER1_WEIGHTS, KOALLWEATHER2_PROFILES, HANMI_STATIC_WEIGHTS,
-    EXTENDED_PROXY_MAP, build_extended_price_series,
+    EXTENDED_PROXY_MAP, EXTENDED_PROXY_SUMMARY, build_extended_price_series,
     compute_allocation, daa_canary_raw_scores, simulate_hanmi_aggressive_daily,
+    simulate_hanmi_aggressive_v2_daily,
 )
 
 # 프록시로 상장 전 구간을 스플라이스해 백테스트를 연장하는 "확장(프록시)" 모드 대상.
-# K-글로벌자산배분은 병목 종목(KODEX AI전력핵심설비)이 "매년 유망 섹터로 교체"하는
-# 슬롯이라 장기 프록시가 개념적으로 맞지 않아 제외했다.
-EXTENDED_BACKTEST_CODES = ["KOALLWEATHER2_GROWTH", "HANMI_STATIC"]
+# 2026-11-19: 로컬 연구 엔진과 같은 프록시(지수·미국ETF 원화환산, 현금성 ETF는 CD금리)로 바꾸고
+# 한국 ETF 전략 전부로 확대. K-글로벌의 섹터 슬롯(매년 교체)은 연구 문서처럼 나스닥100으로 근사한다.
+EXTENDED_BACKTEST_CODES = [
+    "KOALLWEATHER1", "KOALLWEATHER1_R2", "KOALLWEATHER2_GROWTH", "HANMI_STATIC", "HANMI_STATIC_R1",
+    "HANMI_DYNAMIC_STABLE", "HANMI_DYNAMIC_STABLE_R3", "HANMI_DYNAMIC_AGGRESSIVE", "HANMI_DYNAMIC_AGGRESSIVE_V2",
+    "PENSION_IRP", "PENSION_SAVINGS_MOMENTUM",
+]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
@@ -63,6 +68,7 @@ TICKER_REMARK = {
     "148070.KS": "KOSEF 국고채10년", "133690.KS": "TIGER 미국나스닥100", "069500.KS": "KODEX 200",
     "229200.KS": "KODEX 코스닥150", "138230.KS": "KOSEF 미국달러선물", "0043B0.KS": "TIGER 머니마켓액티브",
     "305080.KS": "TIGER 미국채10년선물", "329750.KS": "TIGER 미국달러단기채권액티브",
+    "434060.KS": "KODEX TDF2050액티브",
     "USD": "USD : 현금(무이자 가정)",
 }
 
@@ -83,6 +89,7 @@ TICKER_SECTOR = {
     "102110.KS": "국내 주식", "451600.KS": "국고채", "488770.KS": "초단기채권", "148070.KS": "국고채",
     "133690.KS": "나스닥", "069500.KS": "국내 주식", "229200.KS": "국내 주식(코스닥)", "138230.KS": "미국달러선물",
     "0043B0.KS": "초단기채권", "305080.KS": "미국 중기채", "329750.KS": "미국달러단기채권",
+    "434060.KS": "주식/채권 혼합(TDF2050)",
 }
 
 CATEGORY_GROUPS = {
@@ -98,7 +105,7 @@ CATEGORY_GROUPS = {
         "0043B0.KS", "305080.KS", "329750.KS",
     ],
     "원자재": ["GLD", "PDBC", "411060.KS"],
-    "혼합": ["284430.KS"],
+    "혼합": ["284430.KS", "434060.KS"],
     "외환": ["138230.KS"],
     "현금": ["USD"],
 }
@@ -142,6 +149,16 @@ def build_holding_row(ps, ticker, weight, idx, score=None):
 # 매도(150일선 이탈)는 월중 하루짜리 이탈도 놓치면 안 되므로 일별로 체크해야 한다
 # (simulate_hanmi_aggressive_daily 참고 — 월말 스냅샷만 보면 월중 반나절 이탈을 놓친다).
 HYSTERESIS_STRATEGIES = {"HANMI_DYNAMIC_AGGRESSIVE"}
+# 일별 경로로 NAV까지 직접 계산하는 전략(월중 매도를 백테스트 수익률에 반영) — 시뮬레이션은 한 번만 돌려 재사용.
+DAILY_PATH_STRATEGIES = {"HANMI_DYNAMIC_AGGRESSIVE_V2": simulate_hanmi_aggressive_v2_daily}
+_DAILY_CACHE = {}
+
+
+def daily_path(ps, code, upto_idx):
+    key = (id(ps), code, upto_idx)
+    if key not in _DAILY_CACHE:
+        _DAILY_CACHE[key] = DAILY_PATH_STRATEGIES[code](ps, upto_idx)
+    return _DAILY_CACHE[key]
 
 
 def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
@@ -156,6 +173,8 @@ def build_current(ps: PriceSeries, idx_current, idx_latest, today_str):
         kwargs = {"use_live_macro": True} if code == "DGA" else {}
         if code in HYSTERESIS_STRATEGIES:
             allocation = simulate_hanmi_aggressive_daily(ps, idx_current).get(idx_current, {})
+        elif code in DAILY_PATH_STRATEGIES:
+            allocation = daily_path(ps, code, idx_current)[0].get(idx_current, {})
         else:
             allocation = compute_allocation(ps, code, idx_current, **kwargs)
         holdings = [build_holding_row(ps, t, w, idx_current) for t, w in sorted(allocation.items(), key=lambda x: (-x[1], x[0]))]
@@ -241,6 +260,9 @@ REQUIRED_TICKERS = {
     "KOALLWEATHER1": list(KOALLWEATHER1_WEIGHTS.keys()),
     "KOALLWEATHER2_GROWTH": [t for t, w in KOALLWEATHER2_PROFILES["GROWTH"].items() if w > 0],
     "HANMI_STATIC": list(HANMI_STATIC_WEIGHTS.keys()),
+    # 필터판도 원본과 같은 시점부터 시작(필터 효과만 비교되도록)
+    "HANMI_STATIC_R1": list(HANMI_STATIC_WEIGHTS.keys()),
+    "KOALLWEATHER1_R2": list(KOALLWEATHER1_WEIGHTS.keys()),
 }
 
 
@@ -274,6 +296,14 @@ def build_backtests(ps: PriceSeries, idx_current, codes=None):
             continue
 
         rebalance_points = month_ends[start_pos:]
+        if code in DAILY_PATH_STRATEGIES:
+            _, navs = daily_path(ps, code, idx_current)
+            pts = [i for i in rebalance_points if i in navs]
+            if len(pts) < 2:
+                continue
+            base = navs[pts[0]]
+            out[code] = {"dates": [ps.dates[i] for i in pts], "nav": [round(navs[i] / base * 100, 4) for i in pts]}
+            continue
         hysteresis_snapshots = simulate_hanmi_aggressive_daily(ps, idx_current) if code in HYSTERESIS_STRATEGIES else None
         dates, nav = [ps.dates[rebalance_points[0]]], [100.0]
         for t in range(len(rebalance_points) - 1):
@@ -346,10 +376,7 @@ def main():
     extended_ps = build_extended_price_series(ps)
     extended_backtests = build_backtests(extended_ps, idx_current, codes=EXTENDED_BACKTEST_CODES)
     extended_meta = {
-        code: {
-            "label": STRATEGY_LABELS[code],
-            "proxies": {t: EXTENDED_PROXY_MAP[t] for t in EXTENDED_PROXY_MAP if t in REQUIRED_TICKERS.get(code, [])},
-        }
+        code: {"label": STRATEGY_LABELS[code], "proxies": {"summary": EXTENDED_PROXY_SUMMARY}}
         for code in extended_backtests
     }
     (DATA_DIR / "backtests_extended.json").write_text(
