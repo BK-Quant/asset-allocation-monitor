@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generatedAt": "2026-11-19 01:22 KST",
+    "generatedAt": "2026-11-20 22:37 KST",
     "basisDate": "2026-10-30",
     "applicableMonth": "2026년 11월",
     "latestDataDate": "2026-11-18"
@@ -57,7 +57,7 @@
     },
     "LAA": {
       "label": "LAA",
-      "description": "Lethargic Asset Allocation. IWD(미국 대형가치주)·IEF(미국 중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 위'이거나 '실업률이 12개월 평균보다 높음' 중 하나라도 해당하면 QQQ(나스닥), 아니면 SHY(미국 단기국채)로 전환.",
+      "description": "Lethargic Asset Allocation. IWD(미국 대형가치주)·IEF(미국 중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 아래'이면서 '실업률(전월 발표치)이 12개월 이동평균보다 높음'일 때만 SHY(미국 단기국채), 그 밖에는 QQQ(나스닥).",
       "asOfDate": "2026-10-30",
       "applicableMonth": "2026년 11월",
       "timingNote": "기준: 2026-10-30 종가(전월 말) → 적용: 2026년 11월 보유",
@@ -106,7 +106,7 @@
     },
     "RAA": {
       "label": "RAA",
-      "description": "5개 자산 QQQ(나스닥)·IWN(미국 소형가치주)·IEF(미국 중기채)·TLT(미국 장기채)·GLD(금)에 각 20%씩 배분하는 것이 기본. '실업률이 하락 추세(확장국면)'이거나 '카나리아 VWO(신흥국주식)·BND(미국종합채권) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
+      "description": "5개 자산 QQQ(나스닥)·IWN(미국 소형가치주)·IEF(미국 중기채)·TLT(미국 장기채)·GLD(금)에 각 20%씩 배분하는 것이 기본. '실업률(전월 발표치)이 하락 추세(확장국면)'이거나 '카나리아 VWO(신흥국주식)·BND(미국종합채권) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
       "asOfDate": "2026-10-30",
       "applicableMonth": "2026년 11월",
       "timingNote": "기준: 2026-10-30 종가(전월 말) → 적용: 2026년 11월 보유",
@@ -1248,12 +1248,12 @@
     },
     "LAA": {
       "asOfDate": "2026-11-18",
-      "nav": 380.3586,
+      "nav": 398.5645,
       "returnSinceConfirmed": -0.026298
     },
     "RAA": {
       "asOfDate": "2026-11-18",
-      "nav": 235.0429,
+      "nav": 226.9247,
       "returnSinceConfirmed": -0.029206
     },
     "GTAA": {
