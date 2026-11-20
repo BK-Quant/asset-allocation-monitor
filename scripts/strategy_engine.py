@@ -140,9 +140,12 @@ class PriceSeries:
 
     # ── 매크로 지표 (실업률만 히스토리 보유) ─────────────────────
     def unemployment_current_and_past(self, as_of_date=None):
+        """RAA 경기확장 판정용. 공표 지연 반영: as_of_date가 속한 달(m)의 값은 빼고 m−1월까지만 쓴다.
+        2026-11-20 정정: 이전엔 m월 말 판정에 m월 값(다음 달 초 발표)을 써서 1개월 룩어헤드였다."""
         u = self.economic.get("unemployment") or []
         if as_of_date:
-            u = [x for x in u if x["date"] <= as_of_date]
+            cutoff = str(as_of_date)[:7] + "-01"
+            u = [x for x in u if x["date"] < cutoff]
         if len(u) < 13:
             return None
         return {"current": u[-1]["value"], "past12m": u[-13]["value"]}
@@ -156,6 +159,20 @@ class PriceSeries:
         current = u[-1]["value"]
         avg12m = sum(x["value"] for x in u[-13:-1]) / 12
         return current > avg12m
+
+    def is_unemployment_above_sma12_lagged(self, as_of_date=None):
+        """LAA(Keller·Keuning 2019) 실업률 조건. 실업률 > 12개월 SMA(현재 포함)이면 True.
+        공표 지연 반영: as_of_date가 속한 달(m)의 값은 쓰지 않고 m−1월까지만 쓴다
+        (m월 실업률은 m+1월 첫 금요일 발표). 데이터가 13개월 미만이면 None."""
+        u = self.economic.get("unemployment") or []
+        if as_of_date:
+            cutoff = str(as_of_date)[:7] + "-01"
+            u = [x for x in u if x["date"] < cutoff]
+        if len(u) < 12:
+            return None
+        current = u[-1]["value"]
+        sma12 = sum(x["value"] for x in u[-12:]) / 12
+        return current > sma12
 
     def is_expansion(self, as_of_date=None):
         info = self.unemployment_current_and_past(as_of_date)
@@ -703,9 +720,13 @@ def calc_HANMI_DYNAMIC_AGGRESSIVE_V2(ps, idx):
 
 
 def calc_LAA(ps, idx):
+    """LAA (Keller & Keuning, 2019). 가변칸은 'SPY<SMA200 AND 실업률>12개월 SMA'일 때만 SHY,
+    그 밖에는 QQQ. 실업률은 m−1월 값(공표 지연). 2026-11-20 정정: 이전 코드는
+    'SPY>SMA200 OR 실업률>평균 → QQQ'로 실업률 방향이 원문과 반대였다."""
     uptrend = (ps.get_sma_momentum("SPY", idx, 200) or 0) > 0
-    above_avg = ps.is_unemployment_above_average(ps.dates[idx])
-    flexible = "QQQ" if (uptrend or above_avg) else "SHY"
+    unemp_rising = ps.is_unemployment_above_sma12_lagged(ps.dates[idx])
+    defensive = (not uptrend) and bool(unemp_rising)
+    flexible = "SHY" if defensive else "QQQ"
     return {"IWD": 0.25, "IEF": 0.25, "GLD": 0.25, flexible: 0.25}
 
 
@@ -1040,8 +1061,8 @@ STRATEGY_LABELS = {
 
 STRATEGY_DESCRIPTIONS = {
     "PERM": "영구포트폴리오(Harry Browne). SPY(미국 대형주)·TLT(미국 장기채)·GLD(금)·BIL(초단기국채) 4종목에 각 25%씩 고정 배분. 시장 상황과 무관하게 매달 그대로 유지(리밸런싱만).",
-    "LAA": "Lethargic Asset Allocation. IWD(미국 대형가치주)·IEF(미국 중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 위'이거나 '실업률이 12개월 평균보다 높음' 중 하나라도 해당하면 QQQ(나스닥), 아니면 SHY(미국 단기국채)로 전환.",
-    "RAA": "5개 자산 QQQ(나스닥)·IWN(미국 소형가치주)·IEF(미국 중기채)·TLT(미국 장기채)·GLD(금)에 각 20%씩 배분하는 것이 기본. '실업률이 하락 추세(확장국면)'이거나 '카나리아 VWO(신흥국주식)·BND(미국종합채권) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
+    "LAA": "Lethargic Asset Allocation. IWD(미국 대형가치주)·IEF(미국 중기채)·GLD(금)에 각 25% 고정 배분하고, 나머지 25%는 'SPY가 200일 이동평균 아래'이면서 '실업률(전월 발표치)이 12개월 이동평균보다 높음'일 때만 SHY(미국 단기국채), 그 밖에는 QQQ(나스닥).",
+    "RAA": "5개 자산 QQQ(나스닥)·IWN(미국 소형가치주)·IEF(미국 중기채)·TLT(미국 장기채)·GLD(금)에 각 20%씩 배분하는 것이 기본. '실업률(전월 발표치)이 하락 추세(확장국면)'이거나 '카나리아 VWO(신흥국주식)·BND(미국종합채권) 둘 다 양수 모멘텀'이면 그대로 유지하고, 둘 다 아니면 방어모드로 전환해 IEF·TLT에 50%씩만 보유.",
     "GTAA": "Faber GTAA5. SPY(미국 대형주)·EFA(선진국 주식)·IEF(미국 중기채)·PDBC(원자재)·VNQ(미국 리츠) 5개 자산 중 210일 이동평균 위에 있는 자산만 각 20%씩 보유하고, 이동평균 아래인 자산 비중은 현금(USD)으로 대기.",
     "PAA": "Protective Asset Allocation. 공격 12종목 SPY(미국대형주)·IWM(미국소형주)·QQQ(나스닥)·VGK(유럽주식)·EWJ(일본주식)·EEM(신흥국주식)·VNQ(미국리츠)·PDBC(원자재)·GLD(금)·TLT(미국장기채)·HYG(하이일드채권)·LQD(회사채) 중 252일 이동평균 위(양수 모멘텀)인 자산 개수(n)를 센다. n≤6이면 전액 IEF(미국중기채, 안전자산), n>6이면 양수 모멘텀 상위 (n-6)개를 1/6씩 보유하고 나머지는 IEF로 채움 — 시장 폭이 넓을수록 공격적으로 투자.",
     "DAA": "DAA-G12(Keller & Keuning, 2018). 카나리아 VWO(신흥국주식)·BND(미국종합채권) 중 음수 모멘텀 개수(n)에 따라 공격/방어 비중을 3단계(breadth)로 나눈다: n=0→공격 100%, n=1→50%/50%, n=2→방어 100%. 공격자산군 12종목(SPY·IWM·QQQ·VGK·EWJ·EEM·VNQ·PDBC·GLD·TLT·HYG·LQD) 상위 6개는 균등가중, 방어자산군 SHY(단기채)·IEF(중기채)·LQD(회사채) 중 상위 1개에 나머지 전액. 모멘텀은 13612W(1/3/6/12개월 수익률에 12/4/2/1 가중).",

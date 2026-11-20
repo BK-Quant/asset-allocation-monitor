@@ -72,6 +72,7 @@ YAHOO_CHART_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{symbol}"
 BLS_TIMESERIES_URL = "https://api.bls.gov/publicAPI/v2/timeseries/data/"
 BLS_UNRATE_SERIES_ID = "LNS14000000"
 FRED_T10Y3M_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M"
+FRED_UNRATE_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=UNRATE"
 SP500_DIVIDEND_YIELD_URL = "https://us500.com/tools/data/sp500-dividend-yield"
 
 UA_HEADERS = {
@@ -282,6 +283,35 @@ def calculate_sma(values, period):
 
 
 def fetch_unemployment():
+    """실업률 월간 전체 이력. FRED UNRATE(1948~, 계절조정 = BLS LNS14000000과 같은 값)를 먼저 쓴다.
+    2026-11-20: BLS API는 최근 6년만 줘서 LAA 백테스트가 2021 이전에 실업률 조건 없이 돌았다 → FRED로 확장.
+    FRED 실패 시 기존 BLS 경로(최근 6년)로 대체한다."""
+    try:
+        text = _http_get_text(FRED_UNRATE_CSV_URL, timeout=120)
+        rows = []
+        for line in text.strip().splitlines()[1:]:
+            parts = line.split(",")
+            if len(parts) < 2 or parts[1] in ("", "."):
+                continue
+            rows.append({"date": parts[0][:7] + "-01", "value": float(parts[1])})
+        if len(rows) >= 600:
+            return rows
+        print(f"WARNING: FRED UNRATE 행 수 부족({len(rows)}), BLS로 대체")
+    except Exception as e:
+        print(f"WARNING: FRED UNRATE 실패({e}), BLS로 대체")
+    # BLS는 최근 6년뿐 → 기존 economic.json의 긴 이력 위에 덮어써 병합(이력이 줄지 않게)
+    merged = {}
+    try:
+        prev = json.loads(ECONOMIC_PATH.read_text(encoding="utf-8")).get("unemployment") or []
+        merged = {x["date"]: x["value"] for x in prev}
+    except Exception:
+        pass
+    for x in fetch_unemployment_bls():
+        merged[x["date"]] = x["value"]
+    return [{"date": d, "value": merged[d]} for d in sorted(merged)]
+
+
+def fetch_unemployment_bls():
     current_year = datetime.now().year
     payload = {"seriesid": [BLS_UNRATE_SERIES_ID], "startyear": str(current_year - 6), "endyear": str(current_year)}
     data = _http_post_json(BLS_TIMESERIES_URL, payload)
@@ -394,7 +424,7 @@ def build_economic_payload(prices_payload):
     today = datetime.now(KST).strftime("%Y-%m-%d")
     return {
         "lastUpdated": today,
-        "source": "BLS (LNS14000000), Yahoo Finance (SPY proxy), FRED (T10Y3M, IR3TIB01KRM156N), US500.com",
+        "source": "FRED UNRATE (=BLS LNS14000000, 1948~), Yahoo Finance (SPY proxy), FRED (T10Y3M, IR3TIB01KRM156N), US500.com",
         "kr3m": kr3m,
         "unemployment": unemployment,
         "sp500_ma200": round(sp500_ma200, 4) if sp500_ma200 is not None else None,
